@@ -14,9 +14,10 @@ export function CTABanner() {
       <div className="absolute inset-0">
         <Image
           src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=1920&q=80"
-          alt="Luxury jewellery"
+          alt="Bijoux de luxe - Appel à l'action"
           fill
           className="object-cover"
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-background/90" />
       </div>

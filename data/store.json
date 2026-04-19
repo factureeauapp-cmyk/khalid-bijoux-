@@ -1,0 +1,1520 @@
+{
+  "products": [
+    {
+      "id": "product_1775951975538",
+      "nameFr": "jjjjjjjjjsn",
+      "nameAr": "jqjjqq",
+      "categoryId": "rings",
+      "price": 4,
+      "originalPrice": 2,
+      "tag": "neww",
+      "descriptionFr": "sjsjsj",
+      "descriptionAr": "qjqjq",
+      "image": "/khalid-bijoux.png"
+    },
+    {
+      "id": "ring_1",
+      "nameFr": "Ethereal Solitaire",
+      "nameAr": "Ethereal Solitaire",
+      "categoryId": "rings",
+      "price": 850,
+      "originalPrice": 1200,
+      "tag": "Sale",
+      "descriptionFr": "A timeless masterpiece featuring a brilliant-cut solitary diamond that captures and refracts light beautifully.",
+      "descriptionAr": "A timeless masterpiece featuring a brilliant-cut solitary diamond that captures and refracts light beautifully.",
+      "image": "/images/rings/ring_01.jpg"
+    },
+    {
+      "id": "ring_2",
+      "nameFr": "Celestial Rose Band",
+      "nameAr": "Celestial Rose Band",
+      "categoryId": "rings",
+      "price": 640,
+      "tag": "Trending",
+      "descriptionFr": "Elegant rose band with a central morganite stone, reflecting celestial light with unmatched warmth.",
+      "descriptionAr": "Elegant rose band with a central morganite stone, reflecting celestial light with unmatched warmth.",
+      "image": "/images/rings/ring_02.jpg"
+    },
+    {
+      "id": "ring_3",
+      "nameFr": "Onyx Sovereign",
+      "nameAr": "Onyx Sovereign",
+      "categoryId": "rings",
+      "price": 1100,
+      "tag": "Exclusive",
+      "descriptionFr": "A powerful statement piece with a polished black onyx centerpiece set in dark metal for an unmistakable presence.",
+      "descriptionAr": "A powerful statement piece with a polished black onyx centerpiece set in dark metal for an unmistakable presence.",
+      "image": "/images/rings/ring_03.png"
+    },
+    {
+      "id": "ring_4",
+      "nameFr": "Aurora Diamond Halo",
+      "nameAr": "Aurora Diamond Halo",
+      "categoryId": "rings",
+      "price": 1950,
+      "tag": "Premium",
+      "descriptionFr": "A mesmerizing halo design with a central diamond surrounded by a constellation of micro-pavé diamonds.",
+      "descriptionAr": "A mesmerizing halo design with a central diamond surrounded by a constellation of micro-pavé diamonds.",
+      "image": "/images/rings/ring_04.jpg"
+    },
+    {
+      "id": "ring_5",
+      "nameFr": "Velvet Signet",
+      "nameAr": "Velvet Signet",
+      "categoryId": "rings",
+      "price": 490,
+      "tag": "Essential",
+      "descriptionFr": "A smooth, polished signet with a flat top — understated luxury for everyday refinement.",
+      "descriptionAr": "A smooth, polished signet with a flat top — understated luxury for everyday refinement.",
+      "image": "/images/rings/ring_05.jpg"
+    },
+    {
+      "id": "ring_6",
+      "nameFr": "Moonlit Sapphire Crown",
+      "nameAr": "Moonlit Sapphire Crown",
+      "categoryId": "rings",
+      "price": 2400,
+      "tag": "Masterpiece",
+      "descriptionFr": "A regal crown-setting featuring a deep blue sapphire flanked by tapered baguette diamonds.",
+      "descriptionAr": "A regal crown-setting featuring a deep blue sapphire flanked by tapered baguette diamonds.",
+      "image": "/images/rings/ring_06.png"
+    },
+    {
+      "id": "ring_7",
+      "nameFr": "Infinity Twist Band",
+      "nameAr": "Infinity Twist Band",
+      "categoryId": "watches",
+      "price": 680,
+      "originalPrice": 6,
+      "tag": "NewGGG",
+      "descriptionFr": "A delicate infinity twist band studded with cubic zirconia — symbolizing eternal connection.",
+      "descriptionAr": "A delicate infinity twist band studded with cubic zirconia — symbolizing eternal connection.",
+      "image": "/images/rings/ring_07.png"
+    },
+    {
+      "id": "ring_8",
+      "nameFr": "Heritage Double Band",
+      "nameAr": "Heritage Double Band",
+      "categoryId": "rings",
+      "price": 820,
+      "tag": "Handcrafted",
+      "descriptionFr": "Two interlocking bands, hand-polished to perfection for a modern take on a classic silhouette.",
+      "descriptionAr": "Two interlocking bands, hand-polished to perfection for a modern take on a classic silhouette.",
+      "image": "/images/rings/ring_08.png"
+    },
+    {
+      "id": "ring_9",
+      "nameFr": "Eclipse Tension",
+      "nameAr": "Eclipse Tension",
+      "categoryId": "rings",
+      "price": 1450,
+      "tag": "Avant-Garde",
+      "descriptionFr": "A floating diamond held by invisible tension in a sleek titanium band — engineering meets artistry.",
+      "descriptionAr": "A floating diamond held by invisible tension in a sleek titanium band — engineering meets artistry.",
+      "image": "/images/rings/ring_09.jpg"
+    },
+    {
+      "id": "ring_10",
+      "nameFr": "Amber Cocktail",
+      "nameAr": "Amber Cocktail",
+      "categoryId": "rings",
+      "price": 580,
+      "tag": "Bohemian",
+      "descriptionFr": "A bold cocktail piece featuring a warm Baltic amber cabochon in a gold bezel setting.",
+      "descriptionAr": "A bold cocktail piece featuring a warm Baltic amber cabochon in a gold bezel setting.",
+      "image": "/images/rings/ring_10.png"
+    },
+    {
+      "id": "ring_11",
+      "nameFr": "Stardust Stackable Trio",
+      "nameAr": "Stardust Stackable Trio",
+      "categoryId": "rings",
+      "price": 980,
+      "tag": "Trending",
+      "descriptionFr": "Three delicate stacking bands in yellow, white, and rose tones — each embedded with micro-diamond dust.",
+      "descriptionAr": "Three delicate stacking bands in yellow, white, and rose tones — each embedded with micro-diamond dust.",
+      "image": "/images/rings/ring_11.png"
+    },
+    {
+      "id": "ring_12",
+      "nameFr": "Victorian Garnet Cluster",
+      "nameAr": "Victorian Garnet Cluster",
+      "categoryId": "rings",
+      "price": 1250,
+      "tag": "Vintage",
+      "descriptionFr": "A Victorian-inspired cluster featuring deep red garnets set in intricately detailed antique metal.",
+      "descriptionAr": "A Victorian-inspired cluster featuring deep red garnets set in intricately detailed antique metal.",
+      "image": "/images/rings/ring_12.png"
+    },
+    {
+      "id": "ring_13",
+      "nameFr": "Emerald Sovereign",
+      "nameAr": "Emerald Sovereign",
+      "categoryId": "rings",
+      "price": 1800,
+      "tag": "Exclusive",
+      "descriptionFr": "A magnificent emerald-cut Colombian emerald in a thick band — fit for royalty.",
+      "descriptionAr": "A magnificent emerald-cut Colombian emerald in a thick band — fit for royalty.",
+      "image": "/images/rings/ring_13.png"
+    },
+    {
+      "id": "ring_14",
+      "nameFr": "Pearl Embrace",
+      "nameAr": "Pearl Embrace",
+      "categoryId": "rings",
+      "price": 450,
+      "tag": "Elegant",
+      "descriptionFr": "A lustrous freshwater pearl cradled in a minimalist silver setting — pure, refined elegance.",
+      "descriptionAr": "A lustrous freshwater pearl cradled in a minimalist silver setting — pure, refined elegance.",
+      "image": "/images/rings/ring_14.png"
+    },
+    {
+      "id": "ring_15",
+      "nameFr": "Noir Whisper Band",
+      "nameAr": "Noir Whisper Band",
+      "categoryId": "rings",
+      "price": 380,
+      "tag": "Minimalist",
+      "descriptionFr": "Ultra-thin matte black titanium band — the quiet luxury of the Noir Éclat philosophy.",
+      "descriptionAr": "Ultra-thin matte black titanium band — the quiet luxury of the Noir Éclat philosophy.",
+      "image": "/images/rings/ring_01.jpg"
+    },
+    {
+      "id": "ring_16",
+      "nameFr": "Solitaire Pave",
+      "nameAr": "Solitaire Pave",
+      "categoryId": "rings",
+      "price": 1200,
+      "tag": "New",
+      "descriptionFr": "Refined solitaire with a brilliant pave band.",
+      "descriptionAr": "Refined solitaire with a brilliant pave band.",
+      "image": "/images/rings/ring_02.jpg"
+    },
+    {
+      "id": "ring_17",
+      "nameFr": "Sapphire Halo",
+      "nameAr": "Sapphire Halo",
+      "categoryId": "rings",
+      "price": 1450,
+      "tag": "Limited",
+      "descriptionFr": "Royal blue sapphire surrounded by a diamond halo.",
+      "descriptionAr": "Royal blue sapphire surrounded by a diamond halo.",
+      "image": "/images/rings/ring_03.png"
+    },
+    {
+      "id": "ring_18",
+      "nameFr": "Modern Twist",
+      "nameAr": "Modern Twist",
+      "categoryId": "rings",
+      "price": 650,
+      "tag": "Modern",
+      "descriptionFr": "Sculptural twist band with a soft satin finish.",
+      "descriptionAr": "Sculptural twist band with a soft satin finish.",
+      "image": "/images/rings/ring_04.jpg"
+    },
+    {
+      "id": "ring_19",
+      "nameFr": "Emerald Cut Luxe",
+      "nameAr": "Emerald Cut Luxe",
+      "categoryId": "rings",
+      "price": 2100,
+      "tag": "Premium",
+      "descriptionFr": "Stunning emerald-cut diamond in a minimalist setting.",
+      "descriptionAr": "Stunning emerald-cut diamond in a minimalist setting.",
+      "image": "/images/rings/ring_05.jpg"
+    },
+    {
+      "id": "ring_20",
+      "nameFr": "Vintage Engraved",
+      "nameAr": "Vintage Engraved",
+      "categoryId": "rings",
+      "price": 890,
+      "tag": "Vintage",
+      "descriptionFr": "Intricate floral engravings on a heavy gold band.",
+      "descriptionAr": "Intricate floral engravings on a heavy gold band.",
+      "image": "/images/rings/ring_06.png"
+    },
+    {
+      "id": "ring_21",
+      "nameFr": "Midnight Band",
+      "nameAr": "Midnight Band",
+      "categoryId": "rings",
+      "price": 420,
+      "tag": "Minimalist",
+      "descriptionFr": "Sleek and stealthy black band for the modern age.",
+      "descriptionAr": "Sleek and stealthy black band for the modern age.",
+      "image": "/images/rings/ring_07.png"
+    },
+    {
+      "id": "ring_22",
+      "nameFr": "Imperial Ruby",
+      "nameAr": "Imperial Ruby",
+      "categoryId": "rings",
+      "price": 1750,
+      "tag": "Exclusive",
+      "descriptionFr": "Vibrant Burmese ruby set in high-polish gold.",
+      "descriptionAr": "Vibrant Burmese ruby set in high-polish gold.",
+      "image": "/images/rings/ring_08.png"
+    },
+    {
+      "id": "ring_23",
+      "nameFr": "Aura Cluster",
+      "nameAr": "Aura Cluster",
+      "categoryId": "rings",
+      "price": 920,
+      "tag": "Artisan",
+      "descriptionFr": "A cluster of brilliant diamonds that glow like an aura.",
+      "descriptionAr": "A cluster of brilliant diamonds that glow like an aura.",
+      "image": "/images/rings/ring_09.jpg"
+    },
+    {
+      "id": "ring_24",
+      "nameFr": "Oceanic Pearl",
+      "nameAr": "Oceanic Pearl",
+      "categoryId": "rings",
+      "price": 540,
+      "tag": "Elegant",
+      "descriptionFr": "Deep sea pearl cradled in a wave-inspired silver band.",
+      "descriptionAr": "Deep sea pearl cradled in a wave-inspired silver band.",
+      "image": "/images/rings/ring_10.png"
+    },
+    {
+      "id": "ring_25",
+      "nameFr": "Sovereign Signet",
+      "nameAr": "Sovereign Signet",
+      "categoryId": "rings",
+      "price": 780,
+      "tag": "Classical",
+      "descriptionFr": "Heavy signet ring inspired by royal heritage.",
+      "descriptionAr": "Heavy signet ring inspired by royal heritage.",
+      "image": "/images/rings/ring_11.png"
+    },
+    {
+      "id": "ear_1",
+      "nameFr": "Aura Hoops",
+      "nameAr": "Aura Hoops",
+      "categoryId": "earrings",
+      "price": 320,
+      "tag": "Essential",
+      "descriptionFr": "Classic hoops with a modern, high-polish finish that catches the light from every angle.",
+      "descriptionAr": "Classic hoops with a modern, high-polish finish that catches the light from every angle.",
+      "image": "/images/earrings/earring_01.png"
+    },
+    {
+      "id": "ear_2",
+      "nameFr": "Starlight Drops",
+      "nameAr": "Starlight Drops",
+      "categoryId": "earrings",
+      "price": 720,
+      "tag": "New",
+      "descriptionFr": "Shimmering diamond drops that capture the essence of a starlit night.",
+      "descriptionAr": "Shimmering diamond drops that capture the essence of a starlit night.",
+      "image": "/images/earrings/earring_02.png"
+    },
+    {
+      "id": "ear_3",
+      "nameFr": "Emerald Vine Studs",
+      "nameAr": "Emerald Vine Studs",
+      "categoryId": "earrings",
+      "price": 850,
+      "tag": "Handcrafted",
+      "descriptionFr": "Delicate gold-pressed emerald studs inspired by organic vine patterns.",
+      "descriptionAr": "Delicate gold-pressed emerald studs inspired by organic vine patterns.",
+      "image": "/images/earrings/earring_03.png"
+    },
+    {
+      "id": "ear_4",
+      "nameFr": "Pearl Cascade",
+      "nameAr": "Pearl Cascade",
+      "categoryId": "earrings",
+      "price": 540,
+      "tag": "Elegant",
+      "descriptionFr": "Graduated pearls cascading with grace.",
+      "descriptionAr": "Graduated pearls cascading with grace.",
+      "image": "/images/earrings/earring_04.jpg"
+    },
+    {
+      "id": "ear_5",
+      "nameFr": "Chandelier Royale",
+      "nameAr": "Chandelier Royale",
+      "categoryId": "earrings",
+      "price": 1650,
+      "tag": "Premium",
+      "descriptionFr": "Exquisite tiered diamond drops for special occasions.",
+      "descriptionAr": "Exquisite tiered diamond drops for special occasions.",
+      "image": "/images/earrings/earring_05.png"
+    },
+    {
+      "id": "ear_6",
+      "nameFr": "Eclipse Studs",
+      "nameAr": "Eclipse Studs",
+      "categoryId": "earrings",
+      "price": 280,
+      "tag": "Modern",
+      "descriptionFr": "Geometric studs with a brushed finish.",
+      "descriptionAr": "Geometric studs with a brushed finish.",
+      "image": "/images/earrings/earring_06.png"
+    },
+    {
+      "id": "ear_7",
+      "nameFr": "Midnight Threads",
+      "nameAr": "Midnight Threads",
+      "categoryId": "earrings",
+      "price": 420,
+      "tag": "Edgy",
+      "descriptionFr": "Long threader earrings with a noir touch.",
+      "descriptionAr": "Long threader earrings with a noir touch.",
+      "image": "/images/earrings/earring_07.png"
+    },
+    {
+      "id": "ear_8",
+      "nameFr": "Crystal Prism",
+      "nameAr": "Crystal Prism",
+      "categoryId": "earrings",
+      "price": 340,
+      "tag": "Classic",
+      "descriptionFr": "Precision-cut crystals that refract the rainbow.",
+      "descriptionAr": "Precision-cut crystals that refract the rainbow.",
+      "image": "/images/earrings/earring_08.png"
+    },
+    {
+      "id": "ear_9",
+      "nameFr": "Orbital Silver",
+      "nameAr": "Orbital Silver",
+      "categoryId": "earrings",
+      "price": 250,
+      "tag": "Essential",
+      "descriptionFr": "Contemporary double-orbit silver hoops.",
+      "descriptionAr": "Contemporary double-orbit silver hoops.",
+      "image": "/images/earrings/earring_09.png"
+    },
+    {
+      "id": "ear_10",
+      "nameFr": "Sapphire Dangles",
+      "nameAr": "Sapphire Dangles",
+      "categoryId": "earrings",
+      "price": 1250,
+      "tag": "Premium",
+      "descriptionFr": "Pear-shaped sapphires in deep ocean hues.",
+      "descriptionAr": "Pear-shaped sapphires in deep ocean hues.",
+      "image": "/images/earrings/earring_10.png"
+    },
+    {
+      "id": "ear_11",
+      "nameFr": "Minimalist Bars",
+      "nameAr": "Minimalist Bars",
+      "categoryId": "earrings",
+      "price": 190,
+      "tag": "Minimalist",
+      "descriptionFr": "Ultra-thin gold bars for subtle luxury.",
+      "descriptionAr": "Ultra-thin gold bars for subtle luxury.",
+      "image": "/images/earrings/earring_11.png"
+    },
+    {
+      "id": "ear_12",
+      "nameFr": "Baroque Pearl Drops",
+      "nameAr": "Baroque Pearl Drops",
+      "categoryId": "earrings",
+      "price": 640,
+      "tag": "Artisan",
+      "descriptionFr": "Unique organic pearls shaped by nature.",
+      "descriptionAr": "Unique organic pearls shaped by nature.",
+      "image": "/images/earrings/earring_12.png"
+    },
+    {
+      "id": "ear_13",
+      "nameFr": "Filigree Climbers",
+      "nameAr": "Filigree Climbers",
+      "categoryId": "earrings",
+      "price": 580,
+      "tag": "Romantic",
+      "descriptionFr": "Delicate floral designs that climb the earlobe.",
+      "descriptionAr": "Delicate floral designs that climb the earlobe.",
+      "image": "/images/earrings/earring_13.png"
+    },
+    {
+      "id": "ear_14",
+      "nameFr": "Silk Tassels",
+      "nameAr": "Silk Tassels",
+      "categoryId": "earrings",
+      "price": 320,
+      "tag": "Bohemian",
+      "descriptionFr": "Hand-wound silk on elegant gold caps.",
+      "descriptionAr": "Hand-wound silk on elegant gold caps.",
+      "image": "/images/earrings/earring_14.png"
+    },
+    {
+      "id": "ear_15",
+      "nameFr": "Noir Clip Cuffs",
+      "nameAr": "Noir Clip Cuffs",
+      "categoryId": "earrings",
+      "price": 240,
+      "tag": "Trending",
+      "descriptionFr": "Bold no-pierce cuffs in matte black.",
+      "descriptionAr": "Bold no-pierce cuffs in matte black.",
+      "image": "/images/earrings/earring_15.png"
+    },
+    {
+      "id": "ear_16",
+      "nameFr": "Diamond Studs",
+      "nameAr": "Diamond Studs",
+      "categoryId": "earrings",
+      "price": 450,
+      "tag": "Classic",
+      "descriptionFr": "Perfectly matched brilliant diamonds.",
+      "descriptionAr": "Perfectly matched brilliant diamonds.",
+      "image": "/images/earrings/earring_16.png"
+    },
+    {
+      "id": "ear_17",
+      "nameFr": "Chain Loops",
+      "nameAr": "Chain Loops",
+      "categoryId": "earrings",
+      "price": 380,
+      "tag": "Modern",
+      "descriptionFr": "Woven chain hoops with a heavy feel.",
+      "descriptionAr": "Woven chain hoops with a heavy feel.",
+      "image": "/images/earrings/earring_17.png"
+    },
+    {
+      "id": "ear_18",
+      "nameFr": "Onyx Drops",
+      "nameAr": "Onyx Drops",
+      "categoryId": "earrings",
+      "price": 520,
+      "tag": "Noir",
+      "descriptionFr": "Polished onyx teardrops.",
+      "descriptionAr": "Polished onyx teardrops.",
+      "image": "/images/earrings/earring_07.png"
+    },
+    {
+      "id": "ear_19",
+      "nameFr": "Ruby Studs",
+      "nameAr": "Ruby Studs",
+      "categoryId": "earrings",
+      "price": 680,
+      "tag": "Exclusive",
+      "descriptionFr": "Natural rubies in a crown setting.",
+      "descriptionAr": "Natural rubies in a crown setting.",
+      "image": "/images/earrings/earring_10.png"
+    },
+    {
+      "id": "ear_20",
+      "nameFr": "Architectural Hoops",
+      "nameAr": "Architectural Hoops",
+      "categoryId": "earrings",
+      "price": 540,
+      "tag": "Modern",
+      "descriptionFr": "Squircle hoops for a bold statement.",
+      "descriptionAr": "Squircle hoops for a bold statement.",
+      "image": "/images/earrings/earring_09.png"
+    },
+    {
+      "id": "ear_21",
+      "nameFr": "Star Studs",
+      "nameAr": "Star Studs",
+      "categoryId": "earrings",
+      "price": 210,
+      "tag": "New",
+      "descriptionFr": "Tiny sparkling stars for your ears.",
+      "descriptionAr": "Tiny sparkling stars for your ears.",
+      "image": "/images/earrings/earring_11.png"
+    },
+    {
+      "id": "ear_22",
+      "nameFr": "Luxe Threaders",
+      "nameAr": "Luxe Threaders",
+      "categoryId": "earrings",
+      "price": 390,
+      "tag": "Minimalist",
+      "descriptionFr": "Ultra-fine diamond-cut threads.",
+      "descriptionAr": "Ultra-fine diamond-cut threads.",
+      "image": "/images/earrings/earring_15.png"
+    },
+    {
+      "id": "ear_23",
+      "nameFr": "Floral Studs",
+      "nameAr": "Floral Studs",
+      "categoryId": "earrings",
+      "price": 460,
+      "tag": "Romantic",
+      "descriptionFr": "Miniature roses with diamond centers.",
+      "descriptionAr": "Miniature roses with diamond centers.",
+      "image": "/images/earrings/earring_13.png"
+    },
+    {
+      "id": "ear_24",
+      "nameFr": "Imperial Hoops",
+      "nameAr": "Imperial Hoops",
+      "categoryId": "earrings",
+      "price": 820,
+      "tag": "High Luxury",
+      "descriptionFr": "Hand-hammered heavy gold hoops.",
+      "descriptionAr": "Hand-hammered heavy gold hoops.",
+      "image": "/images/earrings/earring_01.png"
+    },
+    {
+      "id": "ear_25",
+      "nameFr": "Aura Drops",
+      "nameAr": "Aura Drops",
+      "categoryId": "earrings",
+      "price": 740,
+      "tag": "Masterpiece",
+      "descriptionFr": "Floating diamonds in a golden halo.",
+      "descriptionAr": "Floating diamonds in a golden halo.",
+      "image": "/images/earrings/earring_02.png"
+    },
+    {
+      "id": "neck_1",
+      "nameFr": "Imperial Chain",
+      "nameAr": "Imperial Chain",
+      "categoryId": "necklaces",
+      "price": 1800,
+      "tag": "Premium",
+      "descriptionFr": "Heavy solid gold chain.",
+      "descriptionAr": "Heavy solid gold chain.",
+      "image": "/images/necklaces/necklace_01.png"
+    },
+    {
+      "id": "neck_2",
+      "nameFr": "Pearl Pendant",
+      "nameAr": "Pearl Pendant",
+      "categoryId": "necklaces",
+      "price": 950,
+      "tag": "Elegant",
+      "descriptionFr": "Radiant South Sea pearl.",
+      "descriptionAr": "Radiant South Sea pearl.",
+      "image": "/images/necklaces/necklace_02.jpg"
+    },
+    {
+      "id": "neck_3",
+      "nameFr": "Sapphire Locket",
+      "nameAr": "Sapphire Locket",
+      "categoryId": "necklaces",
+      "price": 1350,
+      "tag": "Romantic",
+      "descriptionFr": "Blue sapphire locket.",
+      "descriptionAr": "Blue sapphire locket.",
+      "image": "/images/necklaces/necklace_03.jpg"
+    },
+    {
+      "id": "neck_4",
+      "nameFr": "Pure Cascade",
+      "nameAr": "Pure Cascade",
+      "categoryId": "necklaces",
+      "price": 1200,
+      "tag": "Trending",
+      "descriptionFr": "Cascading gold layers.",
+      "descriptionAr": "Cascading gold layers.",
+      "image": "/images/necklaces/necklace_04.jpg"
+    },
+    {
+      "id": "neck_5",
+      "nameFr": "Diamond Drop",
+      "nameAr": "Diamond Drop",
+      "categoryId": "necklaces",
+      "price": 2400,
+      "tag": "Masterpiece",
+      "descriptionFr": "Brilliant solitary diamond.",
+      "descriptionAr": "Brilliant solitary diamond.",
+      "image": "/images/necklaces/necklace_05.png"
+    },
+    {
+      "id": "neck_6",
+      "nameFr": "Velvet Choker",
+      "nameAr": "Velvet Choker",
+      "categoryId": "necklaces",
+      "price": 380,
+      "tag": "Edgy",
+      "descriptionFr": "Glamorous noir choker.",
+      "descriptionAr": "Glamorous noir choker.",
+      "image": "/images/necklaces/necklace_06.png"
+    },
+    {
+      "id": "neck_7",
+      "nameFr": "Cameo Pendant",
+      "nameAr": "Cameo Pendant",
+      "categoryId": "necklaces",
+      "price": 890,
+      "tag": "Vintage",
+      "descriptionFr": "Hand-carved heirloom.",
+      "descriptionAr": "Hand-carved heirloom.",
+      "image": "/images/necklaces/necklace_07.png"
+    },
+    {
+      "id": "neck_8",
+      "nameFr": "Collar of Radiance",
+      "nameAr": "Collar of Radiance",
+      "categoryId": "necklaces",
+      "price": 3200,
+      "tag": "Gala",
+      "descriptionFr": "Diamond-encrusted collar.",
+      "descriptionAr": "Diamond-encrusted collar.",
+      "image": "/images/necklaces/necklace_08.png"
+    },
+    {
+      "id": "neck_9",
+      "nameFr": "Arisan Twist",
+      "nameAr": "Arisan Twist",
+      "categoryId": "necklaces",
+      "price": 1450,
+      "tag": "Handcrafted",
+      "descriptionFr": "Twisted gold wire sculpture.",
+      "descriptionAr": "Twisted gold wire sculpture.",
+      "image": "/images/necklaces/necklace_09.png"
+    },
+    {
+      "id": "neck_10",
+      "nameFr": "Moonstone Drop",
+      "nameAr": "Moonstone Drop",
+      "categoryId": "necklaces",
+      "price": 620,
+      "tag": "Bohemian",
+      "descriptionFr": "Ethereal moonstone lariat.",
+      "descriptionAr": "Ethereal moonstone lariat.",
+      "image": "/images/necklaces/necklace_10.png"
+    },
+    {
+      "id": "neck_11",
+      "nameFr": "Pearl Strand",
+      "nameAr": "Pearl Strand",
+      "categoryId": "necklaces",
+      "price": 1950,
+      "tag": "Classic",
+      "descriptionFr": "Long strand of black pearls.",
+      "descriptionAr": "Long strand of black pearls.",
+      "image": "/images/necklaces/necklace_11.png"
+    },
+    {
+      "id": "neck_12",
+      "nameFr": "Ruby Cathedral",
+      "nameAr": "Ruby Cathedral",
+      "categoryId": "necklaces",
+      "price": 2800,
+      "tag": "Exclusive",
+      "descriptionFr": "Ruby centerpiece on heavy gold.",
+      "descriptionAr": "Ruby centerpiece on heavy gold.",
+      "image": "/images/necklaces/necklace_12.png"
+    },
+    {
+      "id": "neck_13",
+      "nameFr": "Diamond Station",
+      "nameAr": "Diamond Station",
+      "categoryId": "necklaces",
+      "price": 1550,
+      "tag": "New",
+      "descriptionFr": "Evenly spaced diamonds.",
+      "descriptionAr": "Evenly spaced diamonds.",
+      "image": "/images/necklaces/necklace_05.png"
+    },
+    {
+      "id": "neck_14",
+      "nameFr": "Sleek Lariat",
+      "nameAr": "Sleek Lariat",
+      "categoryId": "necklaces",
+      "price": 780,
+      "tag": "Modern",
+      "descriptionFr": "Minimalist Y-chain design.",
+      "descriptionAr": "Minimalist Y-chain design.",
+      "image": "/images/necklaces/necklace_01.png"
+    },
+    {
+      "id": "neck_15",
+      "nameFr": "Venetian Bead",
+      "nameAr": "Venetian Bead",
+      "categoryId": "necklaces",
+      "price": 540,
+      "tag": "Artisan",
+      "descriptionFr": "Hand-blown Murano glass.",
+      "descriptionAr": "Hand-blown Murano glass.",
+      "image": "/images/necklaces/necklace_02.jpg"
+    },
+    {
+      "id": "neck_16",
+      "nameFr": "Aura Choker",
+      "nameAr": "Aura Choker",
+      "categoryId": "necklaces",
+      "price": 850,
+      "tag": "New",
+      "descriptionFr": "Modern choker with a soft glow.",
+      "descriptionAr": "Modern choker with a soft glow.",
+      "image": "/images/necklaces/necklace_04.jpg"
+    },
+    {
+      "id": "neck_17",
+      "nameFr": "Luxe Link",
+      "nameAr": "Luxe Link",
+      "categoryId": "necklaces",
+      "price": 1100,
+      "tag": "Solid",
+      "descriptionFr": "Bold links for powerful looks.",
+      "descriptionAr": "Bold links for powerful looks.",
+      "image": "/images/necklaces/necklace_01.png"
+    },
+    {
+      "id": "neck_18",
+      "nameFr": "Emerald Drop",
+      "nameAr": "Emerald Drop",
+      "categoryId": "necklaces",
+      "price": 1650,
+      "tag": "Exclusive",
+      "descriptionFr": "Deep emerald pendant.",
+      "descriptionAr": "Deep emerald pendant.",
+      "image": "/images/necklaces/necklace_12.png"
+    },
+    {
+      "id": "neck_19",
+      "nameFr": "Star Dust",
+      "nameAr": "Star Dust",
+      "categoryId": "necklaces",
+      "price": 420,
+      "tag": "Delicate",
+      "descriptionFr": "Diamond-dusted fine chain.",
+      "descriptionAr": "Diamond-dusted fine chain.",
+      "image": "/images/necklaces/necklace_10.png"
+    },
+    {
+      "id": "neck_20",
+      "nameFr": "Pearl Orbit",
+      "nameAr": "Pearl Orbit",
+      "categoryId": "necklaces",
+      "price": 720,
+      "tag": "Modern",
+      "descriptionFr": "Floating pearl in a silver circle.",
+      "descriptionAr": "Floating pearl in a silver circle.",
+      "image": "/images/necklaces/necklace_02.jpg"
+    },
+    {
+      "id": "neck_21",
+      "nameFr": "Imperial V",
+      "nameAr": "Imperial V",
+      "categoryId": "necklaces",
+      "price": 1400,
+      "tag": "Regal",
+      "descriptionFr": "V-shaped heavy gold statement.",
+      "descriptionAr": "V-shaped heavy gold statement.",
+      "image": "/images/necklaces/necklace_01.png"
+    },
+    {
+      "id": "neck_22",
+      "nameFr": "Midnight Chain",
+      "nameAr": "Midnight Chain",
+      "categoryId": "necklaces",
+      "price": 580,
+      "tag": "Noir",
+      "descriptionFr": "Dark sleek chain for daily wear.",
+      "descriptionAr": "Dark sleek chain for daily wear.",
+      "image": "/images/necklaces/necklace_06.png"
+    },
+    {
+      "id": "neck_23",
+      "nameFr": "Floral Locket",
+      "nameAr": "Floral Locket",
+      "categoryId": "necklaces",
+      "price": 690,
+      "tag": "Vintage",
+      "descriptionFr": "Engraved locket with room for memory.",
+      "descriptionAr": "Engraved locket with room for memory.",
+      "image": "/images/necklaces/necklace_03.jpg"
+    },
+    {
+      "id": "neck_24",
+      "nameFr": "Celestial Star",
+      "nameAr": "Celestial Star",
+      "categoryId": "necklaces",
+      "price": 480,
+      "tag": "Dainty",
+      "descriptionFr": "Tiny star pendant with diamond.",
+      "descriptionAr": "Tiny star pendant with diamond.",
+      "image": "/images/necklaces/necklace_08.png"
+    },
+    {
+      "id": "neck_25",
+      "nameFr": "Sovereign Pendant",
+      "nameAr": "Sovereign Pendant",
+      "categoryId": "necklaces",
+      "price": 1250,
+      "tag": "Heraldic",
+      "descriptionFr": "Crested pendant in solid gold.",
+      "descriptionAr": "Crested pendant in solid gold.",
+      "image": "/images/necklaces/necklace_09.png"
+    },
+    {
+      "id": "brac_1",
+      "nameFr": "Link Archive",
+      "nameAr": "Link Archive",
+      "categoryId": "bracelets",
+      "price": 1200,
+      "tag": "Signature",
+      "descriptionFr": "Interlocking gold links.",
+      "descriptionAr": "Interlocking gold links.",
+      "image": "/images/bracelets/bracelet_01.png"
+    },
+    {
+      "id": "brac_2",
+      "nameFr": "Constellation Cuff",
+      "nameAr": "Constellation Cuff",
+      "categoryId": "bracelets",
+      "price": 2400,
+      "tag": "Masterpiece",
+      "descriptionFr": "Galaxy of paved diamonds.",
+      "descriptionAr": "Galaxy of paved diamonds.",
+      "image": "/images/bracelets/bracelet_02.png"
+    },
+    {
+      "id": "brac_3",
+      "nameFr": "Hinged Bangle",
+      "nameAr": "Hinged Bangle",
+      "categoryId": "bracelets",
+      "price": 680,
+      "tag": "Elegant",
+      "descriptionFr": "Precision design bangle.",
+      "descriptionAr": "Precision design bangle.",
+      "image": "/images/bracelets/bracelet_03.png"
+    },
+    {
+      "id": "brac_4",
+      "nameFr": "Garden Charm",
+      "nameAr": "Garden Charm",
+      "categoryId": "bracelets",
+      "price": 540,
+      "tag": "Playful",
+      "descriptionFr": "Botanical gold charms.",
+      "descriptionAr": "Botanical gold charms.",
+      "image": "/images/bracelets/bracelet_04.png"
+    },
+    {
+      "id": "brac_5",
+      "nameFr": "Tennis Line",
+      "nameAr": "Tennis Line",
+      "categoryId": "bracelets",
+      "price": 3200,
+      "tag": "Premium",
+      "descriptionFr": "Round-cut diamond line.",
+      "descriptionAr": "Round-cut diamond line.",
+      "image": "/images/bracelets/bracelet_05.png"
+    },
+    {
+      "id": "brac_6",
+      "nameFr": "Stacking Bangles",
+      "nameAr": "Stacking Bangles",
+      "categoryId": "bracelets",
+      "price": 850,
+      "tag": "Trending",
+      "descriptionFr": "Ultra-thin mixed gold stack.",
+      "descriptionAr": "Ultra-thin mixed gold stack.",
+      "image": "/images/bracelets/bracelet_06.png"
+    },
+    {
+      "id": "brac_7",
+      "nameFr": "Wave Cuff",
+      "nameAr": "Wave Cuff",
+      "categoryId": "bracelets",
+      "price": 1100,
+      "tag": "Artisan",
+      "descriptionFr": "Sculpted organic gold cuff.",
+      "descriptionAr": "Sculpted organic gold cuff.",
+      "image": "/images/bracelets/bracelet_07.png"
+    },
+    {
+      "id": "brac_8",
+      "nameFr": "Chain Mail Wrap",
+      "nameAr": "Chain Mail Wrap",
+      "categoryId": "bracelets",
+      "price": 1350,
+      "tag": "Avant-Garde",
+      "descriptionFr": "Woven mixed metal wrap.",
+      "descriptionAr": "Woven mixed metal wrap.",
+      "image": "/images/bracelets/bracelet_08.png"
+    },
+    {
+      "id": "brac_9",
+      "nameFr": "Serpent Bangle",
+      "nameAr": "Serpent Bangle",
+      "categoryId": "bracelets",
+      "price": 950,
+      "tag": "Exclusive",
+      "descriptionFr": "Ruby-set serpent bangle.",
+      "descriptionAr": "Ruby-set serpent bangle.",
+      "image": "/images/bracelets/bracelet_09.png"
+    },
+    {
+      "id": "brac_10",
+      "nameFr": "Hammered Cuff",
+      "nameAr": "Hammered Cuff",
+      "categoryId": "bracelets",
+      "price": 480,
+      "tag": "Handcrafted",
+      "descriptionFr": "Wide hand-textured gold.",
+      "descriptionAr": "Wide hand-textured gold.",
+      "image": "/images/bracelets/bracelet_10.png"
+    },
+    {
+      "id": "brac_11",
+      "nameFr": "Pearl Station",
+      "nameAr": "Pearl Station",
+      "categoryId": "bracelets",
+      "price": 420,
+      "tag": "Classic",
+      "descriptionFr": "Delicate freshwater pearls.",
+      "descriptionAr": "Delicate freshwater pearls.",
+      "image": "/images/bracelets/bracelet_11.png"
+    },
+    {
+      "id": "brac_12",
+      "nameFr": "Turquoise Cuff",
+      "nameAr": "Turquoise Cuff",
+      "categoryId": "bracelets",
+      "price": 340,
+      "tag": "Bohemian",
+      "descriptionFr": "Natural turquoise on silver.",
+      "descriptionAr": "Natural turquoise on silver.",
+      "image": "/images/bracelets/bracelet_12.png"
+    },
+    {
+      "id": "brac_13",
+      "nameFr": "Noir Slider",
+      "nameAr": "Noir Slider",
+      "categoryId": "bracelets",
+      "price": 380,
+      "tag": "Minimalist",
+      "descriptionFr": "Adjustable matte black bangle.",
+      "descriptionAr": "Adjustable matte black bangle.",
+      "image": "/images/bracelets/bracelet_13.png"
+    },
+    {
+      "id": "brac_14",
+      "nameFr": "Bar Bracelet",
+      "nameAr": "Bar Bracelet",
+      "categoryId": "bracelets",
+      "price": 1300,
+      "tag": "Modern",
+      "descriptionFr": "Geometric horizontal diamond bar.",
+      "descriptionAr": "Geometric horizontal diamond bar.",
+      "image": "/images/bracelets/bracelet_14.png"
+    },
+    {
+      "id": "brac_15",
+      "nameFr": "Coil Spring",
+      "nameAr": "Coil Spring",
+      "categoryId": "bracelets",
+      "price": 280,
+      "tag": "Essential",
+      "descriptionFr": "Flexible gold-tone coil.",
+      "descriptionAr": "Flexible gold-tone coil.",
+      "image": "/images/bracelets/bracelet_01.png"
+    },
+    {
+      "id": "brac_16",
+      "nameFr": "Aura Bangle",
+      "nameAr": "Aura Bangle",
+      "categoryId": "bracelets",
+      "price": 750,
+      "tag": "New",
+      "descriptionFr": "Seamless gold bangle with a soft glow.",
+      "descriptionAr": "Seamless gold bangle with a soft glow.",
+      "image": "/images/bracelets/bracelet_02.png"
+    },
+    {
+      "id": "brac_17",
+      "nameFr": "Luxe Rope",
+      "nameAr": "Luxe Rope",
+      "categoryId": "bracelets",
+      "price": 520,
+      "tag": "New",
+      "descriptionFr": "Bold rope chain for daily wear.",
+      "descriptionAr": "Bold rope chain for daily wear.",
+      "image": "/images/bracelets/bracelet_03.png"
+    },
+    {
+      "id": "brac_18",
+      "nameFr": "Emerald Cuff",
+      "nameAr": "Emerald Cuff",
+      "categoryId": "bracelets",
+      "price": 1850,
+      "tag": "Exclusive",
+      "descriptionFr": "Heavy cuff set with single emerald.",
+      "descriptionAr": "Heavy cuff set with single emerald.",
+      "image": "/images/bracelets/bracelet_04.png"
+    },
+    {
+      "id": "brac_19",
+      "nameFr": "Midnight Cuff",
+      "nameAr": "Midnight Cuff",
+      "categoryId": "bracelets",
+      "price": 420,
+      "tag": "Noir",
+      "descriptionFr": "Matte black architectual cuff.",
+      "descriptionAr": "Matte black architectual cuff.",
+      "image": "/images/bracelets/bracelet_05.png"
+    },
+    {
+      "id": "brac_20",
+      "nameFr": "Starlight Chain",
+      "nameAr": "Starlight Chain",
+      "categoryId": "bracelets",
+      "price": 1100,
+      "tag": "Premium",
+      "descriptionFr": "Diamond-dusted fine chain.",
+      "descriptionAr": "Diamond-dusted fine chain.",
+      "image": "/images/bracelets/bracelet_06.png"
+    },
+    {
+      "id": "brac_21",
+      "nameFr": "Imperial Link",
+      "nameAr": "Imperial Link",
+      "categoryId": "bracelets",
+      "price": 1600,
+      "tag": "Regal",
+      "descriptionFr": "Solid link bracelet in pure gold.",
+      "descriptionAr": "Solid link bracelet in pure gold.",
+      "image": "/images/bracelets/bracelet_07.png"
+    },
+    {
+      "id": "brac_22",
+      "nameFr": "Pearl Wrap",
+      "nameAr": "Pearl Wrap",
+      "categoryId": "bracelets",
+      "price": 580,
+      "tag": "Romantic",
+      "descriptionFr": "Multi-wrap bracelet with seed pearls.",
+      "descriptionAr": "Multi-wrap bracelet with seed pearls.",
+      "image": "/images/bracelets/bracelet_08.png"
+    },
+    {
+      "id": "brac_23",
+      "nameFr": "Geometric Band",
+      "nameAr": "Geometric Band",
+      "categoryId": "bracelets",
+      "price": 480,
+      "tag": "Modern",
+      "descriptionFr": "Brushed gold band with angular cuts.",
+      "descriptionAr": "Brushed gold band with angular cuts.",
+      "image": "/images/bracelets/bracelet_09.png"
+    },
+    {
+      "id": "brac_24",
+      "nameFr": "Ruby Charm",
+      "nameAr": "Ruby Charm",
+      "categoryId": "bracelets",
+      "price": 920,
+      "tag": "Exclusive",
+      "descriptionFr": "Fine chain with ruby heart charm.",
+      "descriptionAr": "Fine chain with ruby heart charm.",
+      "image": "/images/bracelets/bracelet_10.png"
+    },
+    {
+      "id": "brac_25",
+      "nameFr": "Sovereign Cuff",
+      "nameAr": "Sovereign Cuff",
+      "categoryId": "bracelets",
+      "price": 2100,
+      "tag": "Masterpiece",
+      "descriptionFr": "Engraved platinum high-luxury cuff.",
+      "descriptionAr": "Engraved platinum high-luxury cuff.",
+      "image": "/images/bracelets/bracelet_11.png"
+    },
+    {
+      "id": "set_1",
+      "nameFr": "Royal Suite",
+      "nameAr": "Royal Suite",
+      "categoryId": "sets",
+      "price": 4200,
+      "tag": "Limited",
+      "descriptionFr": "Full gold gala ensemble.",
+      "descriptionAr": "Full gold gala ensemble.",
+      "image": "/images/cart/set_01.png"
+    },
+    {
+      "id": "set_2",
+      "nameFr": "Eternal Bride",
+      "nameAr": "Eternal Bride",
+      "categoryId": "sets",
+      "price": 5400,
+      "tag": "Bridal",
+      "descriptionFr": "Premium diamond bridal set.",
+      "descriptionAr": "Premium diamond bridal set.",
+      "image": "/images/cart/set_02.png"
+    },
+    {
+      "id": "set_3",
+      "nameFr": "Soirée Ensemble",
+      "nameAr": "Soirée Ensemble",
+      "categoryId": "sets",
+      "price": 2800,
+      "tag": "Evening",
+      "descriptionFr": "Dark onyx evening glamour.",
+      "descriptionAr": "Dark onyx evening glamour.",
+      "image": "/images/cart/set_03.png"
+    },
+    {
+      "id": "set_4",
+      "nameFr": "Pearl Harmony",
+      "nameAr": "Pearl Harmony",
+      "categoryId": "sets",
+      "price": 2100,
+      "tag": "Classic",
+      "descriptionFr": "Akoya pearl trio.",
+      "descriptionAr": "Akoya pearl trio.",
+      "image": "/images/cart/set_04.png"
+    },
+    {
+      "id": "set_5",
+      "nameFr": "Dynasty Ensemble",
+      "nameAr": "Dynasty Ensemble",
+      "categoryId": "sets",
+      "price": 6500,
+      "tag": "Exclusive",
+      "descriptionFr": "Emerald set for modern royalty.",
+      "descriptionAr": "Emerald set for modern royalty.",
+      "image": "/images/cart/set_05.jpg"
+    },
+    {
+      "id": "set_6",
+      "nameFr": "Gala Archive",
+      "nameAr": "Gala Archive",
+      "categoryId": "sets",
+      "price": 3200,
+      "tag": "Gala",
+      "descriptionFr": "Engineered for the spotlight.",
+      "descriptionAr": "Engineered for the spotlight.",
+      "image": "/images/cart/set_06.png"
+    },
+    {
+      "id": "set_7",
+      "nameFr": "Moonlight Suite",
+      "nameAr": "Moonlight Suite",
+      "categoryId": "sets",
+      "price": 1350,
+      "tag": "Essential",
+      "descriptionFr": "Moonlit silver minimalism.",
+      "descriptionAr": "Moonlit silver minimalism.",
+      "image": "/images/cart/set_07.png"
+    },
+    {
+      "id": "set_8",
+      "nameFr": "Rose Collection",
+      "nameAr": "Rose Collection",
+      "categoryId": "sets",
+      "price": 2600,
+      "tag": "Vintage",
+      "descriptionFr": "Morganite and gold romance.",
+      "descriptionAr": "Morganite and gold romance.",
+      "image": "/images/cart/set_08.png"
+    },
+    {
+      "id": "set_9",
+      "nameFr": "Blush Suite",
+      "nameAr": "Blush Suite",
+      "categoryId": "sets",
+      "price": 1950,
+      "tag": "Romantic",
+      "descriptionFr": "Pink sapphire and gold trio.",
+      "descriptionAr": "Pink sapphire and gold trio.",
+      "image": "/images/cart/set_09.png"
+    },
+    {
+      "id": "set_10",
+      "nameFr": "Eternity Archive",
+      "nameAr": "Eternity Archive",
+      "categoryId": "sets",
+      "price": 9200,
+      "tag": "Masterpiece",
+      "descriptionFr": "The pinnacle of jewelry art.",
+      "descriptionAr": "The pinnacle of jewelry art.",
+      "image": "/images/cart/set_10.png"
+    },
+    {
+      "id": "set_11",
+      "nameFr": "Artrio Suite",
+      "nameAr": "Artrio Suite",
+      "categoryId": "sets",
+      "price": 1100,
+      "tag": "Minimalist",
+      "descriptionFr": "Refined daily gold simplicity.",
+      "descriptionAr": "Refined daily gold simplicity.",
+      "image": "/images/cart/set_11.png"
+    },
+    {
+      "id": "set_12",
+      "nameFr": "Twilight Suite",
+      "nameAr": "Twilight Suite",
+      "categoryId": "sets",
+      "price": 5200,
+      "tag": "Premium",
+      "descriptionFr": "Deep blue twilight sapphires.",
+      "descriptionAr": "Deep blue twilight sapphires.",
+      "image": "/images/cart/set_12.png"
+    },
+    {
+      "id": "set_13",
+      "nameFr": "Spirit Collection",
+      "nameAr": "Spirit Collection",
+      "categoryId": "sets",
+      "price": 920,
+      "tag": "Bohemian",
+      "descriptionFr": "Natural stone bohemian luxury.",
+      "descriptionAr": "Natural stone bohemian luxury.",
+      "image": "/images/cart/set_13.png"
+    },
+    {
+      "id": "set_14",
+      "nameFr": "Power Statement",
+      "nameAr": "Power Statement",
+      "categoryId": "sets",
+      "price": 3600,
+      "tag": "Trending",
+      "descriptionFr": "Bold geometric power set.",
+      "descriptionAr": "Bold geometric power set.",
+      "image": "/images/cart/set_14.png"
+    },
+    {
+      "id": "set_15",
+      "nameFr": "Noir Collection",
+      "nameAr": "Noir Collection",
+      "categoryId": "sets",
+      "price": 7200,
+      "tag": "Limited",
+      "descriptionFr": "Definitive black diamond suite.",
+      "descriptionAr": "Definitive black diamond suite.",
+      "image": "/images/cart/set_15.png"
+    },
+    {
+      "id": "set_16",
+      "nameFr": "Aura Set",
+      "nameAr": "Aura Set",
+      "categoryId": "sets",
+      "price": 2400,
+      "tag": "New",
+      "descriptionFr": "Radiant golden glow ensemble.",
+      "descriptionAr": "Radiant golden glow ensemble.",
+      "image": "/images/cart/set_01.png"
+    },
+    {
+      "id": "set_17",
+      "nameFr": "Luxe Minimalist",
+      "nameAr": "Luxe Minimalist",
+      "categoryId": "sets",
+      "price": 1100,
+      "tag": "New",
+      "descriptionFr": "Modern sleek silver trio.",
+      "descriptionAr": "Modern sleek silver trio.",
+      "image": "/images/cart/set_07.png"
+    },
+    {
+      "id": "set_18",
+      "nameFr": "Imperial Ruby Set",
+      "nameAr": "Imperial Ruby Set",
+      "categoryId": "sets",
+      "price": 4800,
+      "tag": "Exclusive",
+      "descriptionFr": "Ruby and gold royal suite.",
+      "descriptionAr": "Ruby and gold royal suite.",
+      "image": "/images/cart/set_06.png"
+    },
+    {
+      "id": "set_19",
+      "nameFr": "Celestial Star Set",
+      "nameAr": "Celestial Star Set",
+      "categoryId": "sets",
+      "price": 2100,
+      "tag": "Dainty",
+      "descriptionFr": "Diamond star necklace and studs.",
+      "descriptionAr": "Diamond star necklace and studs.",
+      "image": "/images/cart/set_10.png"
+    },
+    {
+      "id": "set_20",
+      "nameFr": "Modern Noir Set",
+      "nameAr": "Modern Noir Set",
+      "categoryId": "sets",
+      "price": 3900,
+      "tag": "Avant-Garde",
+      "descriptionFr": "Geometric black gold and onyx.",
+      "descriptionAr": "Geometric black gold and onyx.",
+      "image": "/images/cart/set_15.png"
+    },
+    {
+      "id": "set_21",
+      "nameFr": "Regal Pearl Set",
+      "nameAr": "Regal Pearl Set",
+      "categoryId": "sets",
+      "price": 5800,
+      "tag": "High Luxury",
+      "descriptionFr": "Tahitian pearl and diamond ensemble.",
+      "descriptionAr": "Tahitian pearl and diamond ensemble.",
+      "image": "/images/cart/set_04.png"
+    },
+    {
+      "id": "set_22",
+      "nameFr": "Floral Romance Set",
+      "nameAr": "Floral Romance Set",
+      "categoryId": "sets",
+      "price": 3400,
+      "tag": "Romantic",
+      "descriptionFr": "Intricate floral gold set with rubies.",
+      "descriptionAr": "Intricate floral gold set with rubies.",
+      "image": "/images/cart/set_08.png"
+    },
+    {
+      "id": "set_23",
+      "nameFr": "Midnight Stealth Set",
+      "nameAr": "Midnight Stealth Set",
+      "categoryId": "sets",
+      "price": 1800,
+      "tag": "Modern",
+      "descriptionFr": "All-black tech-jewelry suite.",
+      "descriptionAr": "All-black tech-jewelry suite.",
+      "image": "/images/cart/set_03.png"
+    },
+    {
+      "id": "set_24",
+      "nameFr": "Stardust Gala Set",
+      "nameAr": "Stardust Gala Set",
+      "categoryId": "sets",
+      "price": 7200,
+      "tag": "Masterpiece",
+      "descriptionFr": "Luxury set shimmering with micro-diamonds.",
+      "descriptionAr": "Luxury set shimmering with micro-diamonds.",
+      "image": "/images/cart/set_02.png"
+    },
+    {
+      "id": "set_25",
+      "nameFr": "Sovereign Gold Set",
+      "nameAr": "Sovereign Gold Set",
+      "categoryId": "sets",
+      "price": 6400,
+      "tag": "Heraldic",
+      "descriptionFr": "Heirloom-quality pure gold collection.",
+      "descriptionAr": "Heirloom-quality pure gold collection.",
+      "image": "/images/cart/set_01.png"
+    }
+  ],
+  "orders": [
+    {
+      "customerName": "Facture Eau App",
+      "address": "HHH",
+      "phone": "123456",
+      "notes": "12345678",
+      "items": [
+        {
+          "productId": "ring_1",
+          "productName": "Ethereal Solitaire",
+          "quantity": 1,
+          "unitPrice": 850,
+          "image": "/images/rings/ring_01.jpg"
+        }
+      ],
+      "total": 850,
+      "id": "order_1776614390427",
+      "createdAt": "2026-04-19T15:59:50.427Z",
+      "status": "pending",
+      "paymentMethod": "cash_on_delivery"
+    },
+    {
+      "customerName": "Ismail nidlachgher",
+      "address": "gg",
+      "phone": "gg",
+      "notes": "gg",
+      "items": [
+        {
+          "productId": "ring_1",
+          "quantity": 1,
+          "unitPrice": 850,
+          "image": "/images/rings/ring_01.jpg"
+        }
+      ],
+      "total": 850,
+      "id": "order_1776538038598",
+      "createdAt": "2026-04-18T18:47:18.598Z",
+      "status": "pending",
+      "paymentMethod": "cash_on_delivery"
+    },
+    {
+      "customerName": "hhhhh",
+      "address": "hqhq",
+      "phone": "0612345678",
+      "notes": "IAIAJXJXJX XJXK",
+      "items": [
+        {
+          "productId": "product_1775951975538",
+          "quantity": 2,
+          "unitPrice": 4,
+          "image": "/khalid-bijoux.png"
+        }
+      ],
+      "total": 8,
+      "id": "order_1775952067746",
+      "createdAt": "2026-04-12T00:01:07.746Z",
+      "status": "delivered",
+      "paymentMethod": "cash_on_delivery"
+    },
+    {
+      "customerName": "HHH",
+      "address": "JHJ",
+      "phone": "N N",
+      "notes": "? ?N ",
+      "items": [
+        {
+          "productId": "ring_2",
+          "productName": "Celestial Rose Band",
+          "quantity": 1,
+          "unitPrice": 640,
+          "image": "/images/rings/ring_02.jpg"
+        }
+      ],
+      "total": 640,
+      "id": "order_1775951208510",
+      "createdAt": "2026-04-11T23:46:48.510Z",
+      "status": "delivered",
+      "paymentMethod": "cash_on_delivery"
+    }
+  ],
+  "categories": [
+    {
+      "id": "rings",
+      "nameFr": "Bagues",
+      "nameAr": "الخواتم"
+    },
+    {
+      "id": "necklaces",
+      "nameFr": "Colliers",
+      "nameAr": "القلائد"
+    },
+    {
+      "id": "bracelets",
+      "nameFr": "Bracelets",
+      "nameAr": "الأساور"
+    },
+    {
+      "id": "earrings",
+      "nameFr": "Boucles d'oreilles",
+      "nameAr": "الأقراط"
+    },
+    {
+      "id": "watches",
+      "nameFr": "Montres",
+      "nameAr": "الساعات"
+    },
+    {
+      "id": "sets",
+      "nameFr": "Ensembles",
+      "nameAr": "المجموعات"
+    },
+    {
+      "id": "cc",
+      "nameFr": "CC",
+      "nameAr": "CC"
+    },
+    {
+      "id": "iii",
+      "nameFr": "III",
+      "nameAr": "III"
+    },
+    {
+      "id": "catogorer-1",
+      "nameFr": "catogorer 1",
+      "nameAr": "catogorie 1 ar"
+    }
+  ]
+}

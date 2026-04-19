@@ -180,10 +180,11 @@ export default function AIStylistPage() {
                                                     >
                                                         <div className="relative w-16 h-20 rounded-xl overflow-hidden shrink-0">
                                                             <Image
-                                                                src={p.image}
-                                                                alt={p.name}
+                                                                src={p.image || "/placeholder.svg"}
+                                                                alt={p.name || "Produit"}
                                                                 fill
                                                                 className="object-cover"
+                                                                sizes="80px"
                                                             />
                                                         </div>
                                                         <div className="flex-1 space-y-1">

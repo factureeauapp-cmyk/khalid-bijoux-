@@ -54,10 +54,11 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
         <Link href={`/product/${product.id}`} className="block">
           <div className="relative aspect-square overflow-hidden">
             <Image
-              src={product.images[0]}
-              alt={product.name}
+              src={product.images[0] || "/placeholder.svg"}
+              alt={product.name || "Produit"}
               fill
               className="object-cover transition-transform duration-700 group-hover:scale-110"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
 
             {/* Shine Effect */}
@@ -134,7 +135,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
         {/* Content */}
         <div className="p-4">
           <p className="text-xs text-primary uppercase tracking-wider mb-1">
-            {product.category}
+            {product.category || "Sans catégorie"}
           </p>
           <Link href={`/product/${product.id}`}>
             <h3 className="font-serif text-foreground group-hover:text-primary transition-colors line-clamp-1">

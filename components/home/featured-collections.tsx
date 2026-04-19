@@ -60,10 +60,11 @@ export function FeaturedCollections() {
               <Link href={collection.href} className="group block">
                 <div className="relative aspect-[3/4] rounded-2xl overflow-hidden gold-border gold-border-hover">
                   <Image
-                    src={collection.image}
-                    alt={collection.title}
+                    src={collection.image || "/placeholder.svg"}
+                    alt={collection.title || "Collection"}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
                   

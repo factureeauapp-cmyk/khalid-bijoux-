@@ -28,10 +28,11 @@ export function HeroSection() {
       <motion.div style={{ y }} className="absolute inset-0">
         <Image
           src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=1920&q=80"
-          alt="Luxury jewellery"
+          alt="Bijoux de luxe - Image héroïque"
           fill
           priority
           className="object-cover"
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
       </motion.div>

@@ -49,10 +49,11 @@ export function InstagramSection() {
               className="relative aspect-square rounded-xl overflow-hidden group"
             >
               <Image
-                src={post.image}
-                alt={`Instagram post ${post.id}`}
+                src={post.image || "/placeholder.svg"}
+                alt={`Instagram post ${post.id || "image"}`}
                 fill
                 className="object-cover transition-transform duration-500 group-hover:scale-110"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
               <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/30 transition-colors flex items-center justify-center">
                 <Instagram className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />

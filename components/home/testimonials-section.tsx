@@ -66,10 +66,11 @@ export function TestimonialsSection() {
               <div className="flex flex-col items-center">
                 <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-primary mb-4">
                   <Image
-                    src={testimonials[current].image}
-                    alt={testimonials[current].name}
+                    src={testimonials[current].image || "/placeholder.svg"}
+                    alt={testimonials[current].name || "Témoignage"}
                     fill
                     className="object-cover"
+                    sizes="80px"
                   />
                 </div>
                 <h4 className="font-serif text-lg text-foreground">

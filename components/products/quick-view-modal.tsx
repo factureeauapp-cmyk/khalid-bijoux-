@@ -26,6 +26,16 @@ export function QuickViewModal() {
 
   if (!quickViewProduct) return null
 
+  // Safely access product properties
+  const productName = quickViewProduct?.name || "Product"
+  const productCategory = quickViewProduct?.category || "Sans catégorie"
+  const productPrice = quickViewProduct?.price || 0
+  const productDescription = quickViewProduct?.description || ""
+  const productKarat = quickViewProduct?.karat || ""
+  const productWeight = quickViewProduct?.weight || ""
+  const productImages = quickViewProduct?.images || ["/placeholder.svg"]
+  const productSizes = quickViewProduct?.sizes || []
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-IN", {
       style: "currency",
@@ -35,20 +45,20 @@ export function QuickViewModal() {
   }
 
   const handleAddToCart = () => {
-    const size = selectedSize || quickViewProduct.sizes[0]
+    const size = selectedSize || productSizes[0]
     addToCart(quickViewProduct, quantity, size)
     closeQuickView()
   }
 
   const nextImage = () => {
     setCurrentImageIndex((prev) =>
-      prev === quickViewProduct.images.length - 1 ? 0 : prev + 1
+      prev === productImages.length - 1 ? 0 : prev + 1
     )
   }
 
   const prevImage = () => {
     setCurrentImageIndex((prev) =>
-      prev === 0 ? quickViewProduct.images.length - 1 : prev - 1
+      prev === 0 ? productImages.length - 1 : prev - 1
     )
   }
 
@@ -85,14 +95,15 @@ export function QuickViewModal() {
             {/* Image Section */}
             <div className="relative w-full md:w-1/2 h-64 md:h-auto bg-secondary">
               <Image
-                src={quickViewProduct.images[currentImageIndex]}
-                alt={quickViewProduct.name}
+                src={productImages[currentImageIndex] || "/placeholder.svg"}
+                alt={productName}
                 fill
                 className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
 
               {/* Image Navigation */}
-              {quickViewProduct.images.length > 1 && (
+              {productImages.length > 1 && (
                 <>
                   <button
                     onClick={prevImage}
@@ -113,7 +124,7 @@ export function QuickViewModal() {
 
               {/* Image Dots */}
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                {quickViewProduct.images.map((_, idx) => (
+                {productImages.map((_, idx) => (
                   <button
                     key={idx}
                     onClick={() => setCurrentImageIndex(idx)}
@@ -132,37 +143,37 @@ export function QuickViewModal() {
               <div className="space-y-6">
                 <div>
                   <p className="text-primary text-sm uppercase tracking-wider mb-2">
-                    {quickViewProduct.category}
+                    {productCategory}
                   </p>
                   <h2 className="font-serif text-2xl md:text-3xl text-foreground">
-                    {quickViewProduct.name}
+                    {productName}
                   </h2>
                 </div>
 
                 <div className="flex items-baseline gap-4">
                   <span className="font-serif text-3xl gold-gradient-text">
-                    {formatPrice(quickViewProduct.price)}
+                    {formatPrice(productPrice)}
                   </span>
                   <span className="text-muted-foreground">
-                    {quickViewProduct.karat} | {quickViewProduct.weight}
+                    {productKarat} | {productWeight}
                   </span>
                 </div>
 
                 <p className="text-muted-foreground leading-relaxed">
-                  {quickViewProduct.description}
+                  {productDescription}
                 </p>
 
                 {/* Size Selection */}
                 <div>
                   <label className="text-sm text-foreground mb-3 block">Size</label>
                   <div className="flex flex-wrap gap-2">
-                    {quickViewProduct.sizes.map((size) => (
+                    {productSizes.map((size) => (
                       <button
                         key={size}
                         onClick={() => setSelectedSize(size)}
                         className={cn(
                           "px-4 py-2 border rounded-lg text-sm transition-all",
-                          selectedSize === size || (!selectedSize && size === quickViewProduct.sizes[0])
+                          selectedSize === size || (!selectedSize && size === productSizes[0])
                             ? "border-primary bg-primary/10 text-primary"
                             : "border-border text-muted-foreground hover:border-primary"
                         )}

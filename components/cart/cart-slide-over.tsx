@@ -87,10 +87,11 @@ export function CartSlideOver() {
                     >
                       <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-secondary flex-shrink-0">
                         <Image
-                          src={item.product.images[0]}
-                          alt={item.product.name}
+                          src={item.product.image || "/placeholder.svg"}
+                          alt={item.product.name || "Produit du panier"}
                           fill
                           className="object-cover"
+                          sizes="80px"
                         />
                       </div>
                       <div className="flex-1 min-w-0">

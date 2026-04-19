@@ -1,0 +1,8 @@
+# Uploaded product images
+*.jpg
+*.jpeg
+*.png
+*.webp
+
+# Except for the gitkeep file
+!.gitkeep

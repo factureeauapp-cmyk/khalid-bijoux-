@@ -1,0 +1,123 @@
+[
+  {
+    "id": "ring_1",
+    "name": "Ethereal Solitaire",
+    "category": "Rings",
+    "price": 850,
+    "originalPrice": 1200,
+    "material": "18k Gold & Diamond",
+    "tag": "Sale",
+    "description": "A timeless solitaire ring with a brilliant-cut center stone.",
+    "image": "/images/rings/ring_01.jpg"
+  },
+  {
+    "id": "ring_2",
+    "name": "Celestial Rose Band",
+    "category": "Rings",
+    "price": 640,
+    "originalPrice": null,
+    "material": "Rose Gold & Morganite",
+    "tag": "Trending",
+    "description": "Elegant rose band with a warm central morganite stone.",
+    "image": "/images/rings/ring_02.jpg"
+  },
+  {
+    "id": "ring_3",
+    "name": "Onyx Sovereign",
+    "category": "Rings",
+    "price": 1100,
+    "originalPrice": null,
+    "material": "Black Gold & Onyx",
+    "tag": "Exclusive",
+    "description": "Statement ring centered by polished black onyx.",
+    "image": "/images/rings/ring_03.png"
+  },
+  {
+    "id": "ear_1",
+    "name": "Aura Hoops",
+    "category": "Earrings",
+    "price": 320,
+    "originalPrice": null,
+    "material": "14k Gold",
+    "tag": "Essential",
+    "description": "Classic hoops with a polished, modern finish.",
+    "image": "/images/earrings/earring_01.png"
+  },
+  {
+    "id": "ear_2",
+    "name": "Starlight Drops",
+    "category": "Earrings",
+    "price": 720,
+    "originalPrice": null,
+    "material": "White Gold & Diamonds",
+    "tag": "New",
+    "description": "Diamond drops inspired by a starlit evening.",
+    "image": "/images/earrings/earring_02.png"
+  },
+  {
+    "id": "neck_1",
+    "name": "Imperial Chain",
+    "category": "Necklaces",
+    "price": 1800,
+    "originalPrice": null,
+    "material": "24k Gold",
+    "tag": "Premium",
+    "description": "Heavy solid gold chain with a luxury finish.",
+    "image": "/images/necklaces/necklace_01.png"
+  },
+  {
+    "id": "neck_2",
+    "name": "Pearl Pendant",
+    "category": "Necklaces",
+    "price": 950,
+    "originalPrice": null,
+    "material": "Silver & Pearl",
+    "tag": "Elegant",
+    "description": "Radiant pendant anchored by a premium pearl.",
+    "image": "/images/necklaces/necklace_02.jpg"
+  },
+  {
+    "id": "brac_1",
+    "name": "Link Archive",
+    "category": "Bracelets",
+    "price": 1200,
+    "originalPrice": null,
+    "material": "18k Gold",
+    "tag": "Signature",
+    "description": "Bracelet with interlocking gold links and bold presence.",
+    "image": "/images/bracelets/bracelet_01.png"
+  },
+  {
+    "id": "brac_2",
+    "name": "Constellation Cuff",
+    "category": "Bracelets",
+    "price": 2400,
+    "originalPrice": null,
+    "material": "Platinum",
+    "tag": "Masterpiece",
+    "description": "Premium cuff with a paved constellation effect.",
+    "image": "/images/bracelets/bracelet_02.png"
+  },
+  {
+    "id": "set_1",
+    "name": "Royal Suite",
+    "category": "Sets",
+    "price": 4200,
+    "originalPrice": null,
+    "material": "22k Gold",
+    "tag": "Limited",
+    "description": "Full gold gala ensemble designed for statement occasions.",
+    "image": "/images/cart/set_01.png"
+  },
+  {
+    "id": "set_2",
+    "name": "Eternal Bride",
+    "category": "Sets",
+    "price": 5400,
+    "originalPrice": null,
+    "material": "White Gold",
+    "tag": "Bridal",
+    "description": "Luxury bridal set with a bright diamond profile.",
+    "image": "/images/cart/set_02.png"
+  }
+]
