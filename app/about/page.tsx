@@ -16,20 +16,21 @@ export default function AboutPage() {
           <p className="text-[11px] uppercase tracking-[0.4em] text-[#c9a84c]">Khalid Bijoux</p>
           <h1 className="text-4xl font-cormorant md:text-6xl">{about.title}</h1>
           <p className="max-w-3xl text-lg leading-8 text-white/75">{about.subtitle}</p>
-          <div className="grid gap-6 md:grid-cols-3">
-            <div className="rounded-3xl border border-white/10 bg-black/20 p-6">
-              <h2 className="mb-3 text-2xl font-cormorant">Design</h2>
-              <p className="text-white/70">Nous construisons une identité visuelle élégante, claire et compatible mobile.</p>
+            <div className="grid gap-6 md:grid-cols-3">
+              {about.cards.map((card, index) => (
+                <div
+                  key={index}
+                  className="rounded-3xl border border-white/10 bg-black/20 p-6"
+                >
+                  <h2 className="mb-3 text-2xl font-cormorant">
+                    {card.title}
+                  </h2>
+                  <p className="text-white/70">
+                    {card.desc}
+                  </p>
+                </div>
+              ))}
             </div>
-            <div className="rounded-3xl border border-white/10 bg-black/20 p-6">
-              <h2 className="mb-3 text-2xl font-cormorant">Confiance</h2>
-              <p className="text-white/70">Le parcours de commande a été simplifié avec paiement à la livraison uniquement.</p>
-            </div>
-            <div className="rounded-3xl border border-white/10 bg-black/20 p-6">
-              <h2 className="mb-3 text-2xl font-cormorant">Administration</h2>
-              <p className="text-white/70">Un espace admin permet désormais la gestion des produits et des commandes.</p>
-            </div>
-          </div>
         </div>
       </section>
       <Footer />

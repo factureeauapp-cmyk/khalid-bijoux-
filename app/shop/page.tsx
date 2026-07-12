@@ -6,6 +6,7 @@ import Footer from "../components/Footer"
 import ProductCard from "../components/ProductCard"
 import { useAppContext } from "../providers/AppContext"
 import { getCategoryName } from "@/lib/product-utils"
+import CustomSelect from "../components/CustomSelect"
 
 export default function ShopPage() {
   const { t, products, categories, language } = useAppContext()
@@ -44,6 +45,19 @@ export default function ShopPage() {
     })
   }, [products, language, maxPrice, searchQuery, selectedCategoryId])
 
+
+  const categoryOptions = [
+  {
+    value: "",
+    label: shop.all,
+  },
+
+  ...categories.map((category) => ({
+    value: category.id,
+    label: getCategoryName(category, language),
+  })),
+]
+
   // Prevent rendering until hydration is complete
   if (!mounted) return null
 
@@ -58,7 +72,7 @@ export default function ShopPage() {
             <p className="max-w-2xl text-[#d1c7b7]">{shop.subtitle}</p>
           </div>
 
-          <div className="mb-10 grid gap-4 rounded-[28px] border border-white/10 bg-white/5 p-5 backdrop-blur md:grid-cols-[1.2fr_1fr_1fr]">
+          <div className="mb-10 grid gap-4 rounded-[28px] border border-white/10 bg-white/5 p-5 backdrop-blur md:grid-cols-[1.2fr_1fr_1fr]   relative z-50 w-full">
             <input
               type="text"
               placeholder={shop.search}
@@ -66,7 +80,7 @@ export default function ShopPage() {
               onChange={(event) => setSearchQuery(event.target.value)}
               className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none placeholder:text-white/30"
             />
-            <select
+            {/* <select
               value={selectedCategoryId || ""}
               onChange={(event) => setSelectedCategoryId(event.target.value || null)}
               className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none"
@@ -77,7 +91,15 @@ export default function ShopPage() {
                   {getCategoryName(category, language)}
                 </option>
               ))}
-            </select>
+            </select> */}
+
+            <CustomSelect
+              value={selectedCategoryId ?? ""}
+              options={categoryOptions}
+              placeholder={shop.all}
+              onChange={(value) => setSelectedCategoryId(value || null)}
+            />
+
             <div className="space-y-2 rounded-2xl border border-white/10 bg-black/30 px-4 py-3">
               <div className="flex items-center justify-between text-sm text-white/70">
                 <span>{shop.price}</span>

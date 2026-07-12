@@ -1,15 +1,14 @@
 {
   "products": [
     {
-      "id": "product_1775951975538",
-      "nameFr": "jjjjjjjjjsn",
-      "nameAr": "jqjjqq",
+      "id": "product_1783888836179",
+      "nameFr": "HJGJG",
+      "nameAr": "TEST AR MOD2",
       "categoryId": "rings",
-      "price": 4,
-      "originalPrice": 2,
-      "tag": "neww",
-      "descriptionFr": "sjsjsj",
-      "descriptionAr": "qjqjq",
+      "price": 6,
+      "tag": "SJNXJNSJ",
+      "descriptionFr": "XNJSX",
+      "descriptionAr": "ءنخءنءءءمءمءم",
       "image": "/khalid-bijoux.png"
     },
     {
@@ -17,7 +16,7 @@
       "nameFr": "Ethereal Solitaire",
       "nameAr": "Ethereal Solitaire",
       "categoryId": "rings",
-      "price": 850,
+      "price": 859,
       "originalPrice": 1200,
       "tag": "Sale",
       "descriptionFr": "A timeless masterpiece featuring a brilliant-cut solitary diamond that captures and refracts light beautifully.",
@@ -29,7 +28,7 @@
       "nameFr": "Celestial Rose Band",
       "nameAr": "Celestial Rose Band",
       "categoryId": "rings",
-      "price": 640,
+      "price": 598,
       "tag": "Trending",
       "descriptionFr": "Elegant rose band with a central morganite stone, reflecting celestial light with unmatched warmth.",
       "descriptionAr": "Elegant rose band with a central morganite stone, reflecting celestial light with unmatched warmth.",
@@ -83,10 +82,9 @@
       "id": "ring_7",
       "nameFr": "Infinity Twist Band",
       "nameAr": "Infinity Twist Band",
-      "categoryId": "watches",
+      "categoryId": "rings",
       "price": 680,
-      "originalPrice": 6,
-      "tag": "NewGGG",
+      "tag": "New",
       "descriptionFr": "A delicate infinity twist band studded with cubic zirconia — symbolizing eternal connection.",
       "descriptionAr": "A delicate infinity twist band studded with cubic zirconia — symbolizing eternal connection.",
       "image": "/images/rings/ring_07.png"
@@ -365,17 +363,6 @@
       "descriptionFr": "Long threader earrings with a noir touch.",
       "descriptionAr": "Long threader earrings with a noir touch.",
       "image": "/images/earrings/earring_07.png"
-    },
-    {
-      "id": "ear_8",
-      "nameFr": "Crystal Prism",
-      "nameAr": "Crystal Prism",
-      "categoryId": "earrings",
-      "price": 340,
-      "tag": "Classic",
-      "descriptionFr": "Precision-cut crystals that refract the rainbow.",
-      "descriptionAr": "Precision-cut crystals that refract the rainbow.",
-      "image": "/images/earrings/earring_08.png"
     },
     {
       "id": "ear_9",
@@ -1383,7 +1370,7 @@
       "nameFr": "Sovereign Gold Set",
       "nameAr": "Sovereign Gold Set",
       "categoryId": "sets",
-      "price": 6400,
+      "price": 640,
       "tag": "Heraldic",
       "descriptionFr": "Heirloom-quality pure gold collection.",
       "descriptionAr": "Heirloom-quality pure gold collection.",
@@ -1392,129 +1379,53 @@
   ],
   "orders": [
     {
-      "customerName": "Facture Eau App",
-      "address": "HHH",
-      "phone": "123456",
-      "notes": "12345678",
-      "items": [
-        {
-          "productId": "ring_1",
-          "productName": "Ethereal Solitaire",
-          "quantity": 1,
-          "unitPrice": 850,
-          "image": "/images/rings/ring_01.jpg"
-        }
-      ],
-      "total": 850,
-      "id": "order_1776614390427",
-      "createdAt": "2026-04-19T15:59:50.427Z",
-      "status": "pending",
-      "paymentMethod": "cash_on_delivery"
-    },
-    {
+      "id": "ORD-1783882275081",
+      "orderNumber": "ORD-1783882275081",
       "customerName": "Ismail nidlachgher",
-      "address": "gg",
-      "phone": "gg",
-      "notes": "gg",
-      "items": [
-        {
-          "productId": "ring_1",
-          "quantity": 1,
-          "unitPrice": 850,
-          "image": "/images/rings/ring_01.jpg"
-        }
-      ],
-      "total": 850,
-      "id": "order_1776538038598",
-      "createdAt": "2026-04-18T18:47:18.598Z",
-      "status": "pending",
-      "paymentMethod": "cash_on_delivery"
-    },
-    {
-      "customerName": "hhhhh",
-      "address": "hqhq",
-      "phone": "0612345678",
-      "notes": "IAIAJXJXJX XJXK",
-      "items": [
-        {
-          "productId": "product_1775951975538",
-          "quantity": 2,
-          "unitPrice": 4,
-          "image": "/khalid-bijoux.png"
-        }
-      ],
-      "total": 8,
-      "id": "order_1775952067746",
-      "createdAt": "2026-04-12T00:01:07.746Z",
-      "status": "delivered",
-      "paymentMethod": "cash_on_delivery"
-    },
-    {
-      "customerName": "HHH",
-      "address": "JHJ",
-      "phone": "N N",
-      "notes": "? ?N ",
+      "address": "Maârif Casablanca",
+      "phone": "123456789",
+      "notes": "JJHJH",
       "items": [
         {
           "productId": "ring_2",
-          "productName": "Celestial Rose Band",
+          "productNameFr": "",
+          "productNameAr": "",
           "quantity": 1,
           "unitPrice": 640,
           "image": "/images/rings/ring_02.jpg"
         }
       ],
       "total": 640,
-      "id": "order_1775951208510",
-      "createdAt": "2026-04-11T23:46:48.510Z",
-      "status": "delivered",
-      "paymentMethod": "cash_on_delivery"
+      "paymentMethod": "cash_on_delivery",
+      "status": "pending",
+      "createdAt": "2026-07-12T18:51:15.081Z"
     }
   ],
   "categories": [
     {
       "id": "rings",
-      "nameFr": "Bagues",
-      "nameAr": "الخواتم"
+      "nameFr": "Rings",
+      "nameAr": "Rings"
+    },
+    {
+      "id": "earrings",
+      "nameFr": "Earrings",
+      "nameAr": "Earrings"
     },
     {
       "id": "necklaces",
-      "nameFr": "Colliers",
-      "nameAr": "القلائد"
+      "nameFr": "Necklaces",
+      "nameAr": "Necklaces"
     },
     {
       "id": "bracelets",
       "nameFr": "Bracelets",
-      "nameAr": "الأساور"
-    },
-    {
-      "id": "earrings",
-      "nameFr": "Boucles d'oreilles",
-      "nameAr": "الأقراط"
-    },
-    {
-      "id": "watches",
-      "nameFr": "Montres",
-      "nameAr": "الساعات"
+      "nameAr": "Bracelets"
     },
     {
       "id": "sets",
-      "nameFr": "Ensembles",
-      "nameAr": "المجموعات"
-    },
-    {
-      "id": "cc",
-      "nameFr": "CC",
-      "nameAr": "CC"
-    },
-    {
-      "id": "iii",
-      "nameFr": "III",
-      "nameAr": "III"
-    },
-    {
-      "id": "catogorer-1",
-      "nameFr": "catogorer 1",
-      "nameAr": "catogorie 1 ar"
+      "nameFr": "Sets",
+      "nameAr": "Sets"
     }
   ]
 }

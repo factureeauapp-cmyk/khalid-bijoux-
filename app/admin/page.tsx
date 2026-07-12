@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { LogOut } from "lucide-react"
 import type { CustomerOrder } from "@/lib/store-types"
 import { useAppContext } from "@/app/providers/AppContext"
@@ -35,12 +35,41 @@ export default function AdminPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [successMessage, setSuccessMessage] = useState("")
   const [isDeleting, setIsDeleting] = useState<Set<string>>(new Set())
+  const formRef = useRef<HTMLFormElement | null>(null)
+  const firstInputRef = useRef<HTMLInputElement | null>(null)
+  const [highlightForm, setHighlightForm] = useState(false)
+  const [editTrigger, setEditTrigger] = useState(0)
+
+  
 
   useEffect(() => {
     void refreshProducts()
     void refreshCategories()
     void refreshOrders()
   }, [refreshOrders, refreshProducts, refreshCategories])
+
+  useEffect(() => {
+    if (!editingId) return
+
+    const node = formRef.current
+    if (!node) return
+
+    setHighlightForm(true)
+    node.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" })
+
+    const focusTimer = window.setTimeout(() => {
+      firstInputRef.current?.focus()
+    }, 500)
+
+    const highlightTimer = window.setTimeout(() => {
+      setHighlightForm(false)
+    }, 3200)
+
+    return () => {
+      window.clearTimeout(focusTimer)
+      window.clearTimeout(highlightTimer)
+    }
+  }, [editingId, editTrigger])
 
   useEffect(() => {
     if (!selectedFile) {
@@ -155,6 +184,7 @@ export default function AdminPage() {
     setSelectedFile(null)
     setPreviewUrl(product.image)
     setError("")
+    setEditTrigger((prev) => prev + 1)
   }
 
   const updateOrderStatus = async (orderNumber: string, status: string) => {
@@ -258,6 +288,9 @@ export default function AdminPage() {
               error={error}
               isSaving={isSaving}
               editingId={editingId}
+              formRef={formRef}
+              firstInputRef={firstInputRef}
+              highlightForm={highlightForm}
               onCategoryDeleted={refreshCategories}
             />
 

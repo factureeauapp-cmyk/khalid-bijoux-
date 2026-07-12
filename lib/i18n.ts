@@ -11,6 +11,8 @@ export const translations = {
   fr: {
     brandName: "Khalid Bijoux",
     tagline: "Bijoux d'exception pour chaque moment important.",
+    openMenu: "Ouvrir le menu",
+    closeMenu: "Fermer le menu",
     nav: {
       home: "Accueil",
       shop: "Boutique",
@@ -84,6 +86,20 @@ export const translations = {
     about: {
       title: "L'univers Khalid Bijoux",
       subtitle: "Une maison qui mise sur la finesse, la confiance et l'élégance.",
+      cards: [
+        {
+          title: "Élégance Intemporelle",
+          desc: "Nos bijoux allient un design raffiné et des finitions soignées pour sublimer chaque instant de votre vie.",
+        },
+        {
+          title: "Qualité Premium",
+          desc: "Chaque pièce est sélectionnée avec le plus grand soin afin d'offrir une expérience élégante et durable.",
+        },
+        {
+          title: "Pour Chaque Occasion",
+          desc: "Des bijoux pensés pour célébrer les moments précieux, offrir un cadeau unique ou compléter votre style au quotidien.",
+        },
+      ],
     },
     gallery: {
       title: "Galerie",
@@ -93,6 +109,8 @@ export const translations = {
       description: "Maison de bijoux au style moderne, pensée pour une expérience d'achat simple et élégante.",
       rights: "Tous droits réservés.",
     },
+    loading: "Chargement",
+    loadingDescription: "Préparation de la page, merci de patienter un instant.",
     admin: {
       loginTitle: "Connexion administrateur",
       username: "Identifiant",
@@ -124,14 +142,16 @@ export const translations = {
       cancelBtn: "Annuler",
     },
     errors: {
-    "INVALID_CREDENTIALS": "Identifiants incorrects"
-  }
+      "INVALID_CREDENTIALS": "Identifiants incorrects"
+    }
 
 
   },
   ar: {
     brandName: "خالد بيجو",
     tagline: "مجوهرات أنيقة لكل لحظة مميزة.",
+    openMenu: "فتح القائمة",
+    closeMenu: "إغلاق القائمة",
     nav: {
       home: "الرئيسية",
       shop: "المتجر",
@@ -204,7 +224,21 @@ export const translations = {
     },
     about: {
       title: "عالم خالد بيجو",
-      subtitle: "علامة تركز على الأناقة والثقة والتفاصيل الرفيعة.",
+      subtitle: "علامة تجمع بين الأناقة، الجودة، والاهتمام بأدق التفاصيل.",
+      cards: [
+        {
+          title: "أناقة خالدة",
+          desc: "تم تصميم مجوهراتنا لتجمع بين الفخامة والعصرية، لترافقكم في جميع المناسبات.",
+        },
+        {
+          title: "جودة متميزة",
+          desc: "نختار كل قطعة بعناية فائقة لنقدم لكم مجوهرات راقية بتشطيبات عالية الجودة.",
+        },
+        {
+          title: "لكل مناسبة",
+          desc: "سواء كانت هدية مميزة أو لمسة أنيقة لإطلالتكم اليومية، ستجدون ما يناسبكم في مجموعاتنا.",
+        },
+      ],
     },
     gallery: {
       title: "المعرض",
@@ -214,6 +248,8 @@ export const translations = {
       description: "دار مجوهرات بطابع عصري وتجربة شراء بسيطة وأنيقة.",
       rights: "جميع الحقوق محفوظة.",
     },
+    loading: "جاري التحميل",
+    loadingDescription: "نجهز الصفحة الآن، نقدر صبركم للحظة.",
     admin: {
       loginTitle: "تسجيل دخول الإدارة",
       username: "اسم المستخدم",
@@ -245,7 +281,7 @@ export const translations = {
       cancelBtn: "إلغاء",
     },
     errors: {
-    INVALID_CREDENTIALS: "بيانات تسجيل الدخول غير صحيحة"
-  }
+      INVALID_CREDENTIALS: "بيانات تسجيل الدخول غير صحيحة"
+    }
   },
 } as const

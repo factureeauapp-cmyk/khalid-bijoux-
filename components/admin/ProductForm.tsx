@@ -1,9 +1,10 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo, useState, type RefObject } from "react"
 import { LanguageTabs } from "./LanguageTabs"
 import { CategorySelect } from "./CategorySelect"
 import { ImageUploader } from "./ImageUploader"
+import { cn } from "@/lib/utils"
 import type { Category, Product } from "@/lib/store-types"
 
 interface ProductFormProps {
@@ -19,6 +20,9 @@ interface ProductFormProps {
   error: string
   isSaving: boolean
   editingId: string | null
+  formRef?: RefObject<HTMLFormElement>
+  firstInputRef?: RefObject<HTMLInputElement>
+  highlightForm?: boolean
   onCategoryDeleted?: () => void
 }
 
@@ -35,6 +39,9 @@ export function ProductForm({
   error,
   isSaving,
   editingId,
+  formRef,
+  firstInputRef,
+  highlightForm,
   onCategoryDeleted,
 }: ProductFormProps) {
   const [languageTab, setLanguageTab] = useState<"fr" | "ar">("fr")
@@ -42,7 +49,14 @@ export function ProductForm({
   const categoryId = useMemo(() => form.categoryId || "", [form.categoryId])
 
   return (
-    <form onSubmit={onSubmit} className="rounded-[28px] border border-white/10 bg-white/5 p-6 backdrop-blur space-y-6">
+    <form
+      ref={formRef}
+      onSubmit={onSubmit}
+      className={cn(
+        "rounded-[28px] border border-white/10 bg-white/5 p-6 backdrop-blur space-y-6 transition-shadow duration-300",
+        highlightForm && "ring-2 ring-[#C9A84C]/60 shadow-[0_0_0_18px_rgba(201,168,76,0.12)]"
+      )}
+    >
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-cormorant text-white">{formTitle}</h2>
@@ -71,6 +85,7 @@ export function ProductForm({
             {languageTab === "fr" ? "Nom du produit (FR)" : "اسم المنتج (AR)"}
           </label>
           <input
+            ref={firstInputRef}
             type="text"
             value={languageTab === "fr" ? form.nameFr || "" : form.nameAr || ""}
             onChange={(e) =>

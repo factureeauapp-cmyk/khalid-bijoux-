@@ -1,7 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { Instagram, MessageCircle, MapPin, Phone } from "lucide-react"
+import { MessageCircle, MapPin, Phone } from "lucide-react"
+import { FaInstagram } from "react-icons/fa6";
 import { useAppContext } from "../providers/AppContext"
 import Logo from "./Logo"
 
@@ -21,7 +22,7 @@ export default function Footer() {
             {footer.description}
           </p>
           <div className="flex space-x-5 text-[#A0A0A0]">
-            {[Instagram, MessageCircle].map((Icon, i) => (
+            {[FaInstagram, MessageCircle].map((Icon, i) => (
               <Link key={i} href="#" className="transition-colors hover:text-[#C9A84C]">
                 <Icon size={20} strokeWidth={1.5} />
               </Link>

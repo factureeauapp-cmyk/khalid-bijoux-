@@ -1,4 +1,21 @@
 import { NextRequest, NextResponse } from "next/server"
+import { readFile, writeFile } from "fs/promises"
+import { join } from "path"
+
+const STORE_FILE = join(process.cwd(), "data", "store.json")
+
+async function readStore() {
+  try {
+    const content = await readFile(STORE_FILE, "utf-8")
+    return JSON.parse(content)
+  } catch {
+    return { products: [], orders: [] }
+  }
+}
+
+async function writeStore(data: any) {
+  await writeFile(STORE_FILE, JSON.stringify(data, null, 2))
+}
 
 export async function PATCH(
   request: NextRequest,
@@ -15,25 +32,21 @@ export async function PATCH(
       )
     }
 
-    // Call Spring Boot backend to update order status
-    const response = await fetch(
-      `${process.env.SPRING_API_URL}/api/v1/orders/${id}/status`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status: body.status }),
-      }
-    )
+    const store = await readStore()
+    const orderIndex = store.orders?.findIndex((o: any) => o.orderNumber === id)
 
-    if (!response.ok) {
-      const error = await response.json()
-      return NextResponse.json(error, { status: response.status })
+    if (orderIndex === undefined || orderIndex === -1) {
+      return NextResponse.json(
+        { error: "Order not found" },
+        { status: 404 }
+      )
     }
 
-    const updatedOrder = await response.json()
-    return NextResponse.json(updatedOrder)
+    // Update order status
+    store.orders[orderIndex].status = body.status
+    await writeStore(store)
+
+    return NextResponse.json(store.orders[orderIndex])
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to update order status", details: error instanceof Error ? error.message : String(error) },
@@ -49,23 +62,21 @@ export async function DELETE(
   try {
     const { id } = await params
 
-    // Call Spring Boot backend to cancel order
-    const response = await fetch(
-      `${process.env.SPRING_API_URL}/api/v1/orders/${id}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
+    const store = await readStore()
+    const orderIndex = store.orders?.findIndex((o: any) => o.orderNumber === id)
 
-    if (!response.ok) {
-      const error = await response.json()
-      return NextResponse.json(error, { status: response.status })
+    if (orderIndex === undefined || orderIndex === -1) {
+      return NextResponse.json(
+        { error: "Order not found" },
+        { status: 404 }
+      )
     }
 
-    return NextResponse.json({ success: true }, { status: 204 })
+    // Remove order
+    store.orders.splice(orderIndex, 1)
+    await writeStore(store)
+
+    return NextResponse.json({ success: true }, { status: 200 })
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to cancel order", details: error instanceof Error ? error.message : String(error) },
