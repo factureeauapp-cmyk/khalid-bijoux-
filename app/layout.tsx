@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Inter } from "next/font/google"
 import "./globals.css"
 import { CartProvider } from "./CartContext"
 import { AppProvider } from "./providers/AppContext"
+import { StoreProvider } from "@/hooks/use-store"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -34,9 +35,13 @@ export default function RootLayout({
   return (
     <html lang="fr" dir="ltr" className={`${inter.variable} ${cormorant.variable}`}>
       <body className="antialiased font-inter">
-        <AppProvider>
-          <CartProvider>{children}</CartProvider>
-        </AppProvider>
+        <StoreProvider>
+          <AppProvider>
+            <CartProvider>
+              {children}
+            </CartProvider>
+          </AppProvider>
+        </StoreProvider>
       </body>
     </html>
   )
