@@ -125,8 +125,6 @@ export default function AdminPage() {
       payload.append("price", String(form.price || 0))
       payload.append("originalPrice", String(form.originalPrice ?? ""))
       payload.append("tag", form.tag ?? "")
-      payload.append("id", form.id || "")
-      payload.append("existingImage", form.image || "")
 
       if (selectedFile) {
         payload.append("image", selectedFile)

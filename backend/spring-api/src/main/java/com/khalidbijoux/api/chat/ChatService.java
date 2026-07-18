@@ -4,6 +4,8 @@ import com.khalidbijoux.api.catalog.CatalogService;
 import com.khalidbijoux.api.catalog.Product;
 import java.util.List;
 import java.util.Locale;
+
+import com.khalidbijoux.api.catalog.ProductResponse;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,10 +19,10 @@ public class ChatService {
 
     public ChatResponse reply(String message) {
         String normalized = message.toLowerCase(Locale.ROOT);
-        List<Product> recommendations = catalogService.recommendProducts(message);
+        List<ProductResponse> recommendations = catalogService.recommendProducts(message);
 
         if (normalized.contains("add") || normalized.contains("buy") || normalized.contains("order")) {
-            Product product = recommendations.stream().findFirst().orElse(null);
+            ProductResponse product = recommendations.stream().findFirst().orElse(null);
             if (product != null) {
                 return new ChatResponse(
                         "assistant",

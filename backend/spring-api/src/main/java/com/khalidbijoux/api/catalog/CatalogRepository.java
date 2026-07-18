@@ -11,7 +11,9 @@ public interface CatalogRepository extends JpaRepository<Product, Long> {
 
     List<Product> findAll();
 
-    Optional<Product> findById(Long id);
-    
-    Optional<Product> findByExternalId(String externalId);
+    Optional<Product> findById(String id);
+
+
+
+
 }

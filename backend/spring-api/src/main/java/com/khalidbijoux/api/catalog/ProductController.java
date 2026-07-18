@@ -1,24 +1,21 @@
 package com.khalidbijoux.api.catalog;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 import java.util.List;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/products")
+@RequiredArgsConstructor
 public class ProductController {
 
     private final CatalogService catalogService;
 
-    public ProductController(CatalogService catalogService) {
-        this.catalogService = catalogService;
-    }
-
-    @GetMapping("/products")
-    public List<Product> getProducts(
+    @GetMapping
+    public List<ProductResponse> getProducts(
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Integer maxPrice,
@@ -27,13 +24,24 @@ public class ProductController {
         return catalogService.getProducts(category, search, maxPrice, tag);
     }
 
-    @GetMapping("/products/{id}")
-    public Product getProduct(@PathVariable String id) {
+    @GetMapping("/{id}")
+    public ProductResponse getProduct(@PathVariable String id) {
         return catalogService.getProduct(id);
     }
 
-    @GetMapping("/categories")
-    public List<String> getCategories() {
-        return catalogService.getCategories();
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Product createProduct(@ModelAttribute CreateProductRequest request) throws IOException {
+
+        System.out.println("===== CREATE PRODUCT =====");
+        System.out.println("Name FR : " + request.getNameFr());
+        System.out.println("Name AR : " + request.getNameAr());
+        System.out.println("Category : " + request.getCategoryId());
+        System.out.println("Price : " + request.getPrice());
+
+        if (request.getImage() != null) {
+            System.out.println("Image : " + request.getImage().getOriginalFilename());
+        }
+
+        return catalogService.createProduct(request);
     }
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useMemo, useState } from "react"
+import React, { useMemo, useRef, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Loader2 } from "lucide-react"
@@ -15,79 +15,180 @@ interface ErrorAlert {
   message: string
 }
 
+// ---------------------------------------------------------------------------
+// Form model
+// ---------------------------------------------------------------------------
+
+interface CheckoutFormData {
+  firstName: string
+  lastName: string
+  phone: string
+  email: string
+  address: string
+  city: string
+  state: string
+  postalCode: string
+  country: string
+  notes: string
+}
+
+const initialFormData: CheckoutFormData = {
+  firstName: "",
+  lastName: "",
+  phone: "",
+  email: "",
+  address: "",
+  city: "",
+  state: "",
+  postalCode: "",
+  country: "",
+  notes: "",
+}
+
+type FormErrors = Partial<Record<keyof CheckoutFormData, string>>
+
+// ---------------------------------------------------------------------------
+// Reusable validators (pure functions, no side effects -> easy to test/reuse)
+// ---------------------------------------------------------------------------
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+function validateRequired(value: string, label: string): string | null {
+  return value.trim() ? null : `${label} est obligatoire.`
+}
+
+function validatePhone(value: string): string | null {
+  const digitsOnly = value.replace(/\D/g, "")
+  if (!digitsOnly) return "Le téléphone est obligatoire."
+  if (digitsOnly.length < 10) return "Le numéro doit contenir au moins 10 chiffres."
+  return null
+}
+
+function validateEmail(value: string): string | null {
+  if (!value.trim()) return "L'email est obligatoire."
+  if (!EMAIL_REGEX.test(value.trim())) return "Format d'email invalide."
+  return null
+}
+
+/**
+ * Runs every field-level validator and returns a map of errors.
+ * Only required/validated fields are checked; optional fields (state,
+ * postalCode, notes) are always considered valid.
+ */
+function validateCheckoutForm(data: CheckoutFormData): FormErrors {
+  const errors: FormErrors = {}
+
+  const firstNameError = validateRequired(data.firstName, "Le prénom")
+  if (firstNameError) errors.firstName = firstNameError
+
+  const lastNameError = validateRequired(data.lastName, "Le nom")
+  if (lastNameError) errors.lastName = lastNameError
+
+  const phoneError = validatePhone(data.phone)
+  if (phoneError) errors.phone = phoneError
+
+  const emailError = validateEmail(data.email)
+  if (emailError) errors.email = emailError
+
+  const addressError = validateRequired(data.address, "L'adresse")
+  if (addressError) errors.address = addressError
+
+  const cityError = validateRequired(data.city, "La ville")
+  if (cityError) errors.city = cityError
+
+  const countryError = validateRequired(data.country, "Le pays")
+  if (countryError) errors.country = countryError
+
+  return errors
+}
+
+// Order in which fields should receive focus if invalid on submit.
+const FIELD_FOCUS_ORDER: (keyof CheckoutFormData)[] = [
+  "firstName",
+  "lastName",
+  "phone",
+  "email",
+  "address",
+  "city",
+  "country",
+]
+
 export default function CartPage() {
   const { cart, totalPrice, updateQuantity, removeFromCart, clearCart } = useCart()
   const { t, language } = useAppContext()
   const cartLabels = t("cart")
-  const [customerName, setCustomerName] = useState("")
-  const [address, setAddress] = useState("")
-  const [phone, setPhone] = useState("")
-  const [notes, setNotes] = useState("")
+
+  const [formData, setFormData] = useState<CheckoutFormData>(initialFormData)
+  const [fieldErrors, setFieldErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [successMessage, setSuccessMessage] = useState("")
   const [errorMessages, setErrorMessages] = useState<ErrorAlert[]>([])
 
-  const orderItems = useMemo(() => 
-    cart.map((item) => ({
-      productId: item.id,
-      productNameFr: item.nameFr || "",
-      productNameAr: item.nameAr || "",
-      quantity: item.quantity,
-      unitPrice: item.price,
-      image: item.image,
-    })), [cart]
-  )
+  // Refs used to auto-focus the first invalid field on submit
+  const fieldRefs = useRef<Partial<Record<keyof CheckoutFormData, HTMLInputElement | HTMLTextAreaElement | null>>>({})
 
   const getProductName = (item: any) => {
     return language === "ar" ? item.nameAr : item.nameFr
   }
 
-  const validateForm = (): boolean => {
-    const newErrors: ErrorAlert[] = []
+  const updateField = (field: keyof CheckoutFormData) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      let value = e.target.value
 
-    if (!customerName?.trim()) {
-      newErrors.push({
-        id: "name",
-        message: "Veuillez entrer votre nom complet."
+      // Phone: strip every non-digit character as the user types
+      if (field === "phone") {
+        value = value.replace(/\D/g, "")
+      }
+
+      setFormData((prev) => ({ ...prev, [field]: value }))
+
+      // Clear the field-level error as soon as the user edits it
+      setFieldErrors((prev) => {
+        if (!prev[field]) return prev
+        const next = { ...prev }
+        delete next[field]
+        return next
       })
     }
 
-    if (!address?.trim()) {
-      newErrors.push({
-        id: "address",
-        message: "Veuillez entrer votre adresse de livraison."
-      })
-    }
+  // Lightweight live validity check, used only to enable/disable the submit
+  // button (does NOT display errors — errors are shown on submit attempt).
+  const isFormValid = useMemo(() => {
+    const errors = validateCheckoutForm(formData)
+    return Object.keys(errors).length === 0
+  }, [formData])
 
-    if (!phone?.trim()) {
-      newErrors.push({
-        id: "phone",
-        message: "Veuillez entrer votre numéro de téléphone."
-      })
+  const focusFirstInvalidField = (errors: FormErrors) => {
+    const firstInvalid = FIELD_FOCUS_ORDER.find((field) => errors[field])
+    if (firstInvalid) {
+      fieldRefs.current[firstInvalid]?.focus()
     }
-
-    if (cart.length === 0) {
-      newErrors.push({
-        id: "cart",
-        message: "Votre panier est vide. Veuillez ajouter des articles avant de commander."
-      })
-    }
-
-    if (newErrors.length > 0) {
-      setErrorMessages(newErrors)
-      return false
-    }
-
-    return true
   }
 
   const handleOrder = async () => {
-    // Clear previous messages
     setErrorMessages([])
     setSuccessMessage("")
 
-    // Validate form
-    if (!validateForm()) {
+    if (cart.length === 0) {
+      setErrorMessages([{
+        id: "cart",
+        message: "Votre panier est vide. Veuillez ajouter des articles avant de commander.",
+      }])
+      return
+    }
+
+    const errors = validateCheckoutForm(formData)
+    setFieldErrors(errors)
+
+    if (Object.keys(errors).length > 0) {
+      // Mirror field errors into the AlertBox list as well
+      setErrorMessages(
+        Object.values(errors).map((message, index) => ({
+          id: `field-error-${index}`,
+          message: message as string,
+        }))
+      )
+      focusFirstInvalidField(errors)
       return
     }
 
@@ -95,18 +196,33 @@ export default function CartPage() {
       setIsSubmitting(true)
 
       const response = await fetch(
-  `${process.env.NEXT_PUBLIC_API_BASE_URL}/orders`, {
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          customerName,
-          address,
-          phone,
-          notes,
-          items: orderItems,
-          total: totalPrice,
+          customer: {
+            firstName: formData.firstName.trim(),
+            lastName: formData.lastName.trim(),
+            phoneNumber: formData.phone.trim(),
+            email: formData.email.trim(),
+          },
+          shippingAddress: {
+            street: formData.address.trim(),
+            city: formData.city.trim(),
+            state: formData.state.trim(),
+            postalCode: formData.postalCode.trim(),
+            country: formData.country.trim(),
+          },
+          paymentMethod: "Cash on Delivery",
+          items: cart.map((item: any) => ({
+            productId: item.id,
+            quantity: item.quantity,
+            // NOTE: adapt `item.size` to whatever field name your
+            // CartContext actually uses for the selected size.
+            selectedSize: item.size ?? null,
+          })),
         }),
       })
 
@@ -114,34 +230,73 @@ export default function CartPage() {
 
       if (!response.ok) {
         const errorMessage = data.error || data.message || "Impossible de créer la commande. Veuillez réessayer."
-        setErrorMessages([{
-          id: "api-error",
-          message: errorMessage
-        }])
+        setErrorMessages([{ id: "api-error", message: errorMessage }])
         return
       }
 
       // Success!
       setSuccessMessage(data.message || "Commande créée avec succès ! 🎉 Nous vous contacterons bientôt.")
-      
-      // Clear form and cart
-      clearCart()
-      setCustomerName("")
-      setAddress("")
-      setPhone("")
-      setNotes("")
 
-      // Auto-hide success message after 5 seconds
+      // Clear form and cart ONLY on success
+      clearCart()
+      setFormData(initialFormData)
+      setFieldErrors({})
+
       setTimeout(() => setSuccessMessage(""), 5000)
     } catch (error) {
       console.error("Order error:", error)
       setErrorMessages([{
         id: "network-error",
-        message: "Erreur réseau : impossible de créer la commande. Veuillez vérifier votre connexion et réessayer."
+        message: "Erreur réseau : impossible de créer la commande. Veuillez vérifier votre connexion et réessayer.",
       }])
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  // Small helper to render an input + its error text consistently
+  const renderField = (
+    field: keyof CheckoutFormData,
+    props: {
+      label: string
+      required?: boolean
+      type?: string
+      textarea?: boolean
+      minHeight?: string
+    }
+  ) => {
+    const error = fieldErrors[field]
+    const commonClassName = `w-full rounded-2xl border ${
+      error ? "border-red-400/60" : "border-white/10"
+    } bg-black/30 px-4 py-3 text-white outline-none disabled:opacity-50`
+
+    return (
+      <div>
+        {props.textarea ? (
+          <textarea
+            ref={(el) => { fieldRefs.current[field] = el }}
+            value={formData[field]}
+            onChange={updateField(field)}
+            placeholder={`${props.label}${props.required ? " *" : ""}`}
+            disabled={isSubmitting}
+            className={`${props.minHeight || "min-h-24"} ${commonClassName}`}
+          />
+        ) : (
+          <input
+            ref={(el) => { fieldRefs.current[field] = el }}
+            type={props.type || "text"}
+            value={formData[field]}
+            onChange={updateField(field)}
+            placeholder={`${props.label}${props.required ? " *" : ""}`}
+            disabled={isSubmitting}
+            className={commonClassName}
+          />
+        )}
+        {error && (
+          <p className="mt-1 text-sm text-red-400">{error}</p>
+        )}
+      </div>
+    )
   }
 
   return (
@@ -162,12 +317,12 @@ export default function CartPage() {
                 {cart.map((item) => (
                   <div key={item.id} className="flex flex-col gap-4 rounded-[24px] border border-white/10 bg-white/5 p-4 sm:flex-row sm:items-center">
                     <div className="relative h-28 w-full overflow-hidden rounded-2xl sm:w-28">
-                      <Image 
-                        src={item.image || "/placeholder.svg"} 
-                        alt={getProductName(item) || "Article du panier"} 
-                        fill 
+                      <Image
+                        src={item.image || "/placeholder.svg"}
+                        alt={getProductName(item) || "Article du panier"}
+                        fill
                         sizes="(max-width: 768px) 100vw, 100px"
-                        className="object-cover" 
+                        className="object-cover"
                       />
                     </div>
                     <div className="flex-1 space-y-2">
@@ -175,23 +330,23 @@ export default function CartPage() {
                       <p className="text-lg font-semibold text-[#e8c97e]">{item.price} MAD</p>
                     </div>
                     <div className="flex items-center gap-3">
-                      <button 
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)} 
+                      <button
+                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
                         disabled={item.quantity <= 1}
                         className="rounded-full border border-white/10 px-3 py-1 text-white disabled:opacity-50"
                       >
                         −
                       </button>
                       <span className="min-w-8 text-center text-white">{item.quantity}</span>
-                      <button 
+                      <button
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
                         className="rounded-full border border-white/10 px-3 py-1 text-white hover:bg-white/10"
                       >
                         +
                       </button>
                     </div>
-                    <button 
-                      onClick={() => removeFromCart(item.id)} 
+                    <button
+                      onClick={() => removeFromCart(item.id)}
                       className="text-sm text-red-400 hover:text-red-300"
                     >
                       {cartLabels.remove}
@@ -215,7 +370,7 @@ export default function CartPage() {
                         type="error"
                         message={error.message}
                         autoClose={0}
-                        onClose={() => setErrorMessages(msgs => msgs.filter(m => m.id !== error.id))}
+                        onClose={() => setErrorMessages((msgs) => msgs.filter((m) => m.id !== error.id))}
                       />
                     ))}
                   </div>
@@ -234,36 +389,29 @@ export default function CartPage() {
                 )}
 
                 <div className="space-y-4">
-                  <input 
-                    type="text"
-                    value={customerName} 
-                    onChange={(e) => setCustomerName(e.target.value)}
-                    placeholder={cartLabels.customerName} 
-                    disabled={isSubmitting}
-                    className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none disabled:opacity-50" 
-                  />
-                  <textarea 
-                    value={address} 
-                    onChange={(e) => setAddress(e.target.value)}
-                    placeholder={cartLabels.address} 
-                    disabled={isSubmitting}
-                    className="min-h-28 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none disabled:opacity-50" 
-                  />
-                  <input 
-                    type="tel"
-                    value={phone} 
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder={cartLabels.phone} 
-                    disabled={isSubmitting}
-                    className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none disabled:opacity-50" 
-                  />
-                  <textarea 
-                    value={notes} 
-                    onChange={(e) => setNotes(e.target.value)}
-                    placeholder={cartLabels.notesPlaceholder} 
-                    disabled={isSubmitting}
-                    className="min-h-24 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none disabled:opacity-50" 
-                  />
+                  <div className="grid grid-cols-2 gap-4">
+                    {renderField("firstName", { label: "Prénom", required: true })}
+                    {renderField("lastName", { label: "Nom", required: true })}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    {renderField("phone", { label: "Téléphone", required: true, type: "tel" })}
+                    {renderField("email", { label: "Email", required: true, type: "email" })}
+                  </div>
+
+                  {renderField("address", { label: "Adresse", required: true, textarea: true, minHeight: "min-h-24" })}
+
+                  <div className="grid grid-cols-2 gap-4">
+                    {renderField("city", { label: "Ville", required: true })}
+                    {renderField("state", { label: "Région" })}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    {renderField("postalCode", { label: "Code postal" })}
+                    {renderField("country", { label: "Pays", required: true })}
+                  </div>
+
+                  {renderField("notes", { label: "Notes (optionnel)", textarea: true, minHeight: "min-h-24" })}
                 </div>
 
                 <div className="my-6 border-t border-white/10 pt-6">
@@ -273,9 +421,9 @@ export default function CartPage() {
                   </div>
                 </div>
 
-                <button 
-                  onClick={handleOrder} 
-                  disabled={isSubmitting || cart.length === 0}
+                <button
+                  onClick={handleOrder}
+                  disabled={isSubmitting || cart.length === 0 || !isFormValid}
                   className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   {isSubmitting ? (
@@ -296,4 +444,3 @@ export default function CartPage() {
     </main>
   )
 }
-

@@ -2,6 +2,7 @@ package com.khalidbijoux.api.order;
 
 import com.khalidbijoux.api.catalog.CatalogService;
 import com.khalidbijoux.api.catalog.Product;
+import com.khalidbijoux.api.catalog.ProductResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,79 +23,120 @@ public class OrderService {
     }
 
     public CreateOrderResponse createOrder(CreateOrderRequest request) {
-        // Calculate totals
-        int subtotal = request.items().stream()
-                .mapToInt(item -> {
-                    Product product = catalogService.getProduct(item.productId());
-                    return product.getPrice() * item.quantity();
-                })
-                .sum();
 
-        int shipping = subtotal > 5000 ? 0 : 250;
-        int tax = Math.round(subtotal * 0.03f);
-        int total = subtotal + shipping + tax;
+        try {
 
-        // Create order number
-        String orderNumber = "KB-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+            System.out.println("========== CREATE ORDER ==========");
+            System.out.println("Customer : " + request.customer().firstName() + " " + request.customer().lastName());
+            System.out.println("Payment : " + request.paymentMethod());
 
-        // Create Order entity
-        Order order = new Order();
-        order.setOrderNumber(orderNumber);
-        order.setStatus("PENDING");
-        order.setPaymentMethod(request.paymentMethod());
-        order.setSubtotal(subtotal);
-        order.setShipping(shipping);
-        order.setTax(tax);
-        order.setTotal(total);
+            // Calcul du sous-total
+            int subtotal = request.items().stream()
+                    .mapToInt(item -> {
 
-        // Map customer info
-        CustomerRequest customerReq = request.customer();
-        CustomerInfo customerInfo = new CustomerInfo(
-                customerReq.firstName(),
-                customerReq.lastName(),
-                customerReq.phoneNumber(),
-                customerReq.email()
-        );
-        order.setCustomer(customerInfo);
+                        System.out.println("--------------------------------");
+                        System.out.println("Recherche produit : " + item.productId());
 
-        // Map shipping address
-        com.khalidbijoux.api.order.AddressRequest addressReq = request.shippingAddress();
-        Address address = new Address(
-                addressReq.street(),
-                addressReq.city(),
-                addressReq.state(),
-                addressReq.postalCode(),
-                addressReq.country()
-        );
-        order.setShippingAddress(address);
+                        ProductResponse product = catalogService.getProduct(item.productId());
 
-        // Map order items
-        List<OrderItem> items = request.items().stream()
-                .map(itemReq -> {
-                    Product product = catalogService.getProduct(itemReq.productId());
-                    OrderItem orderItem = new OrderItem();
-                    orderItem.setProductId(itemReq.productId());
-                    orderItem.setQuantity(itemReq.quantity());
-                    orderItem.setSelectedSize(itemReq.selectedSize());
-                    orderItem.setPrice(product.getPrice());
-                    orderItem.setProductName(product.getName());
-                    orderItem.setProductImage(product.getImage());
-                    return orderItem;
-                })
-                .toList();
-        order.setItems(items);
+                        System.out.println("Produit trouvé : " + product.getId());
+                        System.out.println("Nom : " + product.getNameFr());
+                        System.out.println("Prix : " + product.getPrice());
+                        System.out.println("Quantité : " + item.quantity());
 
-        // Save order
-        orderRepository.save(order);
+                        return product.getPrice() * item.quantity();
+                    })
+                    .sum();
 
-        return new CreateOrderResponse(
-                "PENDING",
-                orderNumber,
-                subtotal,
-                shipping,
-                tax,
-                total
-        );
+            int shipping = subtotal > 5000 ? 0 : 250;
+            int tax = Math.round(subtotal * 0.03f);
+            int total = subtotal + shipping + tax;
+
+            String orderNumber = "KB-" + UUID.randomUUID()
+                    .toString()
+                    .substring(0, 8)
+                    .toUpperCase();
+
+            Order order = new Order();
+            order.setOrderNumber(orderNumber);
+            order.setStatus("PENDING");
+            order.setPaymentMethod(request.paymentMethod());
+            order.setSubtotal(subtotal);
+            order.setShipping(shipping);
+            order.setTax(tax);
+            order.setTotal(total);
+
+            // Client
+            CustomerRequest customerReq = request.customer();
+
+            CustomerInfo customerInfo = new CustomerInfo(
+                    customerReq.firstName(),
+                    customerReq.lastName(),
+                    customerReq.phoneNumber(),
+                    customerReq.email()
+            );
+
+            order.setCustomer(customerInfo);
+
+            // Adresse
+            AddressRequest addressReq = request.shippingAddress();
+
+            Address shippingAddress = new Address(
+                    addressReq.street(),
+                    addressReq.city(),
+                    addressReq.state(),
+                    addressReq.postalCode(),
+                    addressReq.country()
+            );
+
+            order.setShippingAddress(shippingAddress);
+
+            // Produits
+            List<OrderItem> items = request.items().stream()
+                    .map(itemReq -> {
+
+                        ProductResponse product = catalogService.getProduct(itemReq.productId());
+
+                        OrderItem orderItem = new OrderItem();
+
+                        orderItem.setProductId(product.getId());
+                        orderItem.setProductName(product.getNameFr());
+                        orderItem.setProductImage(product.getImage());
+                        orderItem.setPrice(product.getPrice());
+                        orderItem.setQuantity(itemReq.quantity());
+                        orderItem.setSelectedSize(itemReq.selectedSize());
+
+                        return orderItem;
+                    })
+                    .toList();
+
+            order.setItems(items);
+
+            orderRepository.save(order);
+
+            System.out.println("========== ORDER CREATED ==========");
+            System.out.println("Order Number : " + orderNumber);
+            System.out.println("Subtotal : " + subtotal);
+            System.out.println("Shipping : " + shipping);
+            System.out.println("Tax : " + tax);
+            System.out.println("Total : " + total);
+
+            return new CreateOrderResponse(
+                    "PENDING",
+                    orderNumber,
+                    subtotal,
+                    shipping,
+                    tax,
+                    total
+            );
+
+        } catch (Exception e) {
+
+            System.out.println("========== ERROR CREATE ORDER ==========");
+            e.printStackTrace();
+
+            throw new RuntimeException("Erreur lors de la création de la commande", e);
+        }
     }
 
     /**

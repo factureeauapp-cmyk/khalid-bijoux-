@@ -11,6 +11,7 @@ export interface Product {
   nameFr: string
   nameAr: string
   categoryId: string
+  category?: Category;
   price: number
   originalPrice?: number
   tag?: string
