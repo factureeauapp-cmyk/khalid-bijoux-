@@ -18,10 +18,10 @@ This document provides a comprehensive guide for integrating the Khalid Bijoux s
 │  └─ i18n Error Handling                                     │
 └─────────────┬───────────────────────────────────────────────┘
               │ HTTP/CORS
-              ├─ /api/v1/auth/** (Public)
-              ├─ /api/v1/products/** (Public)
-              ├─ /api/v1/categories (Public)
-              └─ /api/v1/orders (Protected with JWT)
+              ├─ /api/auth/** (Public)
+              ├─ /api/products/** (Public)
+              ├─ /api/categories (Public)
+              └─ /api/orders (Protected with JWT)
               │
 ┌─────────────┴───────────────────────────────────────────────┐
 │                   Backend (Spring Boot)                      │
@@ -145,18 +145,18 @@ The frontend will start on `http://localhost:3000`
 ## API Endpoints
 
 ### Authentication (Public)
-- `POST /api/v1/auth/login` - Login with email/password
+- `POST /api/auth/login` - Login with email/password
   - Request: `{ "email": "admin@khalid-bijoux.com", "password": "admin123" }`
   - Response: `{ "token": "...", "email": "...", "expiresIn": 28800000 }`
 
 ### Products (Public)
-- `GET /api/v1/products` - List products with filters
+- `GET /api/products` - List products with filters
   - Query params: `category`, `search`, `maxPrice`, `tag`
-- `GET /api/v1/products/:id` - Get product by ID
-- `GET /api/v1/categories` - List product categories
+- `GET /api/products/:id` - Get product by ID
+- `GET /api/categories` - List product categories
 
 ### Orders (Protected)
-- `POST /api/v1/orders` - Create new order
+- `POST /api/orders` - Create new order
   - Headers: `Authorization: Bearer {token}`
   - Request body: OrderRequest with customer, address, items
 
@@ -164,7 +164,7 @@ The frontend will start on `http://localhost:3000`
 
 ### Login Process
 1. User submits email/password in login form
-2. Frontend sends `POST /api/v1/auth/login` to backend
+2. Frontend sends `POST /api/auth/login` to backend
 3. Backend validates credentials against PostgreSQL (bcrypt)
 4. Backend returns JWT token
 5. Frontend stores JWT in httpOnly cookie
@@ -173,7 +173,7 @@ The frontend will start on `http://localhost:3000`
 ### Protected Requests
 ```typescript
 // Example: Creating an order
-const response = await fetch('/api/v1/orders', {
+const response = await fetch('/api/orders', {
   method: 'POST',
   headers: {
     'Authorization': `Bearer ${token}`,
@@ -240,7 +240,7 @@ cd backend/spring-api
 mvn spring-boot:run
 ```
 
-Test backend: `curl http://localhost:8080/api/v1/categories`
+Test backend: `curl http://localhost:8080/api/categories`
 
 ### 3. Start Frontend
 ```bash
@@ -260,15 +260,15 @@ Test frontend: `http://localhost:3000`
 ### 5. Test API Calls
 ```bash
 # Get products
-curl http://localhost:8080/api/v1/products
+curl http://localhost:8080/api/products
 
 # Login
-curl -X POST http://localhost:8080/api/v1/auth/login \
+curl -X POST http://localhost:8080/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@khalid-bijoux.com","password":"admin123"}'
 
 # Create order (with token)
-curl -X POST http://localhost:8080/api/v1/orders \
+curl -X POST http://localhost:8080/api/orders \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d @order-payload.json
@@ -297,7 +297,7 @@ curl -X POST http://localhost:8080/api/v1/orders \
 **API Call Fails with 404**
 - Verify backend is running on port 8080
 - Check `NEXT_PUBLIC_API_BASE_URL` is correct
-- Test with `curl http://localhost:8080/api/v1/categories`
+- Test with `curl http://localhost:8080/api/categories`
 
 **Login Not Working**
 - Check browser console for errors

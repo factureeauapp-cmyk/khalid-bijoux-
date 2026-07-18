@@ -102,10 +102,10 @@ The Khalid Bijoux project has been successfully refactored from a frontend-only 
 │  └─ Environment Config (.env.local)                         │
 └────────────────┬─────────────────────────────────────────────┘
                  │ HTTP/REST (CORS Enabled)
-                 ├─ /api/v1/auth/** (Public)
-                 ├─ /api/v1/products/** (Public)
-                 ├─ /api/v1/categories (Public)
-                 └─ /api/v1/orders (Protected by JWT)
+                 ├─ /api/auth/** (Public)
+                 ├─ /api/products/** (Public)
+                 ├─ /api/categories (Public)
+                 └─ /api/orders (Protected by JWT)
                  │
 ┌────────────────┴─────────────────────────────────────────────┐
 │              Backend (Spring Boot 3.4.4)                     │
@@ -193,7 +193,7 @@ npm run dev
 **Access Application**
 - Frontend: http://localhost:3000
 - Admin Login: http://localhost:3000/admin
-- Backend API: http://localhost:8080/api/v1/
+- Backend API: http://localhost:8080/api/
 
 ### Test Login
 - **Email**: admin@khalid-bijoux.com
@@ -205,7 +205,7 @@ npm run dev
 
 ### Authentication (Public)
 ```
-POST /api/v1/auth/login
+POST /api/auth/login
 Content-Type: application/json
 
 Request:
@@ -224,7 +224,7 @@ Response (200 OK):
 
 ### Products (Public)
 ```
-GET /api/v1/products?category=Rings&maxPrice=1000
+GET /api/products?category=Rings&maxPrice=1000
 
 Response (200 OK):
 [
@@ -245,7 +245,7 @@ Response (200 OK):
 
 ### Orders (Protected with JWT)
 ```
-POST /api/v1/orders
+POST /api/orders
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ...
 Content-Type: application/json
 

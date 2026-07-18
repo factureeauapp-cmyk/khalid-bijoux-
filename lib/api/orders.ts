@@ -41,13 +41,13 @@ export const orderService = {
   async createOrder(
     request: CreateOrderRequest
   ): Promise<{ data?: CreateOrderResponse; error?: any }> {
-    return apiCall<CreateOrderResponse>("/api/v1/orders", {
+    return apiCall<CreateOrderResponse>("/api/orders", {
       method: "POST",
       body: JSON.stringify(request),
     });
   },
 
   async getOrder(orderNumber: string): Promise<{ data?: any; error?: any }> {
-    return apiCall(`/api/v1/orders/${orderNumber}`);
+    return apiCall(`/api/orders/${orderNumber}`);
   },
 };

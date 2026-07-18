@@ -47,24 +47,24 @@ APP_CORS_ALLOWED_ORIGINS=http://localhost:3000
 
 ### Get Products
 ```bash
-curl http://localhost:8080/api/v1/products
+curl http://localhost:8080/api/products
 ```
 
 ### Get Categories
 ```bash
-curl http://localhost:8080/api/v1/categories
+curl http://localhost:8080/api/categories
 ```
 
 ### Login (Get JWT)
 ```bash
-curl -X POST http://localhost:8080/api/v1/auth/login \
+curl -X POST http://localhost:8080/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@khalid-bijoux.com","password":"admin123"}'
 ```
 
 ### Get Single Product
 ```bash
-curl http://localhost:8080/api/v1/products/1
+curl http://localhost:8080/api/products/1
 ```
 
 ## 📚 Full Documentation
@@ -83,7 +83,7 @@ See `INTEGRATION_GUIDE.md` for comprehensive documentation.
 - Check Maven is installed: `mvn -version`
 
 ### Frontend can't connect to backend?
-- Verify backend is running: `curl http://localhost:8080/api/v1/products`
+- Verify backend is running: `curl http://localhost:8080/api/products`
 - Check `.env.local` has correct `NEXT_PUBLIC_API_BASE_URL`
 - Check browser console for CORS errors
 

@@ -84,7 +84,7 @@ export async function PATCH(
 
   // Calls Spring Boot API
   const response = await fetch(
-    `${process.env.SPRING_API_URL}/api/v1/orders/${id}/status`,
+    `${process.env.SPRING_API_URL}/api/orders/${id}/status`,
     {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -109,7 +109,7 @@ export async function DELETE(
   
   // Calls Spring Boot API
   const response = await fetch(
-    `${process.env.SPRING_API_URL}/api/v1/orders/${id}`,
+    `${process.env.SPRING_API_URL}/api/orders/${id}`,
     {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
@@ -143,7 +143,7 @@ export async function DELETE(
   
   // Calls Spring Boot API
   const response = await fetch(
-    `${process.env.SPRING_API_URL}/api/v1/categories/${id}`,
+    `${process.env.SPRING_API_URL}/api/categories/${id}`,
     {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },

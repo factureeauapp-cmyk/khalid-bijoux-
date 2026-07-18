@@ -9,7 +9,7 @@ export async function DELETE(
 
     // Call Spring Boot backend to delete category
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/categories/${id}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/categories/${id}`,
       {
         method: "DELETE",
         headers: {

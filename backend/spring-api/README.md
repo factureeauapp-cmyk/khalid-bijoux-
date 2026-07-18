@@ -4,12 +4,12 @@ Ce dossier contient une base Spring Boot pour brancher le frontend Next.js du pr
 
 ## Endpoints
 
-- `GET /api/v1/products`
-- `GET /api/v1/products/{id}`
-- `GET /api/v1/categories`
-- `POST /api/v1/orders`
-- `POST /api/v1/contact-requests`
-- `POST /api/v1/chat/recommendations`
+- `GET /api/products`
+- `GET /api/products/{id}`
+- `GET /api/categories`
+- `POST /api/orders`
+- `POST /api/contact-requests`
+- `POST /api/chat/recommendations`
 - `GET /actuator/health`
 
 ## Lancer le backend

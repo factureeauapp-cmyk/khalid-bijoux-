@@ -64,7 +64,7 @@ backend/spring-api/src/main/java/com/khalidbijoux/api/
 │   └── Status: READY FOR PRODUCTION
 │
 └── order/UpdateOrderStatusRequest.java
-    ├── DTO for PATCH /api/v1/orders/{id}/status
+    ├── DTO for PATCH /api/orders/{id}/status
     └── Status: READY FOR PRODUCTION
 ```
 
@@ -73,10 +73,10 @@ backend/spring-api/src/main/java/com/khalidbijoux/api/
 backend/spring-api/src/main/java/com/khalidbijoux/api/
 
 1. order/OrderController.java
-   ├── Added: GET /api/v1/orders
-   ├── Added: GET /api/v1/orders/{orderNumber}
-   ├── Added: PATCH /api/v1/orders/{orderNumber}/status
-   ├── Added: DELETE /api/v1/orders/{orderNumber}
+   ├── Added: GET /api/orders
+   ├── Added: GET /api/orders/{orderNumber}
+   ├── Added: PATCH /api/orders/{orderNumber}/status
+   ├── Added: DELETE /api/orders/{orderNumber}
    └── Status: READY FOR PRODUCTION
 
 2. order/OrderService.java
@@ -272,7 +272,7 @@ CREATE TABLE orders (
 
 #### 1. Get All Orders
 ```
-GET /api/v1/orders
+GET /api/orders
 
 Response (200):
 [
@@ -293,7 +293,7 @@ Errors:
 
 #### 2. Get Single Order
 ```
-GET /api/v1/orders/{orderNumber}
+GET /api/orders/{orderNumber}
 
 Response (200):
 {
@@ -309,7 +309,7 @@ Errors:
 
 #### 3. Update Order Status
 ```
-PATCH /api/v1/orders/{orderNumber}/status
+PATCH /api/orders/{orderNumber}/status
 
 Request Body:
 {
@@ -333,7 +333,7 @@ Errors:
 
 #### 4. Cancel Order
 ```
-DELETE /api/v1/orders/{orderNumber}
+DELETE /api/orders/{orderNumber}
 
 Response (204):
 (empty body)
@@ -414,9 +414,9 @@ Errors:
 
 ### Backend Response Times
 ```
-GET /api/v1/orders               : 50-150ms (depends on order count)
-PATCH /api/v1/orders/.../status  : 100-200ms
-DELETE /api/v1/orders/...        : 100-200ms
+GET /api/orders               : 50-150ms (depends on order count)
+PATCH /api/orders/.../status  : 100-200ms
+DELETE /api/orders/...        : 100-200ms
 ```
 
 ### Frontend Render Times

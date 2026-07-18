@@ -32,44 +32,44 @@ Use this checklist to verify the complete integration is working correctly.
 #### Products (Public - No Auth Required)
 ```bash
 # Get all products
-curl http://localhost:8080/api/v1/products
+curl http://localhost:8080/api/products
 # Response: 200 OK with product list
-- [ ] GET /api/v1/products returns 200
+- [ ] GET /api/products returns 200
 
 # Get single product
-curl http://localhost:8080/api/v1/products/1
+curl http://localhost:8080/api/products/1
 # Response: 200 OK with product details
-- [ ] GET /api/v1/products/1 returns 200
+- [ ] GET /api/products/1 returns 200
 
 # Get categories
-curl http://localhost:8080/api/v1/categories
+curl http://localhost:8080/api/categories
 # Response: 200 OK with category list
-- [ ] GET /api/v1/categories returns 200
+- [ ] GET /api/categories returns 200
 
 # Filter products
-curl "http://localhost:8080/api/v1/products?category=Rings&maxPrice=1000"
+curl "http://localhost:8080/api/products?category=Rings&maxPrice=1000"
 # Response: 200 OK with filtered products
-- [ ] GET /api/v1/products with filters returns 200
+- [ ] GET /api/products with filters returns 200
 ```
 
 #### Authentication
 ```bash
 # Login - Valid credentials
-curl -X POST http://localhost:8080/api/v1/auth/login \
+curl -X POST http://localhost:8080/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@khalid-bijoux.com","password":"admin123"}'
 # Response: 200 OK with token
 - [ ] Login with valid credentials returns 200 with token
 
 # Login - Invalid credentials
-curl -X POST http://localhost:8080/api/v1/auth/login \
+curl -X POST http://localhost:8080/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@khalid-bijoux.com","password":"wrong"}'
 # Response: 401 Unauthorized with error code
 - [ ] Login with invalid credentials returns 401
 
 # Login - Missing fields
-curl -X POST http://localhost:8080/api/v1/auth/login \
+curl -X POST http://localhost:8080/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@khalid-bijoux.com"}'
 # Response: 400 Bad Request with validation error
@@ -85,7 +85,7 @@ curl -X POST http://localhost:8080/api/v1/auth/login \
 ### CORS Verification
 ```bash
 # Check CORS headers
-curl -i -X OPTIONS http://localhost:8080/api/v1/products \
+curl -i -X OPTIONS http://localhost:8080/api/products \
   -H "Origin: http://localhost:3000" \
   -H "Access-Control-Request-Method: GET"
 # Response should include CORS headers
@@ -236,9 +236,9 @@ SELECT password FROM admin WHERE email='admin@khalid-bijoux.com';
 ## Performance Verification
 
 ### Response Times
-- [ ] GET /api/v1/products responds in < 500ms
-- [ ] GET /api/v1/categories responds in < 200ms
-- [ ] POST /api/v1/auth/login responds in < 1000ms
+- [ ] GET /api/products responds in < 500ms
+- [ ] GET /api/categories responds in < 200ms
+- [ ] POST /api/auth/login responds in < 1000ms
 
 ### Database Queries
 - [ ] Check backend logs for SQL query times
@@ -271,7 +271,7 @@ SELECT password FROM admin WHERE email='admin@khalid-bijoux.com';
 ### Load Testing (Optional)
 ```bash
 # Use Apache Bench or wrk
-ab -n 100 -c 10 http://localhost:8080/api/v1/products
+ab -n 100 -c 10 http://localhost:8080/api/products
 - [ ] Server handles concurrent requests
 ```
 
@@ -327,5 +327,5 @@ If any check fails:
 ### Network Issues
 - [ ] Check firewall allows port 5432, 8080, 3000
 - [ ] Verify VPN not blocking connections
-- [ ] Test connection: `curl http://localhost:8080/api/v1/categories`
+- [ ] Test connection: `curl http://localhost:8080/api/categories`
 - [ ] Check for proxy interfering with requests

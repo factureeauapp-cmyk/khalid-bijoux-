@@ -143,8 +143,8 @@ Created complete API service layer in `/lib/api/`:
   - Configurable base URL
 
 - **auth.ts**:
-  - `authService.login()` - Calls Spring Boot /api/v1/auth/login
-  - `authService.logout()` - Calls /api/v1/auth/logout
+  - `authService.login()` - Calls Spring Boot /api/auth/login
+  - `authService.logout()` - Calls /api/auth/logout
   - `authService.getCurrentUser()` - Gets current user
   - Typed responses
 

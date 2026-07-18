@@ -94,10 +94,10 @@ backend/spring-api/src/main/java/com/khalidbijoux/api/
 
 ### New API Endpoints
 ```
-GET    /api/v1/orders              Get all orders
-GET    /api/v1/orders/{orderNumber} Get single order
-PATCH  /api/v1/orders/{id}/status  Update status
-DELETE /api/v1/orders/{id}         Cancel order
+GET    /api/orders              Get all orders
+GET    /api/orders/{orderNumber} Get single order
+PATCH  /api/orders/{id}/status  Update status
+DELETE /api/orders/{id}         Cancel order
 ```
 
 ---
@@ -193,7 +193,7 @@ After setup, verify everything works:
 ### "Cannot connect to backend"
 ```bash
 # Check if Spring Boot is running
-curl http://localhost:8080/api/v1/orders
+curl http://localhost:8080/api/orders
 
 # If not, check logs in terminal where you ran mvn spring-boot:run
 ```
@@ -303,7 +303,7 @@ Dashboard available in:
 3. **Verify Setup**:
    ```bash
    # Test backend is running
-   curl -X GET http://localhost:8080/api/v1/orders
+   curl -X GET http://localhost:8080/api/orders
    
    # Should return JSON array of orders
    ```

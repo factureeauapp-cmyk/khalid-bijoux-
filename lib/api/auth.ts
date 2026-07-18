@@ -13,14 +13,14 @@ export interface AuthError {
 
 export const authService = {
   async login(email: string, password: string): Promise<{ data?: LoginResponse; error?: AuthError }> {
-    return apiCall<LoginResponse>("/api/v1/auth/login", {
+    return apiCall<LoginResponse>("/api/auth/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     });
   },
 
   async logout(): Promise<{ success: boolean; error?: AuthError }> {
-    const response = await apiCall<{ success: boolean }>("/api/v1/auth/logout", {
+    const response = await apiCall<{ success: boolean }>("/api/auth/logout", {
       method: "POST",
     });
 
@@ -32,7 +32,7 @@ export const authService = {
   },
 
   async getCurrentUser(): Promise<{ data?: { email: string }; error?: AuthError }> {
-    return apiCall<{ email: string }>("/api/v1/auth/me");
+    return apiCall<{ email: string }>("/api/auth/me");
   },
 };
 

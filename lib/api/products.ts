@@ -27,16 +27,16 @@ export const catalogService = {
     if (params?.tag) queryParams.append("tag", params.tag);
 
     const query = queryParams.toString();
-    const endpoint = `/api/v1/products${query ? "?" + query : ""}`;
+    const endpoint = `/api/products${query ? "?" + query : ""}`;
 
     return apiCall<Product[]>(endpoint);
   },
 
   async getProduct(id: string | number): Promise<{ data?: Product; error?: any }> {
-    return apiCall<Product>(`/api/v1/products/${id}`);
+    return apiCall<Product>(`/api/products/${id}`);
   },
 
   async getCategories(): Promise<{ data?: string[]; error?: any }> {
-    return apiCall<string[]>("/api/v1/categories");
+    return apiCall<string[]>("/api/categories");
   },
 };

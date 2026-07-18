@@ -12,11 +12,11 @@ This comprehensive enhancement adds professional order management and improved c
 
 #### Order Management API
 ```java
-GET  /api/v1/orders              → Fetch all orders (sorted by date)
-GET  /api/v1/orders/{orderNumber} → Fetch single order
-PATCH /api/v1/orders/{orderNumber}/status → Update order status
-DELETE /api/v1/orders/{orderNumber} → Cancel order
-POST /api/v1/orders              → Create order (existing)
+GET  /api/orders              → Fetch all orders (sorted by date)
+GET  /api/orders/{orderNumber} → Fetch single order
+PATCH /api/orders/{orderNumber}/status → Update order status
+DELETE /api/orders/{orderNumber} → Cancel order
+POST /api/orders              → Create order (existing)
 ```
 
 **Features:**
@@ -103,7 +103,7 @@ cancelled: Red badge   → "Annulée"
 DELETE /api/categories/[categoryId]
 
 Proxies to Spring Boot:
-DELETE /api/v1/categories/{categoryId}
+DELETE /api/categories/{categoryId}
 
 Response:
 - 204: Success
@@ -118,7 +118,7 @@ PATCH /api/orders/[orderId]
 Body: { status: "pending" | "shipped" | "delivered" | "cancelled" }
 
 Proxies to Spring Boot:
-PATCH /api/v1/orders/{orderNumber}/status
+PATCH /api/orders/{orderNumber}/status
 
 Response:
 - 200: Updated order object
@@ -132,7 +132,7 @@ Response:
 DELETE /api/orders/[orderId]
 
 Proxies to Spring Boot:
-DELETE /api/v1/orders/{orderNumber}
+DELETE /api/orders/{orderNumber}
 
 Response:
 - 204: Success
@@ -378,7 +378,7 @@ CREATE TABLE orders (
 **Solution**: Ensure translations are updated in `lib/i18n.ts`
 
 ### Issue: 404 on category deletion
-**Solution**: Verify Spring API endpoint is `/api/v1/categories/{categoryId}`
+**Solution**: Verify Spring API endpoint is `/api/categories/{categoryId}`
 
 ---
 
@@ -412,7 +412,7 @@ For issues or questions:
 1. Check Spring Boot logs: `java -jar app.jar 2>&1 | tee logs.txt`
 2. Check browser console: DevTools → Console
 3. Check Network tab: DevTools → Network
-4. Verify backend is responding: `curl http://localhost:8080/api/v1/orders`
+4. Verify backend is responding: `curl http://localhost:8080/api/orders`
 
 ---
 

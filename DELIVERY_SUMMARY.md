@@ -301,16 +301,16 @@ POSTGRES_PASSWORD: postgres
 
 ### Public (No Auth Required)
 ```
-GET    /api/v1/products
-GET    /api/v1/products/:id
-GET    /api/v1/categories
-POST   /api/v1/auth/login
+GET    /api/products
+GET    /api/products/:id
+GET    /api/categories
+POST   /api/auth/login
 ```
 
 ### Protected (JWT Required)
 ```
-POST   /api/v1/orders
-GET    /api/v1/orders/:orderNumber
+POST   /api/orders
+GET    /api/orders/:orderNumber
 ```
 
 ---
