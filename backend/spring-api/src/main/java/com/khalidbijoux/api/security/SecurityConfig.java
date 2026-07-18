@@ -37,6 +37,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                 // Routes publiques
                 .requestMatchers("/api/admin/login").permitAll()
+                // Authentification
+              .requestMatchers("/api/auth/**").permitAll()
 
                 .requestMatchers("/api/products/**").permitAll()
                 .requestMatchers("/api/categories/**").permitAll()
