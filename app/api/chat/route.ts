@@ -12,7 +12,7 @@ export async function POST(request: Request) {
         const springApiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
         if (springApiBaseUrl) {
             try {
-                const springResponse = await fetch(`${springApiBaseUrl}/api/chat/recommendations`, {
+                const springResponse = await fetch(`${springApiBaseUrl}/chat/recommendations`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ message }),

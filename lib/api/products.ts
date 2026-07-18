@@ -27,7 +27,7 @@ export const catalogService = {
     if (params?.tag) queryParams.append("tag", params.tag);
 
     const query = queryParams.toString();
-    const endpoint = `/api/products${query ? "?" + query : ""}`;
+    const endpoint = `products${query ? "?" + query : ""}`;
 
     return apiCall<Product[]>(endpoint);
   },

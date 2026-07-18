@@ -34,7 +34,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const refreshProducts = useCallback(async () => {
    const response = await fetch(
-  `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products`,
+  `${process.env.NEXT_PUBLIC_API_BASE_URL}/products`,
   {
     cache: "no-store",
   }
@@ -48,7 +48,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const refreshCategories = useCallback(async () => {
     const response = await fetch(
-  `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/categories`, { cache: "no-store" })
+  `${process.env.NEXT_PUBLIC_API_BASE_URL}/categories`, { cache: "no-store" })
     if (!response.ok) {
       setCategories([])
       return
@@ -58,7 +58,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const refreshOrders = useCallback(async () => {
     const response = await fetch(
-  `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/orders`, { cache: "no-store" })
+  `${process.env.NEXT_PUBLIC_API_BASE_URL}/orders`, { cache: "no-store" })
     if (!response.ok) {
       setOrders([])
       return

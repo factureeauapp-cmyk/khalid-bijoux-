@@ -95,7 +95,7 @@ export default function CartPage() {
       setIsSubmitting(true)
 
       const response = await fetch(
-  `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/orders`, {
+  `${process.env.NEXT_PUBLIC_API_BASE_URL}/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

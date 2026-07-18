@@ -112,8 +112,8 @@ export default function AdminPage() {
       const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
      const endpoint = editingId
-    ? `${API_URL}/api/products/${editingId}`
-    : `${API_URL}/api/products`;
+    ? `${API_URL}/products/${editingId}`
+    : `${API_URL}/products`;
       const method = editingId ? "PUT" : "POST"
       const payload = new FormData()
 
@@ -168,7 +168,7 @@ export default function AdminPage() {
     setIsDeleting((prev) => new Set(prev).add(id))
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-      const response = await fetch(`${API_URL}/api/products/${id}`, { method: "DELETE" })
+      const response = await fetch(`${API_URL}/products/${id}`, { method: "DELETE" })
       if (!response.ok) throw new Error("Erreur lors de la suppression")
       await refreshProducts()
       setSuccessMessage("Produit supprimé avec succès")
@@ -195,7 +195,7 @@ export default function AdminPage() {
   const updateOrderStatus = async (orderNumber: string, status: string) => {
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-      const response = await fetch(`${API_URL}/api/orders/${orderNumber}`, {
+      const response = await fetch(`${API_URL}/orders/${orderNumber}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
@@ -216,7 +216,7 @@ export default function AdminPage() {
   const cancelOrder = async (orderNumber: string) => {
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-      const response = await fetch(`${API_URL}/api/orders/${orderNumber}`, {
+      const response = await fetch(`${API_URL}/orders/${orderNumber}`, {
         method: "DELETE",
       })
 
@@ -233,7 +233,7 @@ export default function AdminPage() {
   }
 
   const logout = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/logout`, { method: "POST" })
+    await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/logout`, { method: "POST" })
     window.location.href = "/admin/login"
   }
 

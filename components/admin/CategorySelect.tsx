@@ -51,7 +51,7 @@ export function CategorySelect({
 
     try {
       const response = await fetch(
-  `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/categories`, {
+  `${process.env.NEXT_PUBLIC_API_BASE_URL}/categories`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nameFr: newCategoryFr, nameAr: newCategoryAr }),
@@ -88,7 +88,7 @@ export function CategorySelect({
 
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-      const response = await fetch(`${API_URL}/api/categories/${categoryId}`, { method: "DELETE" })
+      const response = await fetch(`${API_URL}/categories/${categoryId}`, { method: "DELETE" })
 
       if (!response.ok) {
         const data = await response.json()
