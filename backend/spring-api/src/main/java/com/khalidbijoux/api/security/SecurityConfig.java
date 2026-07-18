@@ -35,13 +35,17 @@ public class SecurityConfig {
                     })
                 .and()
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/products/**").permitAll()
-                        .requestMatchers("/api/v1/categories").permitAll()
-                        .requestMatchers("/api/v1/chat/**").permitAll()
-                        .requestMatchers("/api/v1/contact/**").permitAll()
-                        .anyRequest().authenticated()
-                )
+                // Routes publiques
+                .requestMatchers("/api/admin/login").permitAll()
+
+                .requestMatchers("/api/products/**").permitAll()
+                .requestMatchers("/api/categories/**").permitAll()
+                .requestMatchers("/api/chat/**").permitAll()
+                .requestMatchers("/api/contact/**").permitAll()
+
+                // Toutes les autres routes nécessitent un JWT
+                .anyRequest().authenticated()
+)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
