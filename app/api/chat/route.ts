@@ -9,7 +9,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "Message is required" }, { status: 400 });
         }
 
-        const springApiBaseUrl = process.env.SPRING_API_BASE_URL;
+        const springApiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
         if (springApiBaseUrl) {
             try {
                 const springResponse = await fetch(`${springApiBaseUrl}/api/v1/chat/recommendations`, {

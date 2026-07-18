@@ -109,7 +109,11 @@ export default function AdminPage() {
         throw new Error("CATEGORY_REQUIRED")
       }
 
-      const endpoint = editingId ? `/api/products/${editingId}` : "/api/products"
+      const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+     const endpoint = editingId
+    ? `${API_URL}/api/products/${editingId}`
+    : `${API_URL}/api/products`;
       const method = editingId ? "PUT" : "POST"
       const payload = new FormData()
 
@@ -163,7 +167,8 @@ export default function AdminPage() {
   const handleDelete = async (id: string) => {
     setIsDeleting((prev) => new Set(prev).add(id))
     try {
-      const response = await fetch(`/api/products/${id}`, { method: "DELETE" })
+      const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const response = await fetch(`${API_URL}/api/products/${id}`, { method: "DELETE" })
       if (!response.ok) throw new Error("Erreur lors de la suppression")
       await refreshProducts()
       setSuccessMessage("Produit supprimé avec succès")
@@ -189,7 +194,8 @@ export default function AdminPage() {
 
   const updateOrderStatus = async (orderNumber: string, status: string) => {
     try {
-      const response = await fetch(`/api/orders/${orderNumber}`, {
+      const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const response = await fetch(`${API_URL}/api/orders/${orderNumber}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
@@ -209,7 +215,8 @@ export default function AdminPage() {
 
   const cancelOrder = async (orderNumber: string) => {
     try {
-      const response = await fetch(`/api/orders/${orderNumber}`, {
+      const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const response = await fetch(`${API_URL}/api/orders/${orderNumber}`, {
         method: "DELETE",
       })
 

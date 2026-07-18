@@ -8,11 +8,7 @@
 
 ## Variable d'environnement
 
-Dans Next.js, définir:
 
-```env
-SPRING_API_BASE_URL=http://localhost:8080
-```
 
 ## Mapping conseillé côté frontend
 
