@@ -39,6 +39,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/login").permitAll()
                 // Authentification
               .requestMatchers("/api/auth/**").permitAll()
+              
 
                 .requestMatchers("/api/products/**").permitAll()
                 .requestMatchers("/api/categories/**").permitAll()
@@ -46,7 +47,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/contact/**").permitAll()
 
                 // Toutes les autres routes nécessitent un JWT
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
