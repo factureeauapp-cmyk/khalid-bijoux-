@@ -33,7 +33,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [orders, setOrders] = useState<CustomerOrder[]>([])
 
   const refreshProducts = useCallback(async () => {
-    const response = await fetch("/api/products", { cache: "no-store" })
+   const response = await fetch(
+  `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products`,
+  {
+    cache: "no-store",
+  }
+)
     if (!response.ok) {
       setProducts([])
       return
@@ -42,7 +47,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const refreshCategories = useCallback(async () => {
-    const response = await fetch("/api/categories", { cache: "no-store" })
+    const response = await fetch(
+  `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/categories`, { cache: "no-store" })
     if (!response.ok) {
       setCategories([])
       return
@@ -51,7 +57,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const refreshOrders = useCallback(async () => {
-    const response = await fetch("/api/orders", { cache: "no-store" })
+    const response = await fetch(
+  `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/orders`, { cache: "no-store" })
     if (!response.ok) {
       setOrders([])
       return

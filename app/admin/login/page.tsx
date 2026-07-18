@@ -16,7 +16,8 @@ export default function AdminLoginPage() {
     event.preventDefault()
     setError("")
 
-    const response = await fetch("/api/admin/login", {
+    const response = await fetch(
+  `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ identifier, password }),

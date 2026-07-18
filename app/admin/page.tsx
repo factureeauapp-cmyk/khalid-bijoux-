@@ -226,7 +226,7 @@ export default function AdminPage() {
   }
 
   const logout = async () => {
-    await fetch("/api/admin/logout", { method: "POST" })
+    await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/logout`, { method: "POST" })
     window.location.href = "/admin/login"
   }
 
