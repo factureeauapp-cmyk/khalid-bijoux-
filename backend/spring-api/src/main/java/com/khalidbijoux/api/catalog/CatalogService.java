@@ -101,7 +101,7 @@ public class CatalogService {
                 .price(product.getPrice())
                 .originalPrice(product.getOriginalPrice())
                 .tag(product.getTag())
-                .image(buildImageUrl(product.getImage()))
+                .image(product.getImage())
                 .category(CategoryResponse.builder()
                         .id(product.getCategory().getId())
                         .nameFr(product.getCategory().getNameFr())

@@ -51,3 +51,13 @@ public class AuthController {
         ));
     }
 }
+//Suppression d'un produit
+//cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+
+//9. Modification d'un produit
+//
+//Si une nouvelle image est envoyée :
+//
+//Supprimer l'ancienne :
+//
+//        cloudinary.uploader().destroy(...)

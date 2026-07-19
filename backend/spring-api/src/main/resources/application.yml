@@ -12,6 +12,12 @@ app:
     secret: ${JWT_SECRET:khalid-bijoux-secret-key-change-in-production-2024-very-secure-key-2026}
     expiration-ms: ${JWT_EXPIRATION_MS:28800000}
 
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:s8uc7652}
+  api-key: ${CLOUDINARY_API_KEY:446972716138229}
+  api-secret: ${CLOUDINARY_API_SECRET:apuYg_GC_jH04s9YlSFETEVHlK4}
+
+
 spring:
   datasource:
     url: jdbc:mysql://${MYSQLHOST:localhost}:${MYSQLPORT:3306}/${MYSQLDATABASE:khalidbijoux_db}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
