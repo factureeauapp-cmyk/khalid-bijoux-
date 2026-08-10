@@ -16,6 +16,7 @@ public class CreateProductRequest {
     private Integer originalPrice;
     private String tag;
     private String existingImage;
+    private Integer quantity;
 
     private MultipartFile image;
 }

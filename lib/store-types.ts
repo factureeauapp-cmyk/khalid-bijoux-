@@ -1,4 +1,3 @@
-export type OrderStatus = "pending" | "shipped" | "delivered" | "cancelled"
 
 export interface Category {
   id: string
@@ -18,27 +17,61 @@ export interface Product {
   descriptionFr: string
   descriptionAr: string
   image: string
+  quantity?: number
+}
+
+
+
+// ⚠️ Type mis à jour pour correspondre exactement à la réponse du back-end
+// Spring Boot (GET /orders), et non plus à l'ancien mock Next.js local.
+
+export interface OrderCustomer {
+  firstName: string
+  lastName: string
+  phoneNumber: string
+  email: string
+}
+
+export interface ShippingAddress {
+  street: string
+  city: string
+  state: string
+  postalCode: string
+  country: string
 }
 
 export interface CustomerOrderItem {
+  id: number
   productId: string
-  productNameFr: string
-  productNameAr: string
   quantity: number
-  unitPrice: number
-  image: string
+  selectedSize?: string | null
+  price: number
+  productName: string | null
+  productImage: string | null
 }
 
+// Adapte cette liste aux valeurs réelles exposées par ton enum Spring Boot
+// (OrderStatus). "PENDING" est confirmé par ton exemple ; complète le reste
+// selon ce que ton back-end accepte réellement en PATCH /orders/:orderNumber.
+export type OrderStatus =
+  | "PENDING"
+  | "CONFIRMED"
+  | "SHIPPED"
+  | "DELIVERED"
+  | "CANCELLED"
+
 export interface CustomerOrder {
-  id: string
+  id: number
   orderNumber: string
-  customerName: string
-  address: string
-  phone: string
-  notes?: string
-  items: CustomerOrderItem[]
-  total: number
-  paymentMethod: "cash_on_delivery"
   status: OrderStatus
+  customer: OrderCustomer
+  shippingAddress: ShippingAddress
+  paymentMethod: string
+  items: CustomerOrderItem[]
+  subtotal: number
+  shipping: number
+  tax: number
+  total: number
   createdAt: string
+  updatedAt: string | null
 }

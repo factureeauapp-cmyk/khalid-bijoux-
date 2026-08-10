@@ -5,18 +5,17 @@ import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 import { useAppContext } from "../providers/AppContext"
 
-const showcase = [
-  "/images/rings/ring_01.jpg",
-  "/images/earrings/earring_01.png",
-  "/images/necklaces/necklace_01.png",
-  "/images/bracelets/bracelet_01.png",
-  "/images/cart/set_01.png",
-  "/images/rings/ring_04.jpg",
-]
+
 
 export default function GalleryPage() {
-  const { t } = useAppContext()
+ const { t, products } = useAppContext()
   const gallery = t("gallery")
+
+  // Toutes les images provenant du backend
+  const showcase = products
+    .map((product) => product.image)
+    .filter(Boolean)
+
 
   return (
     <main className="min-h-screen bg-black pt-28 text-white">

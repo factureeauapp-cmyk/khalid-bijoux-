@@ -8,11 +8,12 @@ import Footer from "./components/Footer"
 import ProductCard from "./components/ProductCard"
 import { useAppContext } from "./providers/AppContext"
 import { PRODUCTS } from "@/lib/data"
+import { getAvailableProducts } from "@/lib/product-utils"
 
 export default function HomePage() {
   const { t, products } = useAppContext()
   const home = t("home")
-  const catalog = products.length ? products : PRODUCTS
+  const catalog = getAvailableProducts(products.length ? products : PRODUCTS)
   const featuredProducts = catalog.slice(0, 4)
 
   return (

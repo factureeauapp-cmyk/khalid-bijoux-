@@ -1,0 +1,14 @@
+com\khalidbijoux\api\catalog\Product.class
+com\khalidbijoux\api\order\OrderService.class
+com\khalidbijoux\api\security\JwtAuthFilter.class
+com\khalidbijoux\api\catalog\Product$ProductBuilder.class
+com\khalidbijoux\api\catalog\StockUpdateRequest.class
+com\khalidbijoux\api\admin\AuthController.class
+com\khalidbijoux\api\catalog\CatalogService.class
+com\khalidbijoux\api\security\SecurityConfig.class
+com\khalidbijoux\api\catalog\ProductMapper.class
+com\khalidbijoux\api\catalog\ProductResponse$ProductResponseBuilder.class
+com\khalidbijoux\api\catalog\ProductResponse.class
+com\khalidbijoux\api\catalog\CatalogRepository.class
+com\khalidbijoux\api\catalog\CreateProductRequest.class
+com\khalidbijoux\api\catalog\ProductController.class

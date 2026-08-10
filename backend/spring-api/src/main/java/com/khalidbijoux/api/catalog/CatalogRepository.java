@@ -13,7 +13,5 @@ public interface CatalogRepository extends JpaRepository<Product, Long> {
 
     Optional<Product> findById(String id);
 
-
-
-
+    Optional<Product> findByIdIgnoreCase(String id);
 }

@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import type { ReactNode } from "react"
 import { Cormorant_Garamond, Inter } from "next/font/google"
 import "./globals.css"
 import { CartProvider } from "./CartContext"
@@ -30,7 +31,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: ReactNode
 }>) {
   return (
     <html lang="fr" dir="ltr" className={`${inter.variable} ${cormorant.variable}`}>

@@ -1,39 +1,58 @@
 package com.khalidbijoux.api.catalog;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CatalogService {
 
     private final CatalogRepository catalogRepository;
-    private final  CategoryRepository  categoryRepository;
+    private final CategoryRepository categoryRepository;
     private final FileStorageService fileStorageService;
-    private final String baseUrl;
+    private final ProductMapper productMapper;
 
-
-    public CatalogService(
-            CatalogRepository catalogRepository,
-            CategoryRepository categoryRepository,
-            FileStorageService fileStorageService,
-            @Value("${app.base-url}") String baseUrl) {
-
-        this.catalogRepository = catalogRepository;
-        this.categoryRepository = categoryRepository;
-        this.fileStorageService = fileStorageService;
-        this.baseUrl = baseUrl;
-    }
+    @Value("${app.base-url}")
+    private String baseUrl;
 
     public List<ProductResponse> getProducts(String category,
                                              String search,
                                              Integer maxPrice,
                                              String tag) {
+        return getProducts(category, search, maxPrice, tag, true);
+    }
+
+    public StockSummaryResponse getStockSummary() {
+        List<Product> products = catalogRepository.findAll();
+        long totalProducts = products.size();
+        long availableProducts = products.stream().filter(product -> product.getQuantity() != null && product.getQuantity() > 0).count();
+        long outOfStockProducts = products.stream().filter(product -> product.getQuantity() == null || product.getQuantity() <= 0).count();
+        long totalQuantity = products.stream().mapToLong(product -> product.getQuantity() == null ? 0 : product.getQuantity()).sum();
+        long totalValue = products.stream().mapToLong(product -> (product.getPrice() == null ? 0 : product.getPrice()) * (product.getQuantity() == null ? 0 : product.getQuantity())).sum();
+
+        return StockSummaryResponse.builder()
+                .totalProducts(totalProducts)
+                .availableProducts(availableProducts)
+                .outOfStockProducts(outOfStockProducts)
+                .totalQuantity(totalQuantity)
+                .totalValue(totalValue)
+                .build();
+    }
+
+    public List<ProductResponse> getProducts(String category,
+                                             String search,
+                                             Integer maxPrice,
+                                             String tag,
+                                             boolean availableOnly) {
 
         return catalogRepository.findAll().stream()
+
+                .filter(product -> !availableOnly || product.getQuantity() != null && product.getQuantity() > 0)
 
                 .filter(product ->
                         isBlank(category)
@@ -63,7 +82,7 @@ public class CatalogService {
                                 .thenComparing(Product::getNameFr)
                 )
 
-                .map(this::toResponse)
+                .map(productMapper::toResponse)
 
                 .toList();
     }
@@ -71,9 +90,9 @@ public class CatalogService {
     public ProductResponse getProduct(String id) {
 
         Product product = catalogRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Produit introuvable : " + id));
+                .orElseThrow(() -> new ProductNotFoundException(id));
 
-        return toResponse(product);
+        return productMapper.toResponse(product);
     }
 
 
@@ -90,25 +109,6 @@ public class CatalogService {
         return baseUrl + image;
     }
 
-    private ProductResponse toResponse(Product product) {
-
-        return ProductResponse.builder()
-                .id(product.getId())
-                .nameFr(product.getNameFr())
-                .nameAr(product.getNameAr())
-                .descriptionFr(product.getDescriptionFr())
-                .descriptionAr(product.getDescriptionAr())
-                .price(product.getPrice())
-                .originalPrice(product.getOriginalPrice())
-                .tag(product.getTag())
-                .image(product.getImage())
-                .category(CategoryResponse.builder()
-                        .id(product.getCategory().getId())
-                        .nameFr(product.getCategory().getNameFr())
-                        .nameAr(product.getCategory().getNameAr())
-                        .build())
-                .build();
-    }
 
     public List<Category> getCategories() {
         return categoryRepository.findAll();
@@ -144,7 +144,8 @@ public class CatalogService {
 
         return catalogRepository.findAll()
                 .stream()
-                .map(this::toResponse)
+                .filter(product -> product.getQuantity() != null && product.getQuantity() > 0)
+                .map(productMapper::toResponse)
                 .limit(4)
                 .toList();
     }
@@ -183,48 +184,126 @@ public class CatalogService {
     }
 
     public Product createProduct(CreateProductRequest request) {
+        validateProductRequest(request);
 
-        try {
+        Product product = new Product();
+        product.setId(UUID.randomUUID().toString());
+        productMapper.applyCreateRequest(product, request, resolveCategory(request.getCategoryId()));
 
-            Product product = new Product();
+        MultipartFile image = request.getImage();
+        if (image != null && !image.isEmpty()) {
+            product.setImage(fileStorageService.saveImage(image));
+        } else {
+            product.setImage("/images/default.png");
+        }
 
+        product.setQuantity(request.getQuantity() != null ? request.getQuantity() : 0);
+        if (product.getQuantity() < 0) {
+            throw new IllegalArgumentException("Quantity cannot be negative");
+        }
 
+        Product saved = catalogRepository.save(product);
+        saved.setId(String.format("PRD-%06d", saved.getPk()));
+        return catalogRepository.save(saved);
+    }
 
-            product.setId(UUID.randomUUID().toString());
+    @Transactional
+    public ProductResponse updateProduct(String id, CreateProductRequest request) {
+        Product product = catalogRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
 
-            product.setNameFr(request.getNameFr());
-            product.setNameAr(request.getNameAr());
+        validateProductRequest(request);
+        productMapper.applyCreateRequest(product, request, resolveCategory(request.getCategoryId()));
 
-            product.setDescriptionFr(request.getDescriptionFr());
-            product.setDescriptionAr(request.getDescriptionAr());
+        if (request.getImage() != null && !request.getImage().isEmpty()) {
+            product.setImage(fileStorageService.saveImage(request.getImage()));
+        }
 
+        product.setQuantity(request.getQuantity() != null ? request.getQuantity() : product.getQuantity());
+        if (product.getQuantity() < 0) {
+            throw new IllegalArgumentException("Quantity cannot be negative");
+        }
 
+        return productMapper.toResponse(catalogRepository.save(product));
+    }
 
-            Category category = categoryRepository.findById(request.getCategoryId())
-                    .orElseThrow(() -> new RuntimeException("Catégorie introuvable"));
+    @Transactional
+    public void deleteProduct(String id) {
+        Product product = catalogRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
+        catalogRepository.delete(product);
+    }
 
-            product.setCategory(category);
+    @Transactional
+    public ProductResponse addStock(String id, Integer quantity) {
+        Product product = catalogRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
+        validatePositiveQuantity(quantity, "Quantity to add must be positive");
+        int current = product.getQuantity() == null ? 0 : product.getQuantity();
+        product.setQuantity(current + quantity);
+        return productMapper.toResponse(catalogRepository.save(product));
+    }
 
-            product.setPrice(request.getPrice());
-            product.setOriginalPrice(request.getOriginalPrice());
+    @Transactional
+    public ProductResponse updateStock(String id, Integer quantity) {
+        Product product = catalogRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
+        validateNonNegativeQuantity(quantity, "Quantity cannot be negative");
+        product.setQuantity(quantity);
+        return productMapper.toResponse(catalogRepository.save(product));
+    }
 
-            product.setTag(request.getTag());
+    @Transactional
+    public ProductResponse decreaseStock(String id, Integer quantity) {
+        Product product = catalogRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
+        validatePositiveQuantity(quantity, "Quantity to decrease must be positive");
+        int current = product.getQuantity() == null ? 0 : product.getQuantity();
+        if (current < quantity) {
+            throw new IllegalArgumentException("Not enough stock available");
+        }
+        product.setQuantity(current - quantity);
+        return productMapper.toResponse(catalogRepository.save(product));
+    }
 
-            String imagePath = fileStorageService.saveImage(request.getImage());
-            product.setImage(imagePath);
+    private Category resolveCategory(String categoryId) {
+        return categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+    }
 
-            Product saved = catalogRepository.save(product);
-
-            saved.setId(String.format("PRD-%06d", saved.getPk()));
-
-
-            return catalogRepository.save(saved);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
+    private void validatePositiveQuantity(Integer quantity, String message) {
+        if (quantity == null || quantity <= 0) {
+            throw new IllegalArgumentException(message);
         }
     }
 
+    private void validateNonNegativeQuantity(Integer quantity, String message) {
+        if (quantity == null || quantity < 0) {
+            throw new IllegalArgumentException(message);
+        }
+    }
 
+    private void validateProductRequest(CreateProductRequest request) {
+        if (request.getNameFr() == null || request.getNameFr().isBlank()) {
+            throw new IllegalArgumentException("Product name in French is required");
+        }
+        if (request.getNameAr() == null || request.getNameAr().isBlank()) {
+            throw new IllegalArgumentException("Product name in Arabic is required");
+        }
+        if (request.getDescriptionFr() == null || request.getDescriptionFr().isBlank()) {
+            throw new IllegalArgumentException("Product description in French is required");
+        }
+        if (request.getDescriptionAr() == null || request.getDescriptionAr().isBlank()) {
+            throw new IllegalArgumentException("Product description in Arabic is required");
+        }
+        if (request.getCategoryId() == null || request.getCategoryId().isBlank()) {
+            throw new IllegalArgumentException("Category is required");
+        }
+        if (request.getPrice() == null || request.getPrice() < 0) {
+            throw new IllegalArgumentException("Price must be positive");
+        }
+        if (request.getQuantity() != null && request.getQuantity() < 0) {
+            throw new IllegalArgumentException("Quantity cannot be negative");
+        }
+    }
 }

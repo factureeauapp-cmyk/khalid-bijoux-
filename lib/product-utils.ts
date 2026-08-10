@@ -28,3 +28,7 @@ export function getCategoryName(category: Category | undefined, language: Langua
 export function getCategoryById(categories: Category[], categoryId: string) {
   return categories.find((category) => category.id === categoryId)
 }
+
+export function getAvailableProducts(products: Product[]) {
+  return products.filter((product) => (product.quantity ?? 0) > 0)
+}

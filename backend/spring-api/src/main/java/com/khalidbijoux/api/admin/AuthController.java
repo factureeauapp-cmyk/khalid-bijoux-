@@ -29,24 +29,43 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
+        System.out.println("===== LOGIN ENDPOINT CALLED =====");
+
+        System.out.println("Email : " + request.email());
+        System.out.println("Password reçu : " + request.password());
+
+
+        System.out.println("Nombre admins : " + adminRepository.count());
+
+        adminRepository.findAll().forEach(a ->
+                System.out.println("Admin => " + a.getEmail())
+        );
         Admin admin = adminRepository.findByEmail(request.email())
                 .orElseThrow(() -> new AuthenticationException(
                         "INVALID_CREDENTIALS",
                         "Invalid email or password"
                 ));
 
+
+
+        boolean ok = passwordEncoder.matches(request.password(), "$2a$10$Jm5nRQzPEUwv3FJW.VpNkeLKj9z3xn6g/BJ9CnNdTQEKkpQ5V3Q4K");
+
+        System.out.println("Matches : " + ok);
+
         if (!passwordEncoder.matches(request.password(), admin.getPassword())) {
+
+
             throw new AuthenticationException(
                     "INVALID_CREDENTIALS",
                     "Invalid email or password"
             );
         }
 
-        String token = jwtService.generateToken(admin.getEmail());
+        String token = jwtService.generateToken(request.email());
 
         return ResponseEntity.ok(Map.of(
                 "token", token,
-                "email", admin.getEmail(),
+                "email", request.email(),
                 "expiresIn", 28800000
         ));
     }

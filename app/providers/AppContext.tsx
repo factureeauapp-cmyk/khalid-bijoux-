@@ -14,7 +14,7 @@ interface AppContextType {
   products: Product[]
   categories: Category[]
   orders: CustomerOrder[]
-  refreshProducts: () => Promise<void>
+  refreshProducts: (availableOnly?: boolean) => Promise<void>
   refreshCategories: () => Promise<void>
   refreshOrders: () => Promise<void>
 }
@@ -32,23 +32,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [categories, setCategories] = useState<Category[]>([])
   const [orders, setOrders] = useState<CustomerOrder[]>([])
 
-  const refreshProducts = useCallback(async () => {
-   const response = await fetch(
-  `${process.env.NEXT_PUBLIC_API_BASE_URL}/products`,
-  {
-    cache: "no-store",
-  }
-)
+  const refreshProducts = useCallback(async (availableOnly = true) => {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/products${availableOnly ? "" : "?availableOnly=false"}`,
+      {
+        cache: "no-store",
+        credentials: "include",
+      }
+    )
     if (!response.ok) {
       setProducts([])
       return
     }
-    setProducts(await response.json())
+    const productsPayload = await response.json()
+    setProducts(productsPayload)
   }, [])
 
   const refreshCategories = useCallback(async () => {
     const response = await fetch(
-  `${process.env.NEXT_PUBLIC_API_BASE_URL}/categories`, { cache: "no-store" })
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/categories`, { cache: "no-store", credentials: "include" })
     if (!response.ok) {
       setCategories([])
       return
@@ -58,7 +60,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const refreshOrders = useCallback(async () => {
     const response = await fetch(
-  `${process.env.NEXT_PUBLIC_API_BASE_URL}/orders`, { cache: "no-store" })
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/orders`, { cache: "no-store", credentials: "include" })
     if (!response.ok) {
       setOrders([])
       return

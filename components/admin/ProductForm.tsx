@@ -7,6 +7,8 @@ import { ImageUploader } from "./ImageUploader"
 import { cn } from "@/lib/utils"
 import type { Category, Product } from "@/lib/store-types"
 
+import { useAppContext } from "@/app/providers/AppContext"
+
 interface ProductFormProps {
   form: Partial<Product>
   formTitle: string
@@ -20,11 +22,13 @@ interface ProductFormProps {
   error: string
   isSaving: boolean
   editingId: string | null
-  formRef?: RefObject<HTMLFormElement>
-  firstInputRef?: RefObject<HTMLInputElement>
+  formRef?: RefObject<HTMLFormElement | null>
+  firstInputRef?: RefObject<HTMLInputElement | null>
   highlightForm?: boolean
   onCategoryDeleted?: () => void
 }
+
+
 
 export function ProductForm({
   form,
@@ -45,6 +49,8 @@ export function ProductForm({
   onCategoryDeleted,
 }: ProductFormProps) {
   const [languageTab, setLanguageTab] = useState<"fr" | "ar">("fr")
+  const { t } = useAppContext()
+  const admin = t("admin")
 
   const categoryId = useMemo(() => form.categoryId || "", [form.categoryId])
 
@@ -66,7 +72,7 @@ export function ProductForm({
             onClick={onReset}
             className="text-sm text-white/60 hover:text-white transition-colors"
           >
-            + Nouveau produit
+            + {admin.newProduct}
           </button>
         )}
       </div>
@@ -82,7 +88,9 @@ export function ProductForm({
         {/* Name */}
         <div>
           <label className="block text-sm font-medium text-white/80 mb-2">
-            {languageTab === "fr" ? "Nom du produit (FR)" : "اسم المنتج (AR)"}
+            {languageTab === "fr"
+              ? admin.productNameFr
+              : admin.productNameAr}
           </label>
           <input
             ref={firstInputRef}
@@ -94,7 +102,11 @@ export function ProductForm({
                 [languageTab === "fr" ? "nameFr" : "nameAr"]: e.target.value,
               })
             }
-            placeholder={languageTab === "fr" ? "Ex: Bague en or..." : "مثال: خاتم ذهب..."}
+            placeholder={
+              languageTab === "fr"
+                ? admin.productNamePlaceholder
+                : admin.productNamePlaceholder
+            }
             className={`w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none focus:border-[#c9a84c]/50 transition-colors ${languageTab === "ar" ? "text-right" : ""}`}
             disabled={isSaving}
           />
@@ -103,7 +115,9 @@ export function ProductForm({
         {/* Description */}
         <div>
           <label className="block text-sm font-medium text-white/80 mb-2">
-            {languageTab === "fr" ? "Description (FR)" : "الوصف (AR)"}
+            {languageTab === "fr"
+              ? admin.descriptionFr
+              : admin.descriptionAr}
           </label>
           <textarea
             value={languageTab === "fr" ? form.descriptionFr || "" : form.descriptionAr || ""}
@@ -113,7 +127,11 @@ export function ProductForm({
                 [languageTab === "fr" ? "descriptionFr" : "descriptionAr"]: e.target.value,
               })
             }
-            placeholder={languageTab === "fr" ? "Décrivez le produit..." : "وصف المنتج..."}
+            placeholder={
+              languageTab === "fr"
+                ? admin.descriptionPlaceholder
+                : admin.descriptionPlaceholder
+            }
             className={`w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none focus:border-[#c9a84c]/50 transition-colors min-h-28 ${languageTab === "ar" ? "text-right" : ""}`}
             disabled={isSaving}
           />
@@ -134,7 +152,7 @@ export function ProductForm({
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-white/80 mb-2">Prix (MAD)</label>
+            <label className="block text-sm font-medium text-white/80 mb-2">{admin.priceMad}</label>
             <input
               type="number"
               value={form.price || 0}
@@ -145,7 +163,7 @@ export function ProductForm({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-white/80 mb-2">Prix initial (opt.)</label>
+            <label className="block text-sm font-medium text-white/80 mb-2">{admin.originalPrice}</label>
             <input
               type="number"
               value={form.originalPrice || 0}
@@ -157,16 +175,29 @@ export function ProductForm({
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-white/80 mb-2">Badge (opt.)</label>
-          <input
-            type="text"
-            value={form.tag || ""}
-            onChange={(e) => onFormChange({ ...form, tag: e.target.value })}
-            placeholder="Ex: Nouveau, Promo..."
-            className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none focus:border-[#c9a84c]/50 transition-colors"
-            disabled={isSaving}
-          />
+        <div className="grid gap-4 md:grid-cols-2">
+          <div>
+            <label className="block text-sm font-medium text-white/80 mb-2">{admin.stockQuantity}</label>
+            <input
+              type="number"
+              min="0"
+              value={form.quantity ?? 0}
+              onChange={(e) => onFormChange({ ...form, quantity: Number(e.target.value) })}
+              className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none focus:border-[#c9a84c]/50 transition-colors"
+              disabled={isSaving}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-white/80 mb-2">{admin.badge}</label>
+            <input
+              type="text"
+              value={form.tag || ""}
+              onChange={(e) => onFormChange({ ...form, tag: e.target.value })}
+              placeholder={admin.badgePlaceholder}
+              className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none focus:border-[#c9a84c]/50 transition-colors"
+              disabled={isSaving}
+            />
+          </div>
         </div>
       </div>
 
@@ -177,16 +208,15 @@ export function ProductForm({
       <button
         type="submit"
         disabled={isSaving}
-        className="w-full rounded-2xl bg-gradient-to-r from-[#c9a84c] to-[#d9b85c] px-4 py-3 font-semibold text-black transition-all hover:shadow-lg hover:shadow-[#c9a84c]/20 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full rounded-2xl bg-linear-to-r from-[#c9a84c] to-[#d9b85c] px-4 py-3 font-semibold text-black transition-all hover:shadow-lg hover:shadow-[#c9a84c]/20 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isSaving ? (
           <span className="flex items-center justify-center gap-2">
             <div className="animate-spin rounded-full border-2 border-black/20 border-t-black h-4 w-4" />
-            Enregistrement...
+            {admin.saving}
           </span>
-        ) : (
-          "Enregistrer le produit"
-        )}
+        ) : 
+          admin.saveProduct}
       </button>
     </form>
   )

@@ -114,6 +114,10 @@ public class OrderService {
 
             orderRepository.save(order);
 
+            for (var item : items) {
+                catalogService.decreaseStock(item.getProductId(), item.getQuantity());
+            }
+
             System.out.println("========== ORDER CREATED ==========");
             System.out.println("Order Number : " + orderNumber);
             System.out.println("Subtotal : " + subtotal);

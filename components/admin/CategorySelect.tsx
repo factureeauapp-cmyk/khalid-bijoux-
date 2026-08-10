@@ -1,8 +1,11 @@
 "use client"
 
+
 import { useEffect, useMemo, useState } from "react"
 import { ChevronDown, Plus, X, Trash2 } from "lucide-react"
 import type { Category, Product } from "@/lib/store-types"
+
+import { useAppContext } from "@/app/providers/AppContext"
 
 interface CategorySelectProps {
   categories: Category[]
@@ -32,6 +35,10 @@ export function CategorySelect({
   const [deletingCategoryId, setDeletingCategoryId] = useState<string | null>(null)
   const [showCategoryOptions, setShowCategoryOptions] = useState<string | null>(null)
 
+
+  const { t } = useAppContext()
+  const admin = t("admin")
+  const adminErrors = admin.errors
   const selectedCategory = useMemo(() => categories.find((c) => c.id === selectedCategoryId), [categories, selectedCategoryId])
 
   const getCategoryLabel = (category: Category) => (language === "ar" ? category.nameAr : category.nameFr)
@@ -42,7 +49,7 @@ export function CategorySelect({
 
   const handleCreateCategory = async () => {
     if (!newCategoryFr.trim() || !newCategoryAr.trim()) {
-      setError("Les deux langues sont requises")
+      setError(admin.bothLanguagesRequired)
       return
     }
 
@@ -51,7 +58,7 @@ export function CategorySelect({
 
     try {
       const response = await fetch(
-  `${process.env.NEXT_PUBLIC_API_BASE_URL}/categories`, {
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/categories`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nameFr: newCategoryFr, nameAr: newCategoryAr }),
@@ -68,7 +75,7 @@ export function CategorySelect({
       setNewCategoryAr("")
       setShowNewCategory(false)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur lors de la création de la catégorie")
+      setError(err instanceof Error ? err.message : admin.categoryCreateError)
     } finally {
       setIsCreating(false)
     }
@@ -77,11 +84,16 @@ export function CategorySelect({
   const handleDeleteCategory = async (categoryId: string) => {
     const productCount = getProductsInCategory(categoryId)
     if (productCount > 0) {
-      setError(`Impossible de supprimer. Cette catégorie contient ${productCount} produit(s).`)
+      setError(
+        admin.categoryContainsProducts.replace(
+          "{count}",
+          String(productCount)
+        )
+      )
       return
     }
 
-    if (!confirm("Êtes-vous sûr de vouloir supprimer cette catégorie ?")) return
+    if (!confirm(admin.confirmDeleteCategory)) return
 
     setDeletingCategoryId(categoryId)
     setError("")
@@ -92,7 +104,7 @@ export function CategorySelect({
 
       if (!response.ok) {
         const data = await response.json()
-        throw new Error(data.error || "Erreur lors de la suppression")
+        throw new Error(data.error || admin.categoryDeleteError)
       }
 
       // If the deleted category was selected, select the first available
@@ -106,7 +118,7 @@ export function CategorySelect({
       onCategoryDeleted?.()
       setShowCategoryOptions(null)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur lors de la suppression")
+      setError(err instanceof Error ? err.message : admin.categoryDeleteError)
     } finally {
       setDeletingCategoryId(null)
     }
@@ -114,11 +126,18 @@ export function CategorySelect({
 
   return (
     <div className="space-y-3">
-      <label className="block text-sm font-medium text-white">Catégorie</label>
+      <label className="block text-sm font-medium text-white">{admin.category}</label>
 
       {categories.length === 0 ? (
         <div className="rounded-2xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
-          ⚠️ Aucune catégorie disponible. Créez-en une d'abord.
+
+          <p className="text-xs text-rose-300">
+            ⚠️{" "}
+            {admin.categoryUsedByProducts.replace(
+              "{count}",
+              String(productCount)
+            )}
+          </p>
         </div>
       ) : (
         <div className="relative">
@@ -128,7 +147,7 @@ export function CategorySelect({
             disabled={isLoading}
             className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 flex items-center justify-between text-left text-white disabled:opacity-50 hover:border-white/20 transition-colors"
           >
-            <span>{selectedCategory ? getCategoryLabel(selectedCategory) : "Sélectionner une catégorie"}</span>
+            <span>{selectedCategory ? getCategoryLabel(selectedCategory) : admin.selectCategory}</span>
             <ChevronDown
               size={18}
               className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
@@ -145,11 +164,10 @@ export function CategorySelect({
                   return (
                     <div key={category.id} className="relative">
                       <div
-                        className={`w-full px-4 py-3 text-left flex items-center justify-between transition-colors ${
-                          isSelected
-                            ? "bg-[#c9a84c]/20 text-[#c9a84c]"
-                            : "text-white hover:bg-white/10"
-                        }`}
+                        className={`w-full px-4 py-3 text-left flex items-center justify-between transition-colors ${isSelected
+                          ? "bg-[#c9a84c]/20 text-[#c9a84c]"
+                          : "text-white hover:bg-white/10"
+                          }`}
                       >
                         <button
                           type="button"
@@ -160,7 +178,7 @@ export function CategorySelect({
                           className="flex-1 text-left"
                         >
                           <div className="font-medium">{getCategoryLabel(category)}</div>
-                          <div className="text-xs text-white/40 mt-1">{productCount} produit(s)</div>
+                          <div className="text-xs text-white/40 mt-1"> {productCount} {admin.productsCount}</div>
                         </button>
                         {categories.length > 1 && (
                           <button
@@ -189,14 +207,14 @@ export function CategorySelect({
                                   disabled={deletingCategoryId === category.id}
                                   className="flex-1 rounded-lg bg-rose-500/20 px-3 py-2 text-xs font-semibold text-rose-400 hover:bg-rose-500/30 transition-colors disabled:opacity-50"
                                 >
-                                  {deletingCategoryId === category.id ? "..." : "Supprimer"}
+                                  {deletingCategoryId === category.id ? "..." : admin.delete}
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() => setShowCategoryOptions(null)}
                                   className="flex-1 rounded-lg border border-white/10 px-3 py-2 text-xs text-white hover:bg-white/10 transition-colors"
                                 >
-                                  Annuler
+                                  {admin.cancelBtn}
                                 </button>
                               </div>
                             </>
@@ -218,7 +236,7 @@ export function CategorySelect({
                   className="w-full flex items-center gap-2 rounded-lg bg-[#c9a84c]/10 px-3 py-2 text-sm text-[#c9a84c] hover:bg-[#c9a84c]/20 transition-colors"
                 >
                   <Plus size={16} />
-                  Créer une catégorie
+                  {admin.createCategory}
                 </button>
               </div>
 
@@ -247,7 +265,7 @@ export function CategorySelect({
                       disabled={isCreating}
                       className="flex-1 rounded-lg bg-[#c9a84c] px-3 py-2 text-xs font-semibold text-black disabled:opacity-50 hover:bg-[#d9b85c] transition-colors"
                     >
-                      {isCreating ? "..." : "Créer"}
+                      {isCreating ? admin.creating : admin.createBtn}
                     </button>
                     <button
                       type="button"

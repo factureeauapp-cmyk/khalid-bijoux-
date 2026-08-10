@@ -1,5 +1,6 @@
 package com.khalidbijoux.api.security;
 
+import com.khalidbijoux.api.admin.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,14 +19,11 @@ import java.io.IOException;
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    // TODO adapte à ton implémentation (injection de ton JwtService / UserDetailsService)
-    // private final JwtService jwtService;
-    // private final UserDetailsService userDetailsService;
-    //
-    // public JwtAuthFilter(JwtService jwtService, UserDetailsService userDetailsService) {
-    //     this.jwtService = jwtService;
-    //     this.userDetailsService = userDetailsService;
-    // }
+    private final JwtService jwtService;
+
+    public JwtAuthFilter(JwtService jwtService) {
+        this.jwtService = jwtService;
+    }
 
     @Override
     protected void doFilterInternal(
@@ -57,32 +55,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         try {
             final String jwt = authHeader.substring(7);
+            final String email = jwtService.extractEmail(jwt);
 
-            // TODO adapte à ton implémentation réelle
-            // final String username = jwtService.extractUsername(jwt);
-            //
-            // if (username != null
-            //         && SecurityContextHolder.getContext().getAuthentication() == null) {
-            //
-            //     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            //
-            //     if (jwtService.isTokenValid(jwt, userDetails)) {
-            //         UsernamePasswordAuthenticationToken authToken =
-            //                 new UsernamePasswordAuthenticationToken(
-            //                         userDetails, null, userDetails.getAuthorities()
-            //                 );
-            //         authToken.setDetails(
-            //                 new WebAuthenticationDetailsSource().buildDetails(request)
-            //         );
-            //         SecurityContextHolder.getContext().setAuthentication(authToken);
-            //     }
-            // }
+            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                if (jwtService.isTokenValid(jwt)) {
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(email, null, java.util.List.of());
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
+            }
 
         } catch (Exception ex) {
-            // Important : ne JAMAIS répondre directement ici (res.sendError, etc.)
-            // On laisse la requête continuer sans authentification. C'est
-            // authorizeHttpRequests / l'AuthenticationEntryPoint qui décidera
-            // du code retour final (401) si la route l'exige vraiment.
             SecurityContextHolder.clearContext();
         }
 

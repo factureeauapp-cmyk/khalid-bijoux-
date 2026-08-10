@@ -35,8 +35,10 @@ export default function ProductCard({ product }: { product: Product }) {
   const productPrice = product?.price || 0
   const productTag = product?.tag || null
   const productDescription = getProductDescription(product, language)
+  const isOutOfStock = (product.quantity ?? 0) <= 0
 
   const handleAddToCart = () => {
+    if (isOutOfStock) return
     addToCart(product)
     setShowFeedback(true)
     setTimeout(() => setShowFeedback(false), 2000)
@@ -52,13 +54,19 @@ export default function ProductCard({ product }: { product: Product }) {
     >
       {productTag && (
         <div className="absolute left-4 top-4 z-20">
-          <span className="rounded-md bg-gradient-to-r from-[#C9A84C] to-[#E8C97E] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-[#0D0D0D] shadow-lg">
+          <span className="rounded-md bg-linear-to-r from-[#C9A84C] to-[#E8C97E] px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[#0D0D0D] shadow-lg">
             {productTag}
           </span>
         </div>
       )}
 
-      <div className="relative block h-[280px] w-full overflow-hidden bg-[#0A0A0A]">
+      {isOutOfStock && (
+        <div className="absolute right-4 top-4 z-20 rounded-full border border-rose-500/30 bg-rose-500/15 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-rose-300">
+          {language === "ar" ? "نفد" : "Rupture"}
+        </div>
+      )}
+
+      <div className="relative block h-70 w-full overflow-hidden bg-[#0A0A0A]">
         <Image
           src={productImage}
           alt={productName || "product image"}
@@ -72,7 +80,8 @@ export default function ProductCard({ product }: { product: Product }) {
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100" >
           <button
             onClick={handleAddToCart}
-            className="pointer-events-auto rounded-full bg-gradient-to-r from-[#C9A84C] to-[#E8C97E] p-3 text-[#0D0D0D] shadow-xl transition-transform duration-300 hover:scale-110"
+            disabled={isOutOfStock}
+            className="pointer-events-auto rounded-full bg-linear-to-r from-[#C9A84C] to-[#E8C97E] p-3 text-[#0D0D0D] shadow-xl transition-transform duration-300 hover:scale-110 disabled:cursor-not-allowed disabled:opacity-50"
             aria-label="Add to cart"
             title={language === "ar" ? "أضف إلى السلة" : "Ajouter au panier"}
           >
@@ -91,7 +100,7 @@ export default function ProductCard({ product }: { product: Product }) {
           <h3 className="text-[20px] font-cormorant font-semibold leading-tight text-white">
             {productName || "Product"}
           </h3>
-          <p className="min-h-[4.5rem] overflow-hidden text-sm text-[#c9c2b7] line-clamp-3">
+          <p className="min-h-18 overflow-hidden text-sm text-[#c9c2b7] line-clamp-3">
             {productDescription}
           </p>
         </div>
@@ -119,7 +128,8 @@ export default function ProductCard({ product }: { product: Product }) {
 
             <button
               onClick={handleAddToCart}
-              className="group flex min-w-0 flex-1 items-center justify-center gap-2 rounded-[14px] bg-gradient-to-r from-[#C9A84C] via-[#E8C97E] to-[#C9A84C] px-4 py-3 text-sm font-semibold uppercase tracking-[0.15em] text-[#0D0D0D] shadow-[0_12px_30px_rgba(201,168,76,0.22)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] hover:shadow-[0_18px_40px_rgba(201,168,76,0.35)] active:scale-[0.98]"
+              disabled={isOutOfStock}
+              className="group flex min-w-0 flex-1 items-center justify-center gap-2 rounded-[14px] bg-linear-to-r from-[#C9A84C] via-[#E8C97E] to-[#C9A84C] px-4 py-3 text-sm font-semibold uppercase tracking-[0.15em] text-[#0D0D0D] shadow-[0_12px_30px_rgba(201,168,76,0.22)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] hover:shadow-[0_18px_40px_rgba(201,168,76,0.35)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
               aria-label="Order now"
             >
               <Plus

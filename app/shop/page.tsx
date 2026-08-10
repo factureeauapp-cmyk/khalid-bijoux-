@@ -5,7 +5,7 @@ import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 import ProductCard from "../components/ProductCard"
 import { useAppContext } from "../providers/AppContext"
-import { getCategoryName } from "@/lib/product-utils"
+import { getAvailableProducts, getCategoryName } from "@/lib/product-utils"
 import CustomSelect from "../components/CustomSelect"
 
 export default function ShopPage() {
@@ -27,7 +27,7 @@ export default function ShopPage() {
   }, [language])
 
   const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
+    return getAvailableProducts(products).filter((product) => {
       // Get product name in current language
       const productName = (language === "ar" ? product.nameAr : product.nameFr || "").toLowerCase().trim()
       const searchTerm = (searchQuery || "").toLowerCase().trim()

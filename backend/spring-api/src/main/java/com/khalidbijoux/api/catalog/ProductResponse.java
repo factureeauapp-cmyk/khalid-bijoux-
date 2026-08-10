@@ -26,5 +26,7 @@ public class ProductResponse {
 
     private String image;
 
+    private Integer quantity;
+
     private CategoryResponse category;
 }

@@ -7,6 +7,7 @@ import Footer from "../../components/Footer"
 import ProductCard from "../../components/ProductCard"
 import { useAppContext } from "../../providers/AppContext"
 import type { Product } from "@/lib/store-types"
+import { getAvailableProducts } from "@/lib/product-utils"
 
 export default function CategoryPage() {
   const params = useParams()
@@ -50,7 +51,7 @@ export default function CategoryPage() {
 
   const filteredProducts = useMemo(() => {
     if (!matchingCategory) return []
-    return catalog.filter((product) => product.categoryId === matchingCategory.id)
+    return getAvailableProducts(catalog).filter((product) => product.categoryId === matchingCategory.id)
   }, [catalog, matchingCategory])
 
   const displayTitle = categoryName.charAt(0).toUpperCase() + categoryName.slice(1)

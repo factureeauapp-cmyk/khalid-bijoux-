@@ -1,8 +1,9 @@
 "use client"
 
 import Image from "next/image"
-import { useEffect, useRef, useState } from "react"
-import { Upload, X } from "lucide-react"
+import { useRef, useState } from "react"
+import { Upload } from "lucide-react"
+import { useAppContext } from "@/app/providers/AppContext"
 
 interface ImageUploaderProps {
   previewUrl: string
@@ -11,6 +12,9 @@ interface ImageUploaderProps {
 }
 
 export function ImageUploader({ previewUrl, onFileSelect, isLoading = false }: ImageUploaderProps) {
+  const { language, t } = useAppContext() as any
+  const adminT = t("admin")
+
   const [isDragging, setIsDragging] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -52,8 +56,8 @@ export function ImageUploader({ previewUrl, onFileSelect, isLoading = false }: I
   }
 
   return (
-    <div className="space-y-3">
-      <label className="block text-sm font-medium text-white">Aperçu de l&apos;image</label>
+    <div className="space-y-3" dir={language === "ar" ? "rtl" : "ltr"}>
+      <label className="block text-sm font-medium text-white">{adminT.imagePreview}</label>
 
       {/* Preview */}
       <div
@@ -67,11 +71,11 @@ export function ImageUploader({ previewUrl, onFileSelect, isLoading = false }: I
             : "border-[#c9a84c]/25 bg-black/30 hover:border-[#c9a84c]/50 hover:bg-black/40"
         }`}
       >
-        <Image 
-          src={previewUrl || "/placeholder.svg"} 
-          alt="Aperçu de l'image du produit" 
-          fill 
-          className="object-cover" 
+        <Image
+          src={previewUrl || "/placeholder.svg"}
+          alt={adminT.productImageAlt}
+          fill
+          className="object-cover"
           sizes="(max-width: 768px) 100vw, 500px"
           priority
         />
@@ -80,13 +84,13 @@ export function ImageUploader({ previewUrl, onFileSelect, isLoading = false }: I
         <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
           <div className="text-center">
             <Upload className="mx-auto mb-2 h-8 w-8 text-[#c9a84c]" />
-            <p className="text-sm text-white">Cliquez ou glissez une image</p>
+            <p className="text-sm text-white">{adminT.dragDropImage}</p>
           </div>
         </div>
 
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/60">
-            <div className="animate-spin rounded-full border-2 border-[#c9a84c]/30 border-t-[#c9a84c] h-8 w-8" />
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#c9a84c]/30 border-t-[#c9a84c]" />
           </div>
         )}
       </div>
@@ -102,7 +106,7 @@ export function ImageUploader({ previewUrl, onFileSelect, isLoading = false }: I
       />
 
       {/* Info text */}
-      <p className="text-xs text-white/50">JPG, PNG ou WEBP • Max 2 MB</p>
+      <p className="text-xs text-white/50">{adminT.maxFileSize}</p>
     </div>
   )
 }
