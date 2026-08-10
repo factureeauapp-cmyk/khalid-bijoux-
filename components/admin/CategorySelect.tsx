@@ -129,17 +129,14 @@ export function CategorySelect({
       <label className="block text-sm font-medium text-white">{admin.category}</label>
 
       {categories.length === 0 ? (
-        <div className="rounded-2xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
-
-          <p className="text-xs text-rose-300">
-            ⚠️{" "}
-            {admin.categoryUsedByProducts.replace(
-              "{count}",
-              String(productCount)
-            )}
-          </p>
-        </div>
-      ) : (
+  <div className="rounded-2xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
+    <p>
+      {language === "ar"
+        ? "لا توجد فئات متاحة."
+        : "Aucune catégorie disponible."}
+    </p>
+  </div>
+) : (
         <div className="relative">
           <button
             type="button"
