@@ -60,7 +60,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/categories", "/api/categories/**").permitAll()
                         .requestMatchers("/api/chat/**", "/api/contact/**", "/api/orders/**", "/api/test/**", "/uploads/**").permitAll()
 
-                        .requestMatchers("/api/admin/**").permitAll()
+                        .requestMatchers("/api/admin/**").authenticated()
                         .anyRequest().authenticated()
                 )
 

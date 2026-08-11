@@ -17,12 +17,13 @@ export default function AdminOrdersPage() {
   const updateOrderStatus = async (orderNumber: string, status: string) => {
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-      const response = await fetch(`${API_URL}/orders/${orderNumber}`, {
+      const response = await fetch(`${API_URL}/orders/${orderNumber}/status`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ status }),
       })
-
       if (!response.ok) {
         const data = await response.json()
         throw new Error(data.error || adminT.statusUpdateError)
