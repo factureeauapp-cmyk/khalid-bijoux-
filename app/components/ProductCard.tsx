@@ -23,8 +23,12 @@ export default function ProductCard({ product }: { product: Product }) {
     setMounted(true)
   }, [])
 
-  // Get category information
-  const category = product?.categoryId ? getCategoryById(categories, product.categoryId) : null
+ const category = product.category
+  ? product.category
+  : product.categoryId
+    ? getCategoryById(categories, product.categoryId)
+    : null
+    
 
   // Prevent rendering until hydration is complete
   if (!mounted) return null
@@ -77,7 +81,7 @@ export default function ProductCard({ product }: { product: Product }) {
         />
 
         {/* Hover Overlay with "+" button - positioned above content */}
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100" >
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
           <button
             onClick={handleAddToCart}
             disabled={isOutOfStock}
@@ -88,55 +92,83 @@ export default function ProductCard({ product }: { product: Product }) {
             <Plus size={20} />
           </button>
         </div>
-
       </div>
-
 
       <div className="flex flex-1 flex-col justify-between p-5">
         <div className="space-y-2">
-          <p className="inline-flex rounded-full border border-[#c9a84c]/20 bg-[#c9a84c]/10 px-3 py-1 text-[11px] font-medium tracking-wider text-[#f3dd9f]">
+          <p className="inline-flex max-w-full truncate rounded-full border border-[#c9a84c]/20 bg-[#c9a84c]/10 px-3 py-1 text-[11px] font-medium tracking-wider text-[#f3dd9f]">
             {category ? getCategoryName(category, language) : language === "ar" ? "غير مصنف" : "Sans categorie"}
           </p>
-          <h3 className="text-[20px] font-cormorant font-semibold leading-tight text-white">
+
+          {/* Nom du produit : 2 lignes max, hauteur uniforme entre les cartes */}
+          <h3 className="line-clamp-2 min-h-[52px] break-words font-cormorant text-[20px] font-semibold leading-[26px] text-white">
             {productName || "Product"}
           </h3>
-          <p className="min-h-18 overflow-hidden text-sm text-[#c9c2b7] line-clamp-3">
+
+          {/* Description : 3 lignes max, hauteur fixe, jamais de débordement */}
+          <p className="h-[72px] overflow-hidden break-words text-sm leading-6 text-[#c9c2b7] line-clamp-3">
             {productDescription}
           </p>
         </div>
 
         <div className="space-y-4 pt-4">
           <div className="flex items-end justify-between gap-3">
-            <div className="flex-1 min-w-0">
-              <p className="text-[18px] font-bold text-[#E8C97E]">{productPrice} MAD</p>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-[18px] font-bold text-[#E8C97E]">{productPrice} MAD</p>
               {product?.originalPrice && (
-                <p className="text-[12px] font-medium text-[#A0A0A0] line-through">
+                <p className="truncate text-[12px] font-medium text-[#A0A0A0] line-through">
                   {product.originalPrice} MAD
                 </p>
               )}
             </div>
           </div>
 
-          <div className="mt-auto flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="mt-auto grid grid-cols-2 gap-2 pt-4 sm:gap-2.5">
+            {/* Détails */}
             <button
+              type="button"
               onClick={() => router.push(`/product/${product.id}`)}
-              className="group flex min-w-0 flex-1 items-center justify-center rounded-[14px] border border-[#C9A84C] bg-transparent px-4 py-3 text-sm font-semibold uppercase tracking-[0.15em] text-[#C9A84C] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] hover:bg-[#C9A84C] hover:text-[#0D0D0D] hover:shadow-[0_12px_30px_rgba(201,168,76,0.25)] active:scale-[0.98]"
-              aria-label="View product details"
+              className="
+                flex h-[48px] min-w-0 items-center justify-center
+                overflow-hidden rounded-[14px] border border-[#C9A84C]
+                bg-transparent px-1.5
+                text-[10.5px] font-semibold uppercase tracking-[0.02em]
+                text-[#C9A84C] whitespace-nowrap
+                transition-all duration-300
+                hover:border-[#E8C97E] hover:bg-[#C9A84C]/10 hover:text-[#E8C97E]
+                active:scale-[0.98]
+                sm:h-[52px] sm:px-3 sm:text-xs sm:tracking-[0.06em]
+              "
+              aria-label={language === "ar" ? "عرض تفاصيل المنتج" : "Voir les détails du produit"}
+              title={shop.details}
             >
-              {shop.details}
+              <span className="truncate">{shop.details}</span>
             </button>
 
+            {/* Commander */}
             <button
+              type="button"
               onClick={handleAddToCart}
               disabled={isOutOfStock}
-              className="group flex min-w-0 flex-1 items-center justify-center gap-2 rounded-[14px] bg-linear-to-r from-[#C9A84C] via-[#E8C97E] to-[#C9A84C] px-4 py-3 text-sm font-semibold uppercase tracking-[0.15em] text-[#0D0D0D] shadow-[0_12px_30px_rgba(201,168,76,0.22)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] hover:shadow-[0_18px_40px_rgba(201,168,76,0.35)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
-              aria-label="Order now"
+              className="
+                flex h-[48px] min-w-0 items-center justify-center gap-1
+                overflow-hidden rounded-[14px]
+                bg-linear-to-r from-[#C9A84C] via-[#E8C97E] to-[#C9A84C]
+                px-1.5
+                text-[10.5px] font-semibold uppercase tracking-[0.02em]
+                text-[#0D0D0D] whitespace-nowrap
+                shadow-[0_10px_24px_rgba(201,168,76,0.18)]
+                transition-all duration-300
+                hover:shadow-[0_14px_32px_rgba(201,168,76,0.28)]
+                active:scale-[0.98]
+                disabled:cursor-not-allowed disabled:opacity-50
+                sm:h-[52px] sm:px-3 sm:text-xs sm:tracking-[0.05em]
+              "
+              aria-label={language === "ar" ? "طلب المنتج" : "Commander le produit"}
+              title={shop.order}
             >
-              <Plus
-                size={16}
-                className="transition-transform duration-300 group-hover:rotate-90 group-hover:scale-110"
-              />
-              {shop.order}
+              <Plus size={13} className="shrink-0" />
+              <span className="truncate">{shop.order}</span>
             </button>
           </div>
 
@@ -146,7 +178,7 @@ export default function ProductCard({ product }: { product: Product }) {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
-              className="mt-2 rounded-lg bg-green-500/20 border border-green-500/50 px-3 py-2 text-center text-xs text-green-300"
+              className="mt-2 rounded-lg border border-green-500/50 bg-green-500/20 px-3 py-2 text-center text-xs text-green-300"
             >
               {language === "ar" ? "✓ تمت الإضافة" : "✓ Ajouté au panier"}
             </motion.div>

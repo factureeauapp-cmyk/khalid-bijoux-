@@ -19,7 +19,7 @@ export default function AdminStockPage() {
   const [history, setHistory] = useState<StockHistoryEntry[]>([])
 
   useEffect(() => {
-    void refreshProducts()
+    void refreshProducts(false)
   }, [refreshProducts])
 
   const handleConfirmStock = async (newQuantity: number) => {
@@ -42,7 +42,7 @@ export default function AdminStockPage() {
         throw new Error(adminT.stockUpdateFailed)
       }
 
-      await refreshProducts()
+      await refreshProducts(false)
 
       setHistory((prev) => [
         {

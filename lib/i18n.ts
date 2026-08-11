@@ -373,6 +373,11 @@ export const translations = {
       categoryDeleteSuccess: "Catégorie supprimée avec succès",
       deletingCategory: "Suppression...",
 
+      inStock: "En stock",
+
+
+      noOrdersYet: "Aucune commande pour le moment.",
+
       errors: {
         INVALID_CREDENTIALS: "Identifiants incorrects",
 
@@ -793,6 +798,10 @@ export const translations = {
 
       deletingCategory: "جارٍ الحذف...",
 
+
+      inStock: "متوفر",
+
+      noOrdersYet: "لا توجد طلبات حالياً.",
 
       errors: {
         INVALID_CREDENTIALS: "بيانات تسجيل الدخول غير صحيحة",

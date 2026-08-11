@@ -49,9 +49,9 @@ export default function AdminProductsPage() {
   const [editTrigger, setEditTrigger] = useState(0)
 
   useEffect(() => {
-    void refreshProducts()
-    void refreshCategories()
-  }, [refreshProducts, refreshCategories])
+  void refreshProducts(false)
+  void refreshCategories()
+}, [refreshProducts, refreshCategories])
 
   useEffect(() => {
     if (!editingId) return
@@ -172,7 +172,7 @@ export default function AdminProductsPage() {
 
       resetForm()
 
-      await refreshProducts()
+      await refreshProducts(false)
 
       setSuccessMessage(
         editingId
@@ -211,7 +211,7 @@ export default function AdminProductsPage() {
       const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
       const response = await fetch(`${API_URL}/products/${id}`, { method: "DELETE" })
       if (!response.ok) throw new Error(adminErrors.PRODUCT_DELETE_FAILED)
-      await refreshProducts()
+      await refreshProducts(false)
       setSuccessMessage(admin.productDeleted)
       setToast({
         message: admin.productDeleted,
@@ -269,7 +269,7 @@ export default function AdminProductsPage() {
           onDelete={handleDelete}
           language={language}
           isDeleting={isDeleting}
-          onStockUpdated={refreshProducts}
+          onStockUpdated={() => refreshProducts(false)}
         />
       </div>
 

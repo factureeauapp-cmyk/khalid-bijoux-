@@ -12,7 +12,7 @@ import { useCart } from "../../CartContext"
 import { useAppContext } from "../../providers/AppContext"
 import { getCategoryById, getCategoryName, getProductDescription, getProductName } from "@/lib/product-utils"
 import type { Product } from "@/lib/store-types"
-import { PRODUCTS } from "@/lib/data"
+
 
 interface ProductWithGallery extends Product {
   images?: string[]
@@ -23,25 +23,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const { id } = use(params)
   const { products, categories, language, dir, t } = useAppContext()
   const productLabels = t("product")
-  const catalog: Product[] = (products.length ? products : PRODUCTS).map((entry) => {
-    if ("nameFr" in entry && "descriptionFr" in entry && "categoryId" in entry) {
-      return entry as Product
-    }
 
-    return {
-      id: entry.id,
-      nameFr: entry.name,
-      nameAr: entry.name,
-      categoryId: "",
-      price: entry.price,
-      originalPrice: entry.originalPrice,
-      tag: entry.tag,
-      descriptionFr: entry.description,
-      descriptionAr: entry.description,
-      image: entry.image,
-    }
-  })
+  const catalog = products
+
   const product = catalog.find((entry) => entry.id === id)
+
   const { addToCart } = useCart()
   const [selectedImage, setSelectedImage] = useState("/placeholder.svg")
   const [showToast, setShowToast] = useState(false)
@@ -73,9 +59,32 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
   const productName = getProductName(product, language)
   const productDescription = getProductDescription(product, language)
-  const category = product.categoryId ? getCategoryById(categories, product.categoryId) : null
-  const categoryName = category ? getCategoryName(category, language) : language === "ar" ? "غير مصنف" : "Sans catégorie"
-  const relatedProducts = catalog.filter((entry) => entry.categoryId === product.categoryId && entry.id !== product.id).slice(0, 4)
+  const category =
+    product.category ??
+    (product.categoryId
+      ? getCategoryById(categories, product.categoryId)
+      : null)
+
+  const categoryName = category
+    ? getCategoryName(category, language)
+    : language === "ar"
+      ? "غير مصنف"
+      : "Sans catégorie"
+
+  const relatedProducts = catalog
+    .filter((entry) => {
+      const entryCategoryId =
+        entry.category?.id ?? entry.categoryId
+
+      const productCategoryId =
+        product.category?.id ?? product.categoryId
+
+      return (
+        entryCategoryId === productCategoryId &&
+        entry.id !== product.id
+      )
+    })
+    .slice(0, 4)
   const productWithGallery = product as ProductWithGallery
   const galleryImages = [product.image, ...(productWithGallery.images ?? []), ...(productWithGallery.gallery ?? [])]
     .filter((image, index, array) => Boolean(image) && array.indexOf(image) === index)

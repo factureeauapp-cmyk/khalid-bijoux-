@@ -228,6 +228,6 @@ public class OrderService {
                 status.equals("DELIVERED") ||
                 status.equals("CANCELLED");
     }
-    
+
 }
 
