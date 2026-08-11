@@ -10,6 +10,8 @@ import java.util.List;
 public class CategoryService {
 
     private final CategoryRepository repository;
+    private final CatalogRepository catalogRepository;
+
 
     public Category create(CreateCategoryRequest request) {
 
@@ -32,5 +34,24 @@ public class CategoryService {
     public Category getCategory(String id) {
         return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Catégorie introuvable"));
+    }
+
+    public void deleteCategory(String id) {
+
+        Category category = repository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Catégorie introuvable"));
+
+        long productCount = catalogRepository.countByCategory_Id(id);
+
+        if (productCount > 0) {
+            throw new RuntimeException(
+                    "Impossible de supprimer cette catégorie : "
+                            + productCount
+                            + " produit(s) utilisent cette catégorie."
+            );
+        }
+
+        repository.delete(category);
     }
 }

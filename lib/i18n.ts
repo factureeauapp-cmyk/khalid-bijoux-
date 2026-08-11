@@ -364,6 +364,15 @@ export const translations = {
       productImageAlt: "Aperçu de l'image du produit",
 
 
+
+      deleteCategoryTitle: "Supprimer la catégorie ?",
+      deleteCategoryConfirmPrefix: "Êtes-vous sûr de vouloir supprimer la catégorie",
+      deleteCategoryIrreversible: "Cette action est irréversible.",
+      categoryProductsAssociated: "produit(s) associé(s) à cette catégorie",
+      cannotDeleteCategoryTitle: "Suppression impossible",
+      categoryDeleteSuccess: "Catégorie supprimée avec succès",
+      deletingCategory: "Suppression...",
+
       errors: {
         INVALID_CREDENTIALS: "Identifiants incorrects",
 
@@ -771,6 +780,18 @@ export const translations = {
       close: "إغلاق",
 
       productImageAlt: "معاينة صورة المنتج",
+
+
+
+
+      deleteCategoryTitle: "حذف الفئة؟",
+      deleteCategoryConfirmPrefix: "هل أنت متأكد من حذف الفئة",
+      deleteCategoryIrreversible: "لا يمكن التراجع عن هذه العملية.",
+      categoryProductsAssociated: "منتج(ات) مرتبط(ة) بهذه الفئة",
+      cannotDeleteCategoryTitle: "تعذر الحذف",
+      categoryDeleteSuccess: "تم حذف الفئة بنجاح",
+
+      deletingCategory: "جارٍ الحذف...",
 
 
       errors: {

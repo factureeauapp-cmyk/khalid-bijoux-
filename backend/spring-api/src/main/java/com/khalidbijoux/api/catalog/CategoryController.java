@@ -1,6 +1,7 @@
 package com.khalidbijoux.api.catalog;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +27,13 @@ public class CategoryController {
     @GetMapping("/{id}")
     public Category getCategory(@PathVariable String id) {
         return categoryService.getCategory(id);
+    }
+
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCategory(@PathVariable String id) {
+        categoryService.deleteCategory(id);
     }
 
 
