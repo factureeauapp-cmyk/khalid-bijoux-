@@ -208,21 +208,26 @@ public class OrderService {
         }
 
         String normalizedStatus = status.toUpperCase();
+
         if (!isValidStatus(normalizedStatus)) {
             throw new IllegalArgumentException(
-                "Invalid status: " + status + ". Valid statuses: PENDING, SHIPPED, DELIVERED, CANCELLED"
+                    "Invalid status: " + status +
+                            ". Valid statuses: PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED"
             );
         }
     }
+
 
     /**
      * Check if status is valid
      */
     private boolean isValidStatus(String status) {
         return status.equals("PENDING") ||
-               status.equals("SHIPPED") ||
-               status.equals("DELIVERED") ||
-               status.equals("CANCELLED");
+                status.equals("CONFIRMED") ||
+                status.equals("SHIPPED") ||
+                status.equals("DELIVERED") ||
+                status.equals("CANCELLED");
     }
+    
 }
 
