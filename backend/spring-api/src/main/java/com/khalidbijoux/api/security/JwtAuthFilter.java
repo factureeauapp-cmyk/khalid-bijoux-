@@ -3,22 +3,24 @@ package com.khalidbijoux.api.security;
 import com.khalidbijoux.api.admin.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
-
     private final JwtService jwtService;
 
     public JwtAuthFilter(JwtService jwtService) {
@@ -26,50 +28,74 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(
-            @NonNull HttpServletRequest request,
-            @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain
-    ) throws ServletException, IOException {
-
-        // ------------------------------------------------------------------
-        // ÉTAPE CRITIQUE : ne jamais appliquer la logique JWT à une requête
-        // OPTIONS (preflight CORS). Le navigateur n'envoie JAMAIS de header
-        // Authorization sur un preflight -> toute tentative de validation de
-        // token ici provoquerait un 401/403 avant même que Spring Security
-        // n'applique les règles permitAll() ou les headers CORS.
-        // ------------------------------------------------------------------
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
         if (HttpMethod.OPTIONS.matches(request.getMethod())) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        final String authHeader = request.getHeader("Authorization");
-
-        // Pas de header Authorization -> on laisse passer, Spring Security
-        // (authorizeHttpRequests) décidera si la route nécessite une auth.
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        String jwt = resolveToken(request);
+        if (jwt == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
-            final String jwt = authHeader.substring(7);
-            final String email = jwtService.extractEmail(jwt);
+            String email = jwtService.extractEmail(jwt);
 
-            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                if (jwtService.isTokenValid(jwt)) {
-                    UsernamePasswordAuthenticationToken authToken =
-                            new UsernamePasswordAuthenticationToken(email, null, java.util.List.of());
-                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
-                }
+            System.out.println("EMAIL = " + email);
+            System.out.println("TOKEN VALID = " + jwtService.isTokenValid(jwt));
+            System.out.println("HAS ROLE = " + jwtService.hasAdminRole(jwt));
+
+            if (email != null
+                    && SecurityContextHolder.getContext().getAuthentication() == null
+                    && jwtService.isTokenValid(jwt)
+                    && jwtService.hasAdminRole(jwt)) {
+
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                email,
+                                null,
+                                List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
+                        );
+
+                authentication.setDetails(
+                        new WebAuthenticationDetailsSource().buildDetails(request)
+                );
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
             SecurityContextHolder.clearContext();
         }
-
         filterChain.doFilter(request, response);
+    }
+
+    /** Browser requests use the httpOnly cookie; API clients may send a Bearer token. */
+    private String resolveToken(HttpServletRequest request) {
+
+        String authorization = request.getHeader("Authorization");
+
+        System.out.println("AUTH HEADER = " + authorization);
+
+        if (authorization != null && authorization.startsWith("Bearer ")) {
+            return authorization.substring(7);
+        }
+
+        if (request.getCookies() == null) {
+            System.out.println("NO COOKIES");
+            return null;
+        }
+
+        Arrays.stream(request.getCookies())
+                .forEach(cookie ->
+                        System.out.println(cookie.getName() + "=" + cookie.getValue()));
+
+        return Arrays.stream(request.getCookies())
+                .filter(cookie -> "kb-admin-token".equals(cookie.getName()))
+                .map(Cookie::getValue)
+                .findFirst()
+                .orElse(null);
     }
 }

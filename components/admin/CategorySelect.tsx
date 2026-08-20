@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
-import { ChevronDown, Plus, X, Trash2, AlertTriangle } from "lucide-react"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { Check, ChevronDown, Plus, X, Trash2, AlertTriangle } from "lucide-react"
 import type { Category, Product } from "@/lib/store-types"
 
 import {
@@ -64,6 +64,10 @@ export function CategorySelect({
   // (source de vérité, différente du count local qui peut être obsolète)
   const [blockedByProductCount, setBlockedByProductCount] = useState<number | null>(null)
 
+  // Liste déroulante — utilisé pour faire défiler jusqu'à la catégorie
+  // actuellement sélectionnée dès l'ouverture du menu.
+  const listRef = useRef<HTMLDivElement>(null)
+
   const { t } = useAppContext()
   const admin = t("admin")
   const adminErrors = admin.errors
@@ -77,6 +81,19 @@ export function CategorySelect({
     const timer = window.setTimeout(() => setSuccessMessage(""), 3200)
     return () => window.clearTimeout(timer)
   }, [successMessage])
+
+  // Quand le menu s'ouvre (typiquement en modification de produit, la
+  // catégorie déjà sélectionnée peut se trouver plus bas dans la liste),
+  // on scrolle automatiquement jusqu'à l'élément sélectionné pour qu'il
+  // soit visible sans que l'utilisateur ait à chercher.
+  useEffect(() => {
+    if (!isOpen || !listRef.current) return
+
+    const selectedEl = listRef.current.querySelector<HTMLElement>('[data-selected="true"]')
+    if (selectedEl) {
+      selectedEl.scrollIntoView({ block: "nearest" })
+    }
+  }, [isOpen])
 
   const getCategoryLabel = (category: Category) => (language === "ar" ? category.nameAr : category.nameFr)
 
@@ -291,15 +308,21 @@ export function CategorySelect({
             type="button"
             onClick={() => setIsOpen(!isOpen)}
             disabled={isLoading}
-            className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 flex items-center justify-between text-left text-white disabled:opacity-50 hover:border-white/20 transition-colors"
+            className={`w-full rounded-2xl border bg-black/30 px-4 py-3 flex items-center justify-between text-left text-white disabled:opacity-50 transition-colors ${
+              selectedCategory
+                ? "border-[#c9a84c]/40 hover:border-[#c9a84c]/60"
+                : "border-white/10 hover:border-white/20"
+            }`}
           >
-            <span>{selectedCategory ? getCategoryLabel(selectedCategory) : admin.selectCategory}</span>
-            <ChevronDown size={18} className={`transition-transform ${isOpen ? "rotate-180" : ""}`} />
+            <span className={selectedCategory ? "text-[#f3d57f]" : "text-white/50"}>
+              {selectedCategory ? getCategoryLabel(selectedCategory) : admin.selectCategory}
+            </span>
+            <ChevronDown size={18} className={`shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`} />
           </button>
 
           {isOpen && (
             <div className="absolute top-full left-0 right-0 mt-2 rounded-2xl border border-white/10 bg-[#0a0a0a] shadow-xl z-50">
-              <div className="max-h-60 overflow-y-auto">
+              <div ref={listRef} className="max-h-60 overflow-y-auto">
                 {categories.map((category) => {
                   const productCount = getProductsInCategory(category.id)
                   const isSelected = selectedCategoryId === category.id
@@ -307,7 +330,8 @@ export function CategorySelect({
                   return (
                     <div key={category.id} className="relative">
                       <div
-                        className={`w-full px-4 py-3 text-left flex items-center justify-between transition-colors ${
+                        data-selected={isSelected ? "true" : undefined}
+                        className={`w-full px-4 py-3 text-left flex items-center justify-between gap-2 transition-colors ${
                           isSelected ? "bg-[#c9a84c]/20 text-[#c9a84c]" : "text-white hover:bg-white/10"
                         }`}
                       >
@@ -317,12 +341,17 @@ export function CategorySelect({
                             onSelectCategory(category.id)
                             setIsOpen(false)
                           }}
-                          className="flex-1 text-left"
+                          className="flex flex-1 items-center gap-2 text-left"
                         >
-                          <div className="font-medium">{getCategoryLabel(category)}</div>
-                          <div className="text-xs text-white/40 mt-1">
-                            {productCount} {admin.productsCount}
-                          </div>
+                          {isSelected && (
+                            <Check size={15} className="shrink-0 text-[#c9a84c]" strokeWidth={2.5} />
+                          )}
+                          <span>
+                            <div className="font-medium">{getCategoryLabel(category)}</div>
+                            <div className="text-xs text-white/40 mt-1">
+                              {productCount} {admin.productsCount}
+                            </div>
+                          </span>
                         </button>
                         {categories.length > 1 && (
                           <button

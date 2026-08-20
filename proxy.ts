@@ -6,7 +6,7 @@ const PUBLIC_ADMIN_PATHS = new Set(["/admin/login", "/api/admin/login"])
 
 async function hasValidToken(request: NextRequest) {
   const token = request.cookies.get("kb-admin-token")?.value
-  const secret = process.env.JWT_SECRET ?? "change-me-in-env"
+  const secret = process.env.JWT_SECRET ?? "khalid-bijoux-secret-key-change-in-production-2024-very-secure-key-2026"
 
   if (!token) {
     return false

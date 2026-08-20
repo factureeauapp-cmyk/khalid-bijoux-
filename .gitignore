@@ -39,3 +39,45 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+
+
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Maven Wrapper
+.mvn/
+mvnw
+mvnw.cmd
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# VS Code
+.vscode/
+
+# Java
+*.class
+
+# Logs
+*.log
+
+# Environment variables / secrets
+.env
+.env.*
+application-local.properties
+application-prod.properties
+
+# OS
+.DS_Store
+Thumbs.db

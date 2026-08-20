@@ -16,6 +16,9 @@ public class ProductMapper {
                 .originalPrice(product.getOriginalPrice())
                 .tag(product.getTag())
                 .image(product.getImage())
+                .images(product.getImages().stream()
+                        .map(image -> new ProductImageResponse(image.getId(), image.getImageUrl(), image.getDisplayOrder()))
+                        .toList())
                 .quantity(product.getQuantity())
                 .category(product.getCategory() != null
                         ? CategoryResponse.builder()
@@ -25,6 +28,19 @@ public class ProductMapper {
                         .build()
                         : null)
                 .build();
+    }
+
+    public void applyUpsertRequest(Product product, ProductUpsertRequest request, Category category) {
+        product.setNameFr(request.nameFr());
+        product.setNameAr(request.nameAr());
+        product.setDescriptionFr(request.descriptionFr());
+        product.setDescriptionAr(request.descriptionAr());
+        product.setCategory(category);
+        product.setPrice(request.price());
+        product.setOriginalPrice(request.originalPrice());
+        product.setTag(request.tag());
+        product.setQuantity(request.quantity());
+        product.replaceImages(request.imageUrls());
     }
 
     public void applyCreateRequest(Product product, CreateProductRequest request, Category category) {

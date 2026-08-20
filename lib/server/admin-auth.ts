@@ -6,7 +6,7 @@ export function getAdminEmail() {
 }
 
 export function getJwtSecret() {
-  return process.env.JWT_SECRET || "default_jwt_secret"
+  return process.env.JWT_SECRET || "khalid-bijoux-secret-key-change-in-production-2024-very-secure-key-2026"
 }
 
 export async function buildAdminToken(email: string) {

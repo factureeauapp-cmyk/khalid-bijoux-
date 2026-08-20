@@ -27,14 +27,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const restoreSession = useCallback(async () => {
     try {
-      const token = typeof window !== "undefined" ? window.localStorage.getItem("kb_token") : null
-      if (!token) {
-        setUser(null)
-        return
-      }
-
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: "include",
         cache: "no-store",
       })
 
@@ -46,7 +40,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser({ email: payload.email })
     } catch {
       setUser(null)
-      window.localStorage.removeItem("kb_token")
     } finally {
       setIsLoading(false)
     }
@@ -57,8 +50,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [restoreSession])
 
   const login = useCallback(async (email: string, password: string) => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`, {
+    const response = await fetch("/api/admin/login", {
       method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     })
@@ -69,25 +63,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const payload = await response.json()
-    const token = payload.token as string | undefined
-    if (!token) {
-      throw new AuthError("Token absent")
-    }
-
-    window.localStorage.setItem("kb_token", token)
     setUser({ email })
     router.push("/admin")
   }, [router])
 
   const logout = useCallback(async () => {
-    const token = window.localStorage.getItem("kb_token")
-    if (token) {
-      await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/logout`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-      })
-    }
-    window.localStorage.removeItem("kb_token")
+    await fetch("/api/admin/logout", { method: "POST", credentials: "include" })
     setUser(null)
     router.push("/admin/login")
   }, [router])

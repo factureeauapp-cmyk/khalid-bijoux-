@@ -32,7 +32,7 @@ public class CorsConfig {
         ));
 
         // Tous les headers de requête autorisés (Authorization, Content-Type, etc.)
-        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "X-Requested-With"));
 
         // Headers que le frontend peut lire dans la réponse
         configuration.setExposedHeaders(List.of("Authorization", "Content-Type"));

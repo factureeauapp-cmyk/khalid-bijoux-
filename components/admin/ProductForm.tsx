@@ -1,9 +1,9 @@
 "use client"
 
-import { useMemo, useState, type RefObject } from "react"
+import { useEffect, useMemo, useState, type RefObject } from "react"
 import { LanguageTabs } from "./LanguageTabs"
 import { CategorySelect } from "./CategorySelect"
-import { ImageUploader } from "./ImageUploader"
+import { ImageUploader, type ProductImageDraft } from "./ImageUploader"
 import { cn } from "@/lib/utils"
 import type { Category, Product } from "@/lib/store-types"
 
@@ -15,8 +15,8 @@ interface ProductFormProps {
   onSubmit: (e: React.FormEvent) => Promise<void>
   onReset: () => void
   onFormChange: (form: Partial<Product>) => void
-  onFileSelect: (file: File | null) => void
-  previewUrl: string
+  images: ProductImageDraft[]
+  onImagesChange: (images: ProductImageDraft[]) => void
   categories: Category[]
   products: Product[]
   error: string
@@ -36,8 +36,8 @@ export function ProductForm({
   onSubmit,
   onReset,
   onFormChange,
-  onFileSelect,
-  previewUrl,
+  images,
+  onImagesChange,
   categories,
   products,
   error,
@@ -52,7 +52,24 @@ export function ProductForm({
   const { t } = useAppContext()
   const admin = t("admin")
 
-  const categoryId = useMemo(() => form.categoryId || "", [form.categoryId])
+  // Certains produits chargés pour modification arrivent avec une catégorie
+  // "peuplée" (form.category = { id, nameFr, nameAr }) mais sans categoryId
+  // à plat. On retombe sur form.category.id dans ce cas, pour que le select
+  // affiche bien la catégorie actuelle du produit au lieu du placeholder.
+  const categoryId = useMemo(
+    () => form.categoryId || (form as Partial<Product> & { category?: Category }).category?.id || "",
+    [form.categoryId, (form as Partial<Product> & { category?: Category }).category?.id]
+  )
+
+  // On synchronise cette valeur dans le form lui-même (pas seulement en local),
+  // sinon un envoi du formulaire sans toucher au select repartirait avec
+  // categoryId vide et échouerait côté API (CATEGORY_REQUIRED).
+  useEffect(() => {
+    if (!form.categoryId && categoryId) {
+      onFormChange({ ...form, categoryId })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categoryId, form.categoryId])
 
   return (
     <form
@@ -78,7 +95,7 @@ export function ProductForm({
       </div>
 
       {/* Image Upload */}
-      <ImageUploader previewUrl={previewUrl} onFileSelect={onFileSelect} isLoading={isSaving} />
+      <ImageUploader images={images} onChange={onImagesChange} isLoading={isSaving} />
 
       {/* Language Tabs */}
       <LanguageTabs activeTab={languageTab} onTabChange={setLanguageTab} />

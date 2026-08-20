@@ -4,20 +4,14 @@ import React, { use, useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { ArrowLeft, BadgeCheck, Gem, ShieldCheck, ShoppingBag, Sparkles, Truck } from "lucide-react"
+import { ArrowLeft, ArrowRight, BadgeCheck, Gem, ShieldCheck, ShoppingBag, Sparkles, Truck } from "lucide-react"
 import Navbar from "../../components/Navbar"
 import Footer from "../../components/Footer"
 import ProductCard from "../../components/ProductCard"
 import { useCart } from "../../CartContext"
 import { useAppContext } from "../../providers/AppContext"
 import { getCategoryById, getCategoryName, getProductDescription, getProductName } from "@/lib/product-utils"
-import type { Product } from "@/lib/store-types"
 
-
-interface ProductWithGallery extends Product {
-  images?: string[]
-  gallery?: string[]
-}
 
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -29,14 +23,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const product = catalog.find((entry) => entry.id === id)
 
   const { addToCart } = useCart()
-  const [selectedImage, setSelectedImage] = useState("/placeholder.svg")
+  const [selectedIndex, setSelectedIndex] = useState(0)
   const [showToast, setShowToast] = useState(false)
-
-  useEffect(() => {
-    if (product?.image) {
-      setSelectedImage(product.image)
-    }
-  }, [product?.image])
 
   useEffect(() => {
     if (!showToast) {
@@ -85,9 +73,18 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       )
     })
     .slice(0, 4)
-  const productWithGallery = product as ProductWithGallery
-  const galleryImages = [product.image, ...(productWithGallery.images ?? []), ...(productWithGallery.gallery ?? [])]
+  const galleryImages = [product.image, ...(product.images ?? []).map((image) => image.imageUrl)]
     .filter((image, index, array) => Boolean(image) && array.indexOf(image) === index)
+
+  const selectImage = (index: number) => {
+    setSelectedIndex(index)
+  }
+
+  const browseImages = (step: -1 | 1) => {
+    const next = (selectedIndex + step + galleryImages.length) % galleryImages.length
+    selectImage(next)
+  }
+  const selectedImage = galleryImages[selectedIndex] ?? galleryImages[0] ?? "/placeholder.svg"
 
   const handleAddToCart = () => {
     addToCart(product)
@@ -143,16 +140,20 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     priority
                     className="object-cover transition-transform duration-700 ease-out hover:scale-105"
                   />
+                  {galleryImages.length > 1 && <>
+                    <button type="button" onClick={() => browseImages(-1)} aria-label="Image précédente" className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-black/55 p-2 text-white backdrop-blur transition hover:bg-[#C9A84C] hover:text-black"><ArrowLeft size={18} /></button>
+                    <button type="button" onClick={() => browseImages(1)} aria-label="Image suivante" className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-black/55 p-2 text-white backdrop-blur transition hover:bg-[#C9A84C] hover:text-black"><ArrowRight size={18} /></button>
+                  </>}
                 </div>
               </div>
 
               {galleryImages.length > 1 && (
                 <div className="grid grid-cols-4 gap-3 sm:grid-cols-5">
-                  {galleryImages.map((image) => (
+                  {galleryImages.map((image, index) => (
                     <button
                       key={image}
                       type="button"
-                      onClick={() => setSelectedImage(image)}
+                      onClick={() => selectImage(index)}
                       className={`relative aspect-square overflow-hidden rounded-2xl border transition-all ${selectedImage === image ? "border-[#C9A84C] shadow-[0_0_0_1px_rgba(201,168,76,0.35)]" : "border-white/10 hover:border-[#C9A84C]/50"}`}
                     >
                       <Image src={image} alt="Miniature produit" fill sizes="96px" className="object-cover" />

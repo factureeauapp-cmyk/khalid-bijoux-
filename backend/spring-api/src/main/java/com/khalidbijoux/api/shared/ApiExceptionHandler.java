@@ -92,13 +92,19 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleGenericException(Exception exception) {
+
+        exception.printStackTrace();
+
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ApiErrorResponse(
                         OffsetDateTime.now(),
                         HttpStatus.INTERNAL_SERVER_ERROR.value(),
                         "INTERNAL_SERVER_ERROR",
-                        List.of("An unexpected error occurred")
+                        List.of(exception.getClass().getSimpleName()
+                                + " : "
+                                + exception.getMessage())
                 ));
     }
+
 }
 

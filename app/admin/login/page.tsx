@@ -7,60 +7,135 @@ import { useAppContext } from "@/app/providers/AppContext"
 export default function AdminLoginPage() {
   const { t } = useAppContext()
   const admin = t("admin")
+
+  const router = useRouter()
+
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
-  const router = useRouter()
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
+
     setError("")
+    setLoading(true)
 
-    // Call the internal Next.js route which sets the `kb-admin-token` cookie
-    const response = await fetch(`/api/admin/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    })
+    console.log("=== LOGIN START ===")
+    console.log("EMAIL =", email)
 
-    if (!response.ok) {
-      setError("Identifiants invalides")
-      return
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        }
+      )
+
+      const data = await response.json()
+
+      console.log("LOGIN RESPONSE STATUS =", response.status)
+      console.log("LOGIN RESPONSE =", data)
+
+      if (!response.ok) {
+        setError(data.message || "Identifiants invalides")
+        return
+      }
+
+      if (!data.token) {
+        setError("Aucun token reçu du serveur")
+        console.error("TOKEN MANQUANT :", data)
+        return
+      }
+
+      localStorage.setItem("adminToken", data.token)
+      localStorage.setItem("adminEmail", data.email)
+
+      console.log("TOKEN STOCKE =", localStorage.getItem("adminToken"))
+      console.log("EMAIL STOCKE =", localStorage.getItem("adminEmail"))
+
+      // ⚠️ Diagnostic : si un middleware.ts protège /admin/* via un cookie,
+      // ce cookie n'existe jamais (le back-end ne renvoie pas de Set-Cookie,
+      // seulement du JSON). On l'écrit ici aussi, en plus du localStorage,
+      // pour qu'un éventuel middleware côté serveur puisse le lire.
+      // Retire ce bloc si tu n'as pas de middleware, ou si tu préfères que
+      // le back-end pose un cookie httpOnly lui-même (plus sûr).
+      document.cookie = `adminToken=${data.token}; path=/; max-age=${Math.floor(
+        (data.expiresIn ?? 28800000) / 1000
+      )}; SameSite=Lax`
+      console.log("COOKIE ECRIT =", document.cookie)
+
+      console.log("REDIRECTION VERS /admin")
+      window.location.href = "/admin"
+    } catch (error) {
+      console.error("Erreur login :", error)
+
+      setError(
+        "Impossible de se connecter au serveur. Vérifiez que le backend est démarré."
+      )
+    } finally {
+      setLoading(false)
     }
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      setError("Identifiants invalides");
-      return;
-    }
-
-
-    console.log("Login OK");
-    console.log(data);
-
-    // Server route sets httpOnly cookie; optionally store email for UI
-    localStorage.setItem("adminEmail", data.email ?? email);
-
-    console.log("Avant redirect");
-
-    router.replace("/admin");
-
-
   }
-
-
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white">
-      <form onSubmit={handleSubmit} className="w-full max-w-md rounded-[32px] border border-white/10 bg-white/5 p-8">
-        <h1 className="mb-6 text-4xl font-cormorant">{admin.loginTitle}</h1>
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-md rounded-[32px] border border-white/10 bg-white/5 p-8 backdrop-blur"
+      >
+        <h1 className="mb-2 text-center text-4xl font-cormorant">
+          {admin.loginTitle}
+        </h1>
+
+        <p className="mb-8 text-center text-sm text-white/60">
+          Administration Khalid Bijoux
+        </p>
+
         <div className="space-y-4">
-          <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder={admin?.email} className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 outline-none" />
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={admin?.password} className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 outline-none" />
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder={admin?.email}
+            required
+            className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 outline-none transition focus:border-[#c9a84c]"
+          />
+
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder={admin?.password}
+            required
+            className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 outline-none transition focus:border-[#c9a84c]"
+          />
         </div>
-        {error && <p className="mt-4 text-sm text-red-400">{error}</p>}
-        <button className="btn-primary mt-6 w-full">{admin.login}</button>
+
+        {error && (
+          <div className="mt-4 rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-400">
+            {error}
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="btn-primary mt-6 w-full disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {loading ? "Connexion..." : admin.login}
+        </button>
+
+        <div className="mt-6 text-center text-xs text-white/40">
+          Version Administration
+        </div>
       </form>
     </main>
   )

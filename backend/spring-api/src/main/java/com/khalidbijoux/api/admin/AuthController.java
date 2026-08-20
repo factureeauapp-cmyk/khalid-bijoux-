@@ -4,12 +4,10 @@ import com.khalidbijoux.api.security.AuthenticationException;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api/auth")
@@ -48,7 +46,7 @@ public class AuthController {
 
 
 
-        boolean ok = passwordEncoder.matches(request.password(), "$2a$10$Jm5nRQzPEUwv3FJW.VpNkeLKj9z3xn6g/BJ9CnNdTQEKkpQ5V3Q4K");
+        boolean ok = passwordEncoder.matches(request.password(), "$2a$10$3Fc7E2aIVyPk5dXHB95kvOCxqBIZHia.u6BXJAs46ao29QDn.447K");
 
         System.out.println("Matches : " + ok);
 
@@ -69,6 +67,26 @@ public class AuthController {
                 "expiresIn", 28800000
         ));
     }
+
+
+    @GetMapping("/me")
+    public ResponseEntity<?> me(
+            @RequestHeader("Authorization") String authorization
+    ) {
+
+        String token = authorization.replace("Bearer ", "");
+
+        if (!jwtService.isTokenValid(token)) {
+            return ResponseEntity.status(401).build();
+        }
+
+        String email = jwtService.extractEmail(token);
+
+        return ResponseEntity.ok(Map.of(
+                "email", email
+        ));
+    }
+
 }
 //Suppression d'un produit
 //cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());

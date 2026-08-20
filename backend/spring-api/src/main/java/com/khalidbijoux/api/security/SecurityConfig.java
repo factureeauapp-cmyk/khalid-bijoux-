@@ -1,6 +1,6 @@
 package com.khalidbijoux.api.security;
 
- // voir remarque ci-dessous
+// voir remarque ci-dessous
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

@@ -11,6 +11,16 @@ app:
   jwt:
     secret: ${JWT_SECRET:khalid-bijoux-secret-key-change-in-production-2024-very-secure-key-2026}
     expiration-ms: ${JWT_EXPIRATION_MS:28800000}
+  admin:
+    email: ${ADMIN_EMAIL:admin@khalidbijoux.com}
+    bootstrap:
+      enabled: ${ADMIN_BOOTSTRAP_ENABLED:true}
+      email: ${ADMIN_BOOTSTRAP_EMAIL:admin@khalid-bijoux.com}
+      password: ${ADMIN_BOOTSTRAP_PASSWORD:admin123}
+  upload:
+    directory: ${UPLOAD_DIRECTORY:uploads/products}
+  auth:
+    cookie-secure: ${AUTH_COOKIE_SECURE:false}
 
 cloudinary:
   cloud-name: ${CLOUDINARY_CLOUD_NAME:s8uc7652}
@@ -24,6 +34,15 @@ spring:
     username: ${MYSQLUSER:root}
     password: ${MYSQLPASSWORD:root}
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+  mail:
+    host: ${SMTP_HOST:localhost}
+    port: ${SMTP_PORT:25}
+    username: ${SMTP_USER:}
+    password: ${SMTP_PASSWORD:}
+    properties:
+      mail.smtp.auth: ${SMTP_AUTH:false}
+      mail.smtp.starttls.enable: ${SMTP_STARTTLS:false}
 
 
   jpa:

@@ -378,6 +378,37 @@ export const translations = {
 
       noOrdersYet: "Aucune commande pour le moment.",
 
+
+
+  
+
+      deleteProductTitle: "Supprimer le produit ?",
+
+      deleteProductDescription:
+        "Êtes-vous sûr de vouloir supprimer ce produit ?",
+
+      irreversibleAction:
+        "Cette action est irréversible.",
+
+      deleting: "Suppression...",
+
+      edit: "Modifier",
+
+      increaseStock:
+        "Augmenter le stock",
+
+      decreaseStock:
+        "Diminuer le stock",
+
+      stockLabel: "Stock",
+
+
+      // fr.admin
+      stockUpdateError: "Impossible de mettre à jour le stock.",
+      stockUpdateSuccess: "Stock mis à jour pour",
+      noProducts: "Aucun produit pour le moment.",
+
+
       errors: {
         INVALID_CREDENTIALS: "Identifiants incorrects",
 
@@ -802,6 +833,34 @@ export const translations = {
       inStock: "متوفر",
 
       noOrdersYet: "لا توجد طلبات حالياً.",
+
+
+
+      deleteProductTitle: "حذف المنتج؟",
+
+      deleteProductDescription:
+        "هل أنت متأكد من رغبتك في حذف هذا المنتج؟",
+
+      irreversibleAction:
+        "لا يمكن التراجع عن هذه العملية.",
+
+      deleting: "جارٍ الحذف...",
+
+      edit: "تعديل",
+
+      increaseStock:
+        "زيادة المخزون",
+
+      decreaseStock:
+        "إنقاص المخزون",
+
+      stockLabel: "المخزون",
+
+
+      // ar.admin
+      stockUpdateError: "تعذر تحديث المخزون.",
+      stockUpdateSuccess: "تم تحديث المخزون لـ",
+      noProducts: "لا يوجد أي منتج حالياً.",
 
       errors: {
         INVALID_CREDENTIALS: "بيانات تسجيل الدخول غير صحيحة",

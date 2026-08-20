@@ -17,7 +17,14 @@ export interface Product {
   descriptionFr: string
   descriptionAr: string
   image: string
+  images?: ProductImage[]
   quantity?: number
+}
+
+export interface ProductImage {
+  id?: number
+  imageUrl: string
+  displayOrder?: number
 }
 
 

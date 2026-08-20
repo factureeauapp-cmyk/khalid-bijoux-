@@ -1,28 +1,54 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { AnimatePresence, motion } from "framer-motion"
 
 import { Sidebar } from "@/components/admin/Sidebar"
 import { Topbar } from "@/components/admin/Topbar"
 import { useAppContext } from "@/app/providers/AppContext"
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   const pathname = usePathname()
+  const router = useRouter()
+
   const { t, language } = useAppContext()
   const admin = t("admin")
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true)
 
   useEffect(() => {
     document.dir = language === "ar" ? "rtl" : "ltr"
   }, [language])
 
-  // Ferme le drawer automatiquement à chaque changement de page
   useEffect(() => {
     setIsSidebarOpen(false)
   }, [pathname])
+
+  useEffect(() => {
+    console.log("=== PROTECTED LAYOUT ===")
+    console.log("PATHNAME =", pathname)
+
+    const token = localStorage.getItem("adminToken")
+    console.log("TOKEN LU =", token)
+
+    if (!token) {
+      console.log("AUCUN TOKEN -> REDIRECTION LOGIN")
+      router.replace("/admin/login")
+      return
+    }
+
+    console.log("TOKEN VALIDE -> ACCES AUTORISE")
+    setIsAuthenticated(true)
+    setIsCheckingAuth(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router])
 
   const pageTitle = useMemo(() => {
     switch (pathname) {
@@ -41,14 +67,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
   }, [pathname, admin])
 
+  if (isCheckingAuth) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-black text-white">
+        Vérification de la session...
+      </div>
+    )
+  }
+
+  if (!isAuthenticated) {
+    return null
+  }
+
   return (
     <div className="flex min-h-screen bg-[#050505] text-white">
-      {/* Sidebar Desktop */}
       <aside className="hidden md:block md:w-72 md:shrink-0">
         <Sidebar />
       </aside>
 
-      {/* Sidebar Mobile — seule et unique instance du drawer mobile */}
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.div
@@ -77,9 +113,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         )}
       </AnimatePresence>
 
-      {/* Content */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        <Topbar title={pageTitle} onMenuClick={() => setIsSidebarOpen(true)} />
+        <Topbar
+          title={pageTitle}
+          onMenuClick={() => setIsSidebarOpen(true)}
+        />
 
         <main className="flex-1 overflow-y-auto px-5 py-6 md:px-8 md:py-8">
           <div className="mx-auto max-w-7xl">{children}</div>

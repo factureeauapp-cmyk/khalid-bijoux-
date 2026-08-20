@@ -1,118 +1,46 @@
-import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
-import { validateAdminCredentials, buildAdminToken } from "@/lib/server/admin-auth";
+import { cookies } from "next/headers"
+import { NextResponse } from "next/server"
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080"
 
+/**
+ * Same-origin login bridge: the browser receives a secure httpOnly cookie while
+ * Spring Boot remains the only authority that validates passwords and signs JWTs.
+ */
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-
-    // Accept both "email" and "identifier" for flexibility
-    const email = String(body.email ?? body.identifier ?? "").trim();
-    const password = String(body.password ?? "").trim();
-
-    console.log("[LOGIN DEBUG] Incoming request:", { email, password: password ? "***" : "empty" });
-
-    // Validation simple
+    const body = await request.json()
+    const email = String(body.email ?? body.identifier ?? "").trim()
+    const password = String(body.password ?? "")
     if (!email || !password) {
-      console.log("[LOGIN DEBUG] Missing fields - email:", email, "password:", password ? "set" : "missing");
-      return NextResponse.json(
-        {
-          error: {
-            code: "MISSING_FIELDS",
-            message: "Email and password are required",
-          },
-        },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: { code: "MISSING_FIELDS", message: "Email and password are required" } }, { status: 400 })
     }
 
-    // First try local authentication (for testing)
-    console.log("[LOGIN DEBUG] Attempting local authentication...");
-    const isValid = await validateAdminCredentials(email, password);
-    console.log("[LOGIN DEBUG] Local auth result:", isValid);
-    
-    if (isValid) {
-      console.log("[LOGIN DEBUG] ✅ Local auth successful!");
-      const token = await buildAdminToken(email);
-      const cookieStore = await cookies();
-      cookieStore.set("kb-admin-token", token, {
-        httpOnly: true,
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
-        path: "/",
-        maxAge: 8 * 60 * 60, // 8 hours in seconds
-      });
-
-      return NextResponse.json({
-        success: true,
-        email,
-      });
+    const backendResponse = await fetch(`${BACKEND_URL}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({ email, password }),
+    })
+    const payload = await backendResponse.json().catch(() => ({}))
+    if (!backendResponse.ok) {
+      return NextResponse.json({ error: payload.error ?? { code: "INVALID_CREDENTIALS", message: "Invalid email or password" } }, { status: backendResponse.status })
     }
 
-    console.log("[LOGIN DEBUG] Local auth failed, attempting Spring Boot backend...");
-    
-    // Fallback: Try Spring Boot backend if available
-    try {
-      const response = await fetch(`${BACKEND_URL}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+    // Forward Spring's signed JWT from its Set-Cookie header to the Next.js origin.
+    const setCookie = backendResponse.headers.get("set-cookie")
+    const token = setCookie?.match(/kb-admin-token=([^;]+)/)?.[1]
+    if (!token) return NextResponse.json({ error: { code: "INVALID_LOGIN_RESPONSE" } }, { status: 502 })
 
-      console.log("[LOGIN DEBUG] Spring Boot response status:", response.status);
-
-      if (response.ok) {
-        const authData = await response.json();
-        console.log("[LOGIN DEBUG] ✅ Spring Boot auth successful!");
-        const cookieStore = await cookies();
-        cookieStore.set("kb-admin-token", authData.token, {
-          httpOnly: true,
-          sameSite: "lax",
-          secure: process.env.NODE_ENV === "production",
-          path: "/",
-          maxAge: authData.expiresIn || 28800,
-        });
-
-        return NextResponse.json({
-          success: true,
-          email: authData.email,
-        });
-      }
-    } catch (backendError) {
-      console.log("[LOGIN DEBUG] Spring Boot backend error:", backendError);
-    }
-
-    // Both failed
-    console.log("[LOGIN DEBUG] ❌ All authentication methods failed!");
-    return NextResponse.json(
-      {
-        error: {
-          code: "INVALID_CREDENTIALS",
-          message: "Invalid email or password",
-        },
-      },
-      { status: 401 }
-    );
-
-  } catch (error) {
-    console.error("[LOGIN DEBUG] ❌ FATAL ERROR:", error);
-
-    return NextResponse.json(
-      {
-        error: {
-          code: "INTERNAL_SERVER_ERROR",
-          message: "An unexpected error occurred",
-        },
-      },
-      { status: 500 }
-    );
+    const cookieStore = await cookies()
+    cookieStore.set("kb-admin-token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: Math.floor(Number(payload.expiresIn ?? 28800000) / 1000),
+    })
+    return NextResponse.json({ success: true, email: payload.email })
+  } catch {
+    return NextResponse.json({ error: { code: "BACKEND_UNAVAILABLE", message: "Authentication service unavailable" } }, { status: 503 })
   }
 }

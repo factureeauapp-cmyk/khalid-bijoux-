@@ -20,6 +20,7 @@ public class CatalogService {
     @Value("${app.base-url}")
     private String baseUrl;
 
+    @Transactional(readOnly = true)
     public List<ProductResponse> getProducts(String category,
                                              String search,
                                              Integer maxPrice,
@@ -87,6 +88,7 @@ public class CatalogService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public ProductResponse getProduct(String id) {
 
         Product product = catalogRepository.findById(id)
@@ -191,11 +193,9 @@ public class CatalogService {
         productMapper.applyCreateRequest(product, request, resolveCategory(request.getCategoryId()));
 
         MultipartFile image = request.getImage();
-        if (image != null && !image.isEmpty()) {
-            product.setImage(fileStorageService.saveImage(image));
-        } else {
-            product.setImage("/images/default.png");
-        }
+        product.replaceImages(image != null && !image.isEmpty()
+                ? List.of(fileStorageService.saveImage(image))
+                : List.of("/placeholder.svg"));
 
         product.setQuantity(request.getQuantity() != null ? request.getQuantity() : 0);
         if (product.getQuantity() < 0) {
@@ -205,6 +205,24 @@ public class CatalogService {
         Product saved = catalogRepository.save(product);
         saved.setId(String.format("PRD-%06d", saved.getPk()));
         return catalogRepository.save(saved);
+    }
+
+    @Transactional
+    public ProductResponse createProduct(ProductUpsertRequest request) {
+        Product product = new Product();
+        product.setId(UUID.randomUUID().toString());
+        productMapper.applyUpsertRequest(product, request, resolveCategory(request.categoryId()));
+        Product saved = catalogRepository.save(product);
+        saved.setId(String.format("PRD-%06d", saved.getPk()));
+        return productMapper.toResponse(catalogRepository.save(saved));
+    }
+
+    @Transactional
+    public ProductResponse updateProduct(String id, ProductUpsertRequest request) {
+        Product product = catalogRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
+        productMapper.applyUpsertRequest(product, request, resolveCategory(request.categoryId()));
+        return productMapper.toResponse(catalogRepository.save(product));
     }
 
     @Transactional

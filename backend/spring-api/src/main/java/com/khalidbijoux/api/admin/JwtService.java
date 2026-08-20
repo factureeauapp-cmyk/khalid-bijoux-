@@ -26,6 +26,7 @@ public class JwtService {
         long now = System.currentTimeMillis();
         return Jwts.builder()
                 .setSubject(email)
+                .claim("role", "ADMIN")
                 .setIssuedAt(new Date(now))
                 .setExpiration(new Date(now + jwtProperties.getExpirationMs()))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
@@ -52,6 +53,19 @@ public class JwtService {
                     .build()
                     .parseClaimsJws(token);
             return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    public boolean hasAdminRole(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return "ADMIN".equals(claims.get("role", String.class));
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
