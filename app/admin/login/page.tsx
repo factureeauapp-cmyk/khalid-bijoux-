@@ -67,10 +67,17 @@ export default function AdminLoginPage() {
       // pour qu'un éventuel middleware côté serveur puisse le lire.
       // Retire ce bloc si tu n'as pas de middleware, ou si tu préfères que
       // le back-end pose un cookie httpOnly lui-même (plus sûr).
-      document.cookie = `adminToken=${data.token}; path=/; max-age=${Math.floor(
+      const maxAge = Math.floor(
         (data.expiresIn ?? 28800000) / 1000
-      )}; SameSite=Lax`
-      console.log("COOKIE ECRIT =", document.cookie)
+      )
+      
+      document.cookie = `kb-admin-token=${encodeURIComponent(
+        data.token
+      )}; Path=/; Max-Age=${maxAge}; SameSite=Lax${
+        window.location.protocol === "https:" ? "; Secure" : ""
+      }`
+
+    console.log("COOKIE ECRIT =", document.cookie)
 
       console.log("REDIRECTION VERS /admin")
       window.location.href = "/admin"
