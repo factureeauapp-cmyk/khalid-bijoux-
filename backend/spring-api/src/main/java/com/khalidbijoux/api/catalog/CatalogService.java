@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -209,20 +210,101 @@ public class CatalogService {
 
     @Transactional
     public ProductResponse createProduct(ProductUpsertRequest request) {
+
         Product product = new Product();
+
+        // =========================================================
+        // ID TEMPORAIRE
+        // =========================================================
+
         product.setId(UUID.randomUUID().toString());
-        productMapper.applyUpsertRequest(product, request, resolveCategory(request.categoryId()));
+
+        // =========================================================
+        // CHAMPS PRINCIPAUX
+        // =========================================================
+
+        Category category = resolveCategory(request.categoryId());
+
+        productMapper.applyUpsertRequest(
+                product,
+                request,
+                category
+        );
+
+        // =========================================================
+        // ATTRIBUTES
+        // =========================================================
+        //
+        // null = aucun attribut
+        // []   = aucun attribut
+        // [...] = créer les attributs
+        //
+
+        if (request.attributes() != null) {
+
+            syncAttributes(
+                    product,
+                    request.attributes()
+            );
+        }
+
+        // =========================================================
+        // SAVE
+        // =========================================================
+
         Product saved = catalogRepository.save(product);
-        saved.setId(String.format("PRD-%06d", saved.getPk()));
-        return productMapper.toResponse(catalogRepository.save(saved));
+
+        // =========================================================
+        // ID PUBLIC
+        // =========================================================
+
+        saved.setId(
+                String.format(
+                        "PRD-%06d",
+                        saved.getPk()
+                )
+        );
+
+        saved = catalogRepository.save(saved);
+
+        return productMapper.toResponse(saved);
     }
 
     @Transactional
-    public ProductResponse updateProduct(String id, ProductUpsertRequest request) {
+    public ProductResponse updateProduct(
+            String id,
+            ProductUpsertRequest request
+    ) {
         Product product = catalogRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
-        productMapper.applyUpsertRequest(product, request, resolveCategory(request.categoryId()));
-        return productMapper.toResponse(catalogRepository.save(product));
+
+        Category category = resolveCategory(request.categoryId());
+
+        // 1. Champs principaux
+        productMapper.applyBasicFields(
+                product,
+                request,
+                category
+        );
+
+        // 2. Attributs
+        //
+        // null = conserver les attributs existants
+        // []   = supprimer tous les attributs
+        // [...] = synchroniser les attributs
+        //
+        if (request.attributes() != null) {
+            syncAttributes(
+                    product,
+                    request.attributes()
+            );
+        }
+
+        // Product déjà managed par Hibernate.
+        // save() n'est même pas obligatoire, mais on peut le garder.
+        Product saved = catalogRepository.save(product);
+
+        return productMapper.toResponse(saved);
     }
 
     @Transactional
@@ -323,5 +405,231 @@ public class CatalogService {
         if (request.getQuantity() != null && request.getQuantity() < 0) {
             throw new IllegalArgumentException("Quantity cannot be negative");
         }
+    }
+
+    private void syncAttributes(
+            Product product,
+            List<ProductAttributeRequest> requests
+    ) {
+        if (requests == null) {
+            return;
+        }
+
+        // =========================================================
+        // ATTRIBUTS EXISTANTS
+        // =========================================================
+
+        Map<String, ProductAttribute> existingById =
+                product.getAttributes()
+                        .stream()
+                        .filter(attribute ->
+                                attribute.getAttributeId() != null
+                        )
+                        .collect(Collectors.toMap(
+                                ProductAttribute::getAttributeId,
+                                attribute -> attribute,
+                                (a, b) -> a
+                        ));
+
+        // Les entités qui doivent rester après le PUT
+        Set<ProductAttribute> attributesToKeep =
+                new HashSet<>();
+
+        // =========================================================
+        // CREATE / UPDATE
+        // =========================================================
+
+        for (int attributeIndex = 0;
+             attributeIndex < requests.size();
+             attributeIndex++) {
+
+            ProductAttributeRequest request =
+                    requests.get(attributeIndex);
+
+            // Ignorer les entrées invalides
+            if (request == null ||
+                    request.getName() == null ||
+                    request.getName().isBlank()) {
+                continue;
+            }
+
+            ProductAttribute attribute;
+
+            // =====================================================
+            // EXISTING ATTRIBUTE
+            // =====================================================
+
+            if (request.getId() != null &&
+                    !request.getId().isBlank() &&
+                    existingById.containsKey(request.getId())) {
+
+                // UPDATE d'un attribut existant
+                attribute = existingById.get(request.getId());
+
+            }
+
+            // =====================================================
+            // NEW ATTRIBUTE
+            // =====================================================
+
+            else {
+
+                // CREATE d'un nouvel attribut
+                //
+                // L'ID envoyé par le frontend peut être un UUID
+                // temporaire. On ne l'utilise PAS.
+                attribute = ProductAttribute.builder()
+                        .attributeId(UUID.randomUUID().toString())
+                        .product(product)
+                        .values(new ArrayList<>())
+                        .build();
+
+                product.getAttributes().add(attribute);
+            }
+
+            attributesToKeep.add(attribute);
+
+            // =====================================================
+            // UPDATE ATTRIBUTE
+            // =====================================================
+
+            attribute.setName(
+                    request.getName().trim()
+            );
+
+            attribute.setNameAr(
+                    request.getNameAr() != null
+                            ? request.getNameAr().trim()
+                            : null
+            );
+
+            attribute.setDisplayOrder(attributeIndex);
+
+            // =====================================================
+            // VALUES
+            // =====================================================
+
+            syncAttributeValues(
+                    attribute,
+                    request.getValues()
+            );
+        }
+
+        // =========================================================
+        // DELETE ATTRIBUTES REMOVED FROM FRONTEND
+        // =========================================================
+
+        product.getAttributes().removeIf(
+                attribute -> !attributesToKeep.contains(attribute)
+        );
+    }
+
+
+
+
+    private void syncAttributeValues(
+            ProductAttribute attribute,
+            List<ProductAttributeValueRequest> requests
+    ) {
+        if (requests == null) {
+            return;
+        }
+
+        // =========================================================
+        // VALEURS EXISTANTES
+        // =========================================================
+
+        Map<String, ProductAttributeValue> existingById =
+                attribute.getValues()
+                        .stream()
+                        .filter(value ->
+                                value.getValueId() != null
+                        )
+                        .collect(Collectors.toMap(
+                                ProductAttributeValue::getValueId,
+                                value -> value
+                        ));
+
+        // Valeurs qui doivent rester
+        Set<ProductAttributeValue> valuesToKeep =
+                new HashSet<>();
+
+        // =========================================================
+        // CREATE / UPDATE
+        // =========================================================
+
+        for (int valueIndex = 0;
+             valueIndex < requests.size();
+             valueIndex++) {
+
+            ProductAttributeValueRequest request =
+                    requests.get(valueIndex);
+
+            if (request == null ||
+                    request.getValue() == null ||
+                    request.getValue().isBlank()) {
+                continue;
+            }
+
+            ProductAttributeValue value;
+
+            // =====================================================
+            // EXISTING VALUE
+            // =====================================================
+
+            if (request.getId() != null &&
+                    !request.getId().isBlank()) {
+
+                value = existingById.get(request.getId());
+
+                if (value == null) {
+                    throw new IllegalArgumentException(
+                            "Attribute value not found: "
+                                    + request.getId()
+                    );
+                }
+
+            }
+
+            // =====================================================
+            // NEW VALUE
+            // =====================================================
+
+            else {
+
+                value = ProductAttributeValue.builder()
+                        .valueId(UUID.randomUUID().toString())
+                        .attribute(attribute)
+                        .build();
+
+                attribute.getValues().add(value);
+            }
+
+            valuesToKeep.add(value);
+
+            // =====================================================
+            // UPDATE VALUE
+            // =====================================================
+
+            value.setValue(
+                    request.getValue().trim()
+            );
+
+            value.setValueAr(
+                    request.getValueAr() != null
+                            ? request.getValueAr().trim()
+                            : null
+            );
+
+            value.setDisplayOrder(valueIndex);
+        }
+
+        // =========================================================
+        // DELETE VALUES REMOVED FROM FRONTEND
+        // =========================================================
+
+        attribute.getValues().removeIf(
+                value -> !valuesToKeep.contains(value)
+        );
     }
 }

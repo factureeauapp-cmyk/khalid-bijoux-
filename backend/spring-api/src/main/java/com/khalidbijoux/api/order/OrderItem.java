@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "order_items")
 @Data
@@ -22,9 +25,6 @@ public class OrderItem {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    @Column(name = "selected_size")
-    private String selectedSize;
-
     @Column(name = "price", nullable = false)
     private Integer price;
 
@@ -33,4 +33,21 @@ public class OrderItem {
 
     @Transient
     private String productImage;
+
+    /**
+     * Attributs sélectionnés par le client
+     *
+     * Exemple :
+     * Taille  -> 8
+     * Couleur -> Or
+     * Pierre  -> Diamant
+     */
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
+    )
+    @JoinColumn(name = "order_item_id")
+    private List<OrderItemAttribute> selectedAttributes =
+            new ArrayList<>();
 }

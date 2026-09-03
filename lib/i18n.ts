@@ -1,3 +1,5 @@
+import { em } from "framer-motion/client";
+
 export type Language = "fr" | "ar"
 
 export const languages: Array<{ code: Language; label: string; nativeLabel: string; dir: "ltr" | "rtl" }> = [
@@ -152,6 +154,7 @@ export const translations = {
       loginTitle: "Connexion administrateur",
       username: "Identifiant",
       password: "Mot de passe",
+      email: "Email",
       login: "Se connecter",
       products: "Produits",
       orders: "Commandes",
@@ -409,6 +412,17 @@ export const translations = {
       noProducts: "Aucun produit pour le moment.",
 
 
+      productAttributes: "Caractéristiques du produit",
+      addProductAttribute: "Ajouter une caractéristique",
+      attributeNameFr: "Nom (FR)",
+      attributeNameAr: "Nom (AR)",
+      attributeValueFr: "Valeur (FR)",
+      attributeValueAr: "Valeur (AR)",
+      addProductAttributeValue: "Ajouter une valeur",
+      removeProductAttribute: "Supprimer",
+      moveProductAttributeUp: "Monter",
+      moveProductAttributeDown: "Descendre",
+
       errors: {
         INVALID_CREDENTIALS: "Identifiants incorrects",
 
@@ -597,6 +611,7 @@ export const translations = {
       loginTitle: "تسجيل دخول الإدارة",
       username: "اسم المستخدم",
       password: "كلمة المرور",
+      email: "البريد الإلكتروني",
       login: "دخول",
       products: "المنتجات",
       orders: "الطلبات",
@@ -861,6 +876,18 @@ export const translations = {
       stockUpdateError: "تعذر تحديث المخزون.",
       stockUpdateSuccess: "تم تحديث المخزون لـ",
       noProducts: "لا يوجد أي منتج حالياً.",
+
+
+      productAttributes: "خصائص المنتج",
+      addProductAttribute: "إضافة خاصية",
+      attributeNameFr: "الاسم بالفرنسية",
+      attributeNameAr: "الاسم بالعربية",
+      attributeValueFr: "القيمة بالفرنسية",
+      attributeValueAr: "القيمة بالعربية",
+      addProductAttributeValue: "إضافة قيمة",
+      removeProductAttribute: "حذف",
+      moveProductAttributeUp: "نقل للأعلى",
+      moveProductAttributeDown: "نقل للأسفل",
 
       errors: {
         INVALID_CREDENTIALS: "بيانات تسجيل الدخول غير صحيحة",

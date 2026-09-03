@@ -114,39 +114,170 @@ export default function AdminProductsPage() {
 
     return map
   }
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault(); setError(""); setIsSaving(true)
-    try {
-      if (!form.nameFr?.trim() || !form.nameAr?.trim() || !form.descriptionFr?.trim() || !form.descriptionAr?.trim()) throw new Error("Tous les champs bilingues sont requis")
-      if (!form.categoryId) throw new Error("Une catégorie est requise")
-      if (!images.length) throw new Error("Ajoutez au moins une image")
-      const uploaded = await uploadNewImages()
-      const imageUrls = images.map((image) => uploaded.get(image.key) ?? image.imageUrl)
-      const payload = { nameFr: form.nameFr, nameAr: form.nameAr, descriptionFr: form.descriptionFr, descriptionAr: form.descriptionAr, categoryId: form.categoryId, price: form.price ?? 0, originalPrice: form.originalPrice ?? null, tag: form.tag || null, quantity: form.quantity ?? 0, imageUrls }
-      const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/products${editingId ? `/${editingId}` : ""}`
-      const token = localStorage.getItem("adminToken")
 
-      const response = await fetch(endpoint, {
-        method: editingId ? "PUT" : "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      })
 
-      const data = await response.json().catch(() => ({}))
-      if (!response.ok) throw new Error(data.details?.[0] || data.message || "Impossible d’enregistrer le produit")
-      const wasEditing = Boolean(editingId)
-      resetForm(); await refreshProducts(false)
-      const message = wasEditing ? admin.productUpdated : admin.productAdded
-      setSuccessMessage(message); setToast({ message, type: "success" })
-    } catch (submissionError) {
-      const message = submissionError instanceof Error ? submissionError.message : admin.saveError
-      setError(message); setToast({ message, type: "error" })
-    } finally { setIsSaving(false) }
+
+  const buildAttributesPayload = (
+  attributes: Product["attributes"] | undefined,
+  isUpdate: boolean
+) => {
+  if (!attributes) {
+    return []
   }
+
+  // ==========================================
+  // UPDATE
+  // ==========================================
+  if (isUpdate) {
+    return attributes
+  }
+
+  // ==========================================
+  // CREATE
+  // ==========================================
+  return attributes.map((attribute) => ({
+    name: attribute.name,
+    nameAr: attribute.nameAr,
+    values: (attribute.values ?? []).map((value) => ({
+      value: value.value,
+      valueAr: value.valueAr,
+    })),
+  }))
+}
+
+const handleSubmit = async (event: React.FormEvent) => {
+  event.preventDefault()
+  setError("")
+  setIsSaving(true)
+
+  try {
+    if (
+      !form.nameFr?.trim() ||
+      !form.nameAr?.trim() ||
+      !form.descriptionFr?.trim() ||
+      !form.descriptionAr?.trim()
+    ) {
+      throw new Error("Tous les champs bilingues sont requis")
+    }
+
+    if (!form.categoryId) {
+      throw new Error("Une catégorie est requise")
+    }
+
+    if (!images.length) {
+      throw new Error("Ajoutez au moins une image")
+    }
+
+    const uploaded = await uploadNewImages()
+
+    const imageUrls = images.map(
+      (image) =>
+        uploaded.get(image.key) ?? image.imageUrl
+    )
+
+    const attributesPayload = buildAttributesPayload(
+      form.attributes,
+      Boolean(editingId)
+    )
+
+    const payload = {
+      nameFr: form.nameFr,
+      nameAr: form.nameAr,
+      descriptionFr: form.descriptionFr,
+      descriptionAr: form.descriptionAr,
+      categoryId: form.categoryId,
+      price: form.price ?? 0,
+      originalPrice: form.originalPrice ?? null,
+      tag: form.tag || null,
+      quantity: form.quantity ?? 0,
+      imageUrls,
+      attributes: attributesPayload,
+    }
+
+    console.log("========== PRODUCT PAYLOAD ==========")
+    console.log(
+      JSON.stringify(payload, null, 2)
+    )
+    console.log(
+      "MODE =",
+      editingId ? "UPDATE" : "CREATE"
+    )
+    console.log(
+      "ATTRIBUTES =",
+      payload.attributes
+    )
+    console.log("====================================")
+
+    const endpoint =
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/products` +
+      `${editingId ? `/${editingId}` : ""}`
+
+    const token = localStorage.getItem("adminToken")
+
+    if (!token) {
+      throw new Error(
+        "Session expirée. Veuillez vous reconnecter."
+      )
+    }
+
+    const response = await fetch(endpoint, {
+      method: editingId ? "PUT" : "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    })
+
+    const data = await response
+      .json()
+      .catch(() => ({}))
+
+    if (!response.ok) {
+      throw new Error(
+        data.details?.[0] ||
+        data.message ||
+        data.error ||
+        "Impossible d’enregistrer le produit"
+      )
+    }
+
+    const wasEditing = Boolean(editingId)
+
+    resetForm()
+
+    await refreshProducts(false)
+
+    const message = wasEditing
+      ? admin.productUpdated
+      : admin.productAdded
+
+    setSuccessMessage(message)
+
+    setToast({
+      message,
+      type: "success",
+    })
+
+  } catch (submissionError) {
+
+    const message =
+      submissionError instanceof Error
+        ? submissionError.message
+        : admin.saveError
+
+    setError(message)
+
+    setToast({
+      message,
+      type: "error",
+    })
+
+  } finally {
+    setIsSaving(false)
+  }
+}
 
   const handleDelete = async (id: string) => {
     setIsDeleting((previous) => new Set(previous).add(id))
@@ -172,9 +303,52 @@ export default function AdminProductsPage() {
   }
 
   const handleEdit = (product: Product) => {
-    setEditingId(product.id); setForm(product)
-    const existing = product.images?.length ? product.images : [{ imageUrl: product.image }]
-    setImages(existing.map((image, index) => ({ key: `stored-${image.id ?? index}`, imageUrl: image.imageUrl })))
+    setEditingId(product.id)
+
+    // Le backend retourne actuellement :
+    // category: { id, nameFr, nameAr }
+    //
+    // Le formulaire utilise :
+    // categoryId
+    //
+    // On récupère donc l'ID depuis category.id.
+    const categoryId =
+      product.categoryId ||
+      product.category?.id ||
+      ""
+
+    const productForForm: Product = {
+      ...product,
+
+      // IMPORTANT :
+      // utiliser l'ID de la catégorie retournée par le backend
+      categoryId,
+
+      // Garder les attributs existants
+      attributes: product.attributes ?? [],
+    }
+
+    console.log("========== EDIT PRODUCT ==========")
+    console.log("Product ID:", product.id)
+    console.log("Backend category:", product.category)
+    console.log("Backend categoryId:", product.categoryId)
+    console.log("Resolved categoryId:", categoryId)
+    console.log("Attributes:", product.attributes)
+    console.log("==================================")
+
+    setForm(productForForm)
+
+    const existing = product.images?.length
+      ? product.images
+      : [{ imageUrl: product.image }]
+
+    setImages(
+      existing.map((image, index) => ({
+        key: `stored-${image.id ?? index}`,
+        imageUrl: image.imageUrl
+      }))
+    )
+
     setError("")
   }
 

@@ -10,7 +10,7 @@ export interface Product {
   nameFr: string
   nameAr: string
   categoryId: string
-  category?: Category;
+  category?: Category
   price: number
   originalPrice?: number
   tag?: string
@@ -19,6 +19,23 @@ export interface Product {
   image: string
   images?: ProductImage[]
   quantity?: number
+  /** Optional, backwards-compatible configurable product options. */
+  attributes?: ProductAttribute[]
+}
+
+/** A named characteristic of a product (e.g. "Taille", "Couleur"). */
+export interface ProductAttribute {
+  id?: string
+  name: string
+  nameAr?: string
+  values: ProductAttributeValue[]
+}
+
+/** One selectable value for an attribute, with stable id and bilingual labels. */
+export interface ProductAttributeValue {
+  id?: string
+  value: string
+  valueAr?: string
 }
 
 export interface ProductImage {
@@ -27,7 +44,40 @@ export interface ProductImage {
   displayOrder?: number
 }
 
+// ============================================================================
+// PANIER — sélection d'attributs
+// ============================================================================
 
+/**
+ * Sélection "brute" faite par l'utilisateur sur la page produit.
+ * Clé = ProductAttribute.id (ou .name si pas d'id)
+ * Valeur = ProductAttributeValue.id (ou .value si pas d'id)
+ */
+export type SelectedAttributes = Record<string, string>
+
+/**
+ * Attribut sélectionné tel que stocké dans le panier / envoyé au backend.
+ * Auto-suffisant : ne dépend plus de product.attributes pour être affiché,
+ * donc reste correct même si le produit est modifié/supprimé plus tard.
+ */
+export interface SelectedCartAttribute {
+  attributeId?: string
+  attributeName: string
+  attributeNameAr?: string
+  valueId?: string
+  selectedValue: string
+  selectedValueAr?: string
+}
+
+/**
+ * Item du panier. `variantKey` identifie de façon unique
+ * un produit + une configuration d'attributs donnée.
+ */
+export interface CartItem extends Product {
+  quantity: number
+  selectedAttributes: SelectedCartAttribute[]
+  variantKey: string
+}
 
 // ⚠️ Type mis à jour pour correspondre exactement à la réponse du back-end
 // Spring Boot (GET /orders), et non plus à l'ancien mock Next.js local.

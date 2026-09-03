@@ -3,7 +3,7 @@ export const siteConfig = {
   tagline: "Bijoux d'exception pour chaque moment important",
   description: "Collection moderne de bijoux avec expérience d'achat simple, élégante et pensée pour mobile.",
   location: "Casablanca, Maroc",
-  phone: "+212 6 00 00 00 00",
+  phone: "+212 6 18737715",
   whatsapp: "+212600000000",
   email: "contact@khalidbijoux.com",
   address: "Casablanca, Maroc",

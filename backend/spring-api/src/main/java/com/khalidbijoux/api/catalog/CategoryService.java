@@ -1,5 +1,7 @@
 package com.khalidbijoux.api.catalog;
 
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -54,4 +56,24 @@ public class CategoryService {
 
         repository.delete(category);
     }
+
+    @Transactional
+    public Category update(
+            String id,
+            CreateCategoryRequest request
+    ) {
+        Category category = repository.findById(id)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Category not found"
+                        )
+                );
+
+        category.setNameFr(request.getNameFr());
+        category.setNameAr(request.getNameAr());
+
+        return repository.save(category);
+    }
+
+
 }

@@ -1,5 +1,6 @@
 server:
   port: ${PORT:8080}
+  address: 0.0.0.0
 
 app:
   cors:
@@ -28,6 +29,7 @@ cloudinary:
   api-secret: ${CLOUDINARY_API_SECRET:apuYg_GC_jH04s9YlSFETEVHlK4}
 
 
+
 spring:
   datasource:
     url: jdbc:mysql://${MYSQLHOST:localhost}:${MYSQLPORT:3306}/${MYSQLDATABASE:khalidbijoux_db}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
@@ -51,3 +53,9 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+
+
+  order:
+    shipping-cost: ${0}
+    free-shipping-threshold: ${0}
+    tax-rate: ${0}

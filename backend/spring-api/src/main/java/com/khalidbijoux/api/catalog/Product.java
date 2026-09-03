@@ -2,6 +2,7 @@ package com.khalidbijoux.api.catalog;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +48,11 @@ public class Product {
     @Column(nullable = false)
     private String image;
 
-    /** First image stays denormalized for compatibility with older clients. */
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            mappedBy = "product",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     @OrderBy("displayOrder ASC, id ASC")
     @Builder.Default
     private List<ProductImage> images = new ArrayList<>();
@@ -56,8 +60,24 @@ public class Product {
     @Column(nullable = false)
     private Integer quantity = 0;
 
+    /**
+     * Caractéristiques dynamiques du produit.
+     * Exemple :
+     * Taille -> 6, 7, 8
+     * Couleur -> Or, Argent
+     */
+    @OneToMany(
+            mappedBy = "product",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @OrderBy("displayOrder ASC, id ASC")
+    @Builder.Default
+    private List<ProductAttribute> attributes = new ArrayList<>();
+
     public void replaceImages(List<String> imageUrls) {
         images.clear();
+
         for (int index = 0; index < imageUrls.size(); index++) {
             images.add(ProductImage.builder()
                     .product(this)
@@ -65,6 +85,39 @@ public class Product {
                     .displayOrder(index)
                     .build());
         }
-        image = imageUrls.isEmpty() ? "/placeholder.svg" : imageUrls.get(0);
+
+        image = imageUrls.isEmpty()
+                ? "/placeholder.svg"
+                : imageUrls.get(0);
+    }
+
+    public void replaceAttributes(List<ProductAttribute> newAttributes) {
+        attributes.clear();
+
+        if (newAttributes == null) {
+            return;
+        }
+
+        for (int index = 0; index < newAttributes.size(); index++) {
+            ProductAttribute attribute = newAttributes.get(index);
+
+            attribute.setProduct(this);
+            attribute.setDisplayOrder(index);
+
+            if (attribute.getValues() != null) {
+                for (int valueIndex = 0;
+                     valueIndex < attribute.getValues().size();
+                     valueIndex++) {
+
+                    ProductAttributeValue value =
+                            attribute.getValues().get(valueIndex);
+
+                    value.setAttribute(attribute);
+                    value.setDisplayOrder(valueIndex);
+                }
+            }
+
+            attributes.add(attribute);
+        }
     }
 }

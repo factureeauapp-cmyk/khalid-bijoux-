@@ -59,7 +59,7 @@ export default function Footer() {
             </div>
             <div className="flex items-center space-x-3">
               <Phone size={14} className="text-[#C9A84C]" />
-              <span>+212 6 00 00 00 00</span>
+              <span>+212 6 18737715</span>
             </div>
             <p className="cursor-pointer transition-colors hover:text-[#C9A84C]">contact@khalidbijoux.com</p>
           </div>

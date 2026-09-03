@@ -3,16 +3,28 @@ package com.khalidbijoux.api.order;
 import com.khalidbijoux.api.catalog.CatalogService;
 import com.khalidbijoux.api.catalog.Product;
 import com.khalidbijoux.api.catalog.ProductResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 @Transactional
 public class OrderService {
+
+
+    @Value("${app.order.shipping-cost:0}")
+    private int shippingCost;
+
+    @Value("${app.order.free-shipping-threshold:0}")
+    private int freeShippingThreshold;
+
+    @Value("${app.order.tax-rate:0.00}")
+    private double taxRate;
 
     private final CatalogService catalogService;
     private final OrderRepository orderRepository;
@@ -21,6 +33,8 @@ public class OrderService {
         this.catalogService = catalogService;
         this.orderRepository = orderRepository;
     }
+
+
 
     public CreateOrderResponse createOrder(CreateOrderRequest request) {
 
@@ -48,8 +62,10 @@ public class OrderService {
                     })
                     .sum();
 
-            int shipping = subtotal > 5000 ? 0 : 250;
-            int tax = Math.round(subtotal * 0.03f);
+            int shipping =  shippingCost;
+
+            int tax = (int) Math.round(subtotal * taxRate);
+
             int total = subtotal + shipping + tax;
 
             String orderNumber = "KB-" + UUID.randomUUID()
@@ -91,20 +107,116 @@ public class OrderService {
 
             order.setShippingAddress(shippingAddress);
 
-            // Produits
+            // =========================================================
+// PRODUITS
+// =========================================================
+
             List<OrderItem> items = request.items().stream()
                     .map(itemReq -> {
 
-                        ProductResponse product = catalogService.getProduct(itemReq.productId());
+                        System.out.println("--------------------------------");
+                        System.out.println("Création OrderItem");
+                        System.out.println("Product ID : " + itemReq.productId());
+                        System.out.println("Quantity   : " + itemReq.quantity());
+
+                        ProductResponse product =
+                                catalogService.getProduct(itemReq.productId());
+
+                        if (product == null) {
+                            throw new IllegalArgumentException(
+                                    "Produit introuvable : " + itemReq.productId()
+                            );
+                        }
 
                         OrderItem orderItem = new OrderItem();
 
+                        // =================================================
+                        // PRODUIT
+                        // =================================================
+
                         orderItem.setProductId(product.getId());
-                        orderItem.setProductName(product.getNameFr());
-                        orderItem.setProductImage(product.getImage());
-                        orderItem.setPrice(product.getPrice());
-                        orderItem.setQuantity(itemReq.quantity());
-                        orderItem.setSelectedSize(itemReq.selectedSize());
+
+                        orderItem.setProductName(
+                                product.getNameFr()
+                        );
+
+                        orderItem.setProductImage(
+                                product.getImage()
+                        );
+
+                        orderItem.setPrice(
+                                product.getPrice()
+                        );
+
+                        // IMPORTANT :
+                        // quantité commandée par le client
+                        orderItem.setQuantity(
+                                itemReq.quantity()
+                        );
+
+                        // =================================================
+                        // ATTRIBUTS SÉLECTIONNÉS
+                        // =================================================
+
+                        List<OrderItemAttribute> selectedAttributes =
+                                new ArrayList<>();
+
+                        if (itemReq.selectedAttributes() != null) {
+
+                            for (SelectedAttributeRequest selected :
+                                    itemReq.selectedAttributes()) {
+
+                                if (selected == null) {
+                                    continue;
+                                }
+
+                                if (selected.attributeName() == null ||
+                                        selected.attributeName().isBlank()) {
+                                    continue;
+                                }
+
+                                if (selected.selectedValue() == null ||
+                                        selected.selectedValue().isBlank()) {
+                                    continue;
+                                }
+
+                                OrderItemAttribute orderAttribute =
+                                        new OrderItemAttribute();
+
+                                orderAttribute.setAttributeName(
+                                        selected.attributeName().trim()
+                                );
+
+                                orderAttribute.setAttributeNameAr(
+                                        selected.attributeNameAr() != null
+                                                ? selected.attributeNameAr().trim()
+                                                : null
+                                );
+
+                                orderAttribute.setSelectedValue(
+                                        selected.selectedValue().trim()
+                                );
+
+                                orderAttribute.setSelectedValueAr(
+                                        selected.selectedValueAr() != null
+                                                ? selected.selectedValueAr().trim()
+                                                : null
+                                );
+
+                                selectedAttributes.add(orderAttribute);
+
+                                System.out.println(
+                                        "Attribut sélectionné : "
+                                                + selected.attributeName()
+                                                + " = "
+                                                + selected.selectedValue()
+                                );
+                            }
+                        }
+
+                        orderItem.setSelectedAttributes(
+                                selectedAttributes
+                        );
 
                         return orderItem;
                     })
@@ -227,6 +339,99 @@ public class OrderService {
                 status.equals("SHIPPED") ||
                 status.equals("DELIVERED") ||
                 status.equals("CANCELLED");
+    }
+
+
+
+    private void validateSelectedAttributes(
+            ProductResponse product,
+            List<SelectedAttributeRequest> selectedAttributes
+    ) {
+
+        if (selectedAttributes == null ||
+                selectedAttributes.isEmpty()) {
+            return;
+        }
+
+        if (product.getAttributes() == null ||
+                product.getAttributes().isEmpty()) {
+
+            throw new IllegalArgumentException(
+                    "Le produit " + product.getId()
+                            + " ne possède aucun attribut."
+            );
+        }
+
+        for (SelectedAttributeRequest selected :
+                selectedAttributes) {
+
+            if (selected == null) {
+                continue;
+            }
+
+            if (selected.attributeName() == null ||
+                    selected.attributeName().isBlank()) {
+
+                throw new IllegalArgumentException(
+                        "Nom d'attribut invalide."
+                );
+            }
+
+            if (selected.selectedValue() == null ||
+                    selected.selectedValue().isBlank()) {
+
+                throw new IllegalArgumentException(
+                        "Valeur sélectionnée invalide pour "
+                                + selected.attributeName()
+                );
+            }
+
+            // =====================================================
+            // RECHERCHER L'ATTRIBUT DU PRODUIT
+            // =====================================================
+
+            var productAttribute =
+                    product.getAttributes()
+                            .stream()
+                            .filter(attribute ->
+                                    attribute.getName()
+                                            .equalsIgnoreCase(
+                                                    selected.attributeName()
+                                            )
+                            )
+                            .findFirst()
+                            .orElseThrow(() ->
+                                    new IllegalArgumentException(
+                                            "Attribute not found: "
+                                                    + selected.attributeName()
+                                    )
+                            );
+
+            // =====================================================
+            // RECHERCHER LA VALEUR
+            // =====================================================
+
+            boolean valueExists =
+                    productAttribute.getValues()
+                            .stream()
+                            .anyMatch(value ->
+                                    value.getValue()
+                                            .equalsIgnoreCase(
+                                                    selected.selectedValue()
+                                            )
+                            );
+
+            if (!valueExists) {
+
+                throw new IllegalArgumentException(
+                        "Value '"
+                                + selected.selectedValue()
+                                + "' not found for attribute '"
+                                + selected.attributeName()
+                                + "'"
+                );
+            }
+        }
     }
 
 }

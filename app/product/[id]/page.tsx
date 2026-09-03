@@ -1,6 +1,6 @@
 "use client"
 
-import React, { use, useEffect, useState } from "react"
+import React, { use, useEffect, useMemo, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { motion } from "framer-motion"
@@ -11,7 +11,7 @@ import ProductCard from "../../components/ProductCard"
 import { useCart } from "../../CartContext"
 import { useAppContext } from "../../providers/AppContext"
 import { getCategoryById, getCategoryName, getProductDescription, getProductName } from "@/lib/product-utils"
-
+import { normalizeAttributeValue } from "@/lib/products/attributes"
 
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -26,6 +26,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [showToast, setShowToast] = useState(false)
 
+  // Options dynamiques du produit (Taille, Couleur, Pierre, etc.) : quel que
+  // soit le nombre ou le nom des caractéristiques, ce state suit uniquement
+  // "quelle valeur est sélectionnée pour quelle caractéristique".
+  const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({})
+
   useEffect(() => {
     if (!showToast) {
       return
@@ -34,6 +39,64 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     const timer = window.setTimeout(() => setShowToast(false), 2200)
     return () => window.clearTimeout(timer)
   }, [showToast])
+
+  // Réinitialise la sélection quand on change de produit (navigation vers un
+  // autre article), pour ne pas garder une sélection incohérente.
+  useEffect(() => {
+    setSelectedAttributes({})
+    setSelectedIndex(0)
+  }, [id])
+
+  const attributes = useMemo(() => product?.attributes ?? [], [product])
+
+  const attributeKey = (attribute: { id?: string; name: string }) => attribute.id ?? attribute.name
+  const valueKey = (value: { id?: string; value: string }) => value.id ?? value.value
+
+  const attributeLabel = (attribute: { name: string; nameAr?: string }) =>
+    language === "ar" ? attribute.nameAr || attribute.name : attribute.name
+
+  const valueLabel = (value: { value: string; valueAr?: string }) =>
+    language === "ar" ? value.valueAr || value.value : value.value
+
+  // Normalisation légère pour comparer des libellés de couleur sans être
+  // sensible à la casse / aux espaces superflus.
+  const normalizeKey = (input: string) => input.trim().toLowerCase()
+
+  // Détecte automatiquement quelle caractéristique du produit représente la
+  // couleur, sans dépendre d'un nom figé (FR "Couleur" / AR "اللون").
+  const colorAttribute = useMemo(
+    () =>
+      attributes.find((attribute) => {
+        const name = attribute.name?.toLowerCase() ?? ""
+        const nameAr = attribute.nameAr ?? ""
+        return name.includes("couleur") || name.includes("color") || nameAr.includes("لون")
+      }),
+    [attributes]
+  )
+
+  // Caractéristiques obligatoires pas encore sélectionnées, dans l'ordre où
+  // elles apparaissent sur le produit. Sert à la fois à désactiver le bouton
+  // et à générer le message d'erreur (jamais de nom en dur).
+  const missingAttributes = useMemo(
+    () => attributes.filter((attribute) => !selectedAttributes[attributeKey(attribute)]),
+    [attributes, selectedAttributes]
+  )
+
+  const hasAllRequiredAttributes = missingAttributes.length === 0
+
+  const selectAttributeValue = (attribute: (typeof attributes)[number], value: string) => {
+    setSelectedAttributes((previous) => ({
+      ...previous,
+      [attributeKey(attribute)]: value,
+    }))
+
+    // Si c'est la couleur qu'on vient de changer, on repart sur la première
+    // image de la nouvelle galerie plutôt que de garder un index qui n'a
+    // plus de sens.
+    if (colorAttribute && attributeKey(attribute) === attributeKey(colorAttribute)) {
+      setSelectedIndex(0)
+    }
+  }
 
   if (!product) {
     return (
@@ -73,8 +136,30 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       )
     })
     .slice(0, 4)
-  const galleryImages = [product.image, ...(product.images ?? []).map((image) => image.imageUrl)]
+
+  // Toutes les images du produit, tous coloris confondus (fallback par
+  // défaut et vue quand aucune couleur n'est encore choisie).
+  const allGalleryImages = [product.image, ...(product.images ?? []).map((image) => image.imageUrl)]
     .filter((image, index, array) => Boolean(image) && array.indexOf(image) === index)
+
+  const selectedColorValue = colorAttribute ? selectedAttributes[attributeKey(colorAttribute)] : undefined
+
+  // Galerie effective : si une couleur est sélectionnée ET que certaines
+  // images du produit sont taguées avec cette couleur (champ `color` sur
+  // chaque entrée de product.images), on n'affiche que ces images-là.
+  // Sinon on retombe sur la galerie complète.
+  // NB : adapte le nom du champ (`image.color`) au modèle de données réel
+  // si tes images de variantes sont stockées différemment (ex: colorId).
+  const galleryImages = useMemo(() => {
+    if (!selectedColorValue) return allGalleryImages
+
+    const colorTaggedImages = (product.images ?? [])
+      .filter((image: any) => image.color && normalizeKey(image.color) === normalizeKey(selectedColorValue))
+      .map((image: any) => image.imageUrl)
+
+    return colorTaggedImages.length > 0 ? colorTaggedImages : allGalleryImages
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product, selectedColorValue])
 
   const selectImage = (index: number) => {
     setSelectedIndex(index)
@@ -86,8 +171,19 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   }
   const selectedImage = galleryImages[selectedIndex] ?? galleryImages[0] ?? "/placeholder.svg"
 
+  // Message dynamique "Veuillez sélectionner {nom de la première
+  // caractéristique manquante}", généré à partir des données du produit,
+  // jamais d'un nom d'attribut écrit en dur dans le code.
+  const missingAttributeMessage = missingAttributes[0]
+    ? language === "ar"
+      ? `يرجى اختيار ${attributeLabel(missingAttributes[0])}.`
+      : `Veuillez sélectionner ${attributeLabel(missingAttributes[0])}.`
+    : null
+
   const handleAddToCart = () => {
-    addToCart(product)
+    if (!hasAllRequiredAttributes) return
+
+    addToCart(product, selectedAttributes)
     setShowToast(true)
   }
 
@@ -195,6 +291,57 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                   <p className="text-[15px] leading-8 text-[#e8e1d5]">{productDescription}</p>
                 </div>
 
+                {/* ============================================================ */}
+                {/* OPTIONS DU PRODUIT — génération 100% dynamique             */}
+                {/* ============================================================ */}
+
+                {attributes.length > 0 && (
+                  <div className="space-y-4 rounded-[20px] border border-[#C9A84C]/20 bg-[#0A0A0A]/80 p-4">
+                    <div className="flex items-center gap-2 text-[#E8C97E]">
+                      <Gem size={16} />
+                      <span className="text-sm font-semibold uppercase tracking-[0.24em]">
+                        {language === "ar" ? "خيارات المنتج" : "Options du produit"}
+                      </span>
+                    </div>
+
+                    {attributes.map((attribute) => {
+                      const key = attributeKey(attribute)
+                      const currentValue = selectedAttributes[key]
+
+                      return (
+                        <div key={key} className="space-y-2">
+                          <p className="text-xs font-medium uppercase tracking-wide text-white/60">
+                            {attributeLabel(attribute)}
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {attribute.values.map((rawValue) => {
+                              const value = normalizeAttributeValue(rawValue)
+                              const vKey = valueKey(value)
+                              const isSelected = currentValue === vKey
+
+                              return (
+                                <button
+                                  key={vKey}
+                                  type="button"
+                                  onClick={() => selectAttributeValue(attribute, vKey)}
+                                  aria-pressed={isSelected}
+                                  className={`min-w-[44px] rounded-xl border px-3.5 py-2 text-sm font-medium transition-all ${
+                                    isSelected
+                                      ? "border-[#C9A84C] bg-[#C9A84C]/15 text-[#E8C97E] shadow-[0_0_0_1px_rgba(201,168,76,0.35)]"
+                                      : "border-white/15 text-white/75 hover:border-[#C9A84C]/50 hover:text-[#E8C97E]"
+                                  }`}
+                                >
+                                  {valueLabel(value)}
+                                </button>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+
                 <div className="grid gap-3 sm:grid-cols-2">
                   <motion.div whileHover={{ y: -4, scale: 1.01 }} className="rounded-[20px] border border-white/10 bg-white/5 p-4 transition-all duration-300 hover:border-[#C9A84C]/40 hover:bg-white/8">
                     <div className="mb-3 inline-flex rounded-full bg-[#C9A84C]/10 p-2 text-[#E8C97E]">
@@ -221,7 +368,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                   <button
                     type="button"
                     onClick={handleAddToCart}
-                    className="group flex flex-1 items-center justify-center gap-2 rounded-[14px] bg-linear-to-r from-[#C9A84C] via-[#E8C97E] to-[#C9A84C] px-5 py-3.5 text-sm font-semibold uppercase tracking-[0.2em] text-[#0D0D0D] shadow-[0_12px_35px_rgba(201,168,76,0.22)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03]"
+                    disabled={!hasAllRequiredAttributes}
+                    className="group flex flex-1 items-center justify-center gap-2 rounded-[14px] bg-linear-to-r from-[#C9A84C] via-[#E8C97E] to-[#C9A84C] px-5 py-3.5 text-sm font-semibold uppercase tracking-[0.2em] text-[#0D0D0D] shadow-[0_12px_35px_rgba(201,168,76,0.22)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:scale-100"
                   >
                     <ShoppingBag size={17} className="transition-transform duration-300 group-hover:rotate-6" />
                     {productLabels.order}
@@ -233,6 +381,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     {productLabels.contact}
                   </Link>
                 </div>
+
+                {!hasAllRequiredAttributes && missingAttributeMessage && (
+                  <p className="text-sm text-rose-400">{missingAttributeMessage}</p>
+                )}
               </div>
             </motion.div>
           </div>

@@ -33,7 +33,7 @@ export default function ContactPage() {
     <Navbar />
     <section className="px-6 py-12 md:px-12"><div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-2">
       <div className="space-y-6"><p className="text-[11px] font-bold uppercase tracking-[0.5em] text-[#c9a84c]">Khalid Bijoux</p><h1 className="text-4xl font-cormorant md:text-6xl">{contact.title}</h1><p className="max-w-xl text-lg text-white/70">{contact.subtitle}</p>
-        <div className="grid gap-4 sm:grid-cols-2"><div className="rounded-[24px] border border-white/10 bg-white/5 p-5">Casablanca, Maroc</div><div className="rounded-[24px] border border-white/10 bg-white/5 p-5">+212 6 00 00 00 00</div><div className="rounded-[24px] border border-white/10 bg-white/5 p-5">contact@khalidbijoux.com</div><div className="rounded-[24px] border border-white/10 bg-white/5 p-5">Lun - Sam, 10h à 19h</div></div>
+        <div className="grid gap-4 sm:grid-cols-2"><div className="rounded-[24px] border border-white/10 bg-white/5 p-5">Casablanca, Maroc</div><div className="rounded-[24px] border border-white/10 bg-white/5 p-5">+212 6 18737715</div><div className="rounded-[24px] border border-white/10 bg-white/5 p-5">contact@khalidbijoux.com</div><div className="rounded-[24px] border border-white/10 bg-white/5 p-5">Lun - Sam, 10h à 19h</div></div>
       </div>
       <div className="rounded-[32px] border border-white/10 bg-white/5 p-6"><h2 className="mb-6 text-2xl font-cormorant">{contact.formTitle}</h2>
         <form className="space-y-4" onSubmit={submit}>

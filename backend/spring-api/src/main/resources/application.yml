@@ -24,9 +24,10 @@ app:
     cookie-secure: ${AUTH_COOKIE_SECURE:false}
 
 cloudinary:
-  cloud-name: ${CLOUDINARY_CLOUD_NAME}
-  api-key: ${CLOUDINARY_API_KEY}
-  api-secret: ${CLOUDINARY_API_SECRET}
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:s8uc7652}
+  api-key: ${CLOUDINARY_API_KEY:446972716138229}
+  api-secret: ${CLOUDINARY_API_SECRET:apuYg_GC_jH04s9YlSFETEVHlK4}
+
 
 
 spring:
@@ -52,3 +53,9 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+
+
+  order:
+    shipping-cost: ${0}
+    free-shipping-threshold: ${0}
+    tax-rate: ${0}

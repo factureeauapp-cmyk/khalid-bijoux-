@@ -3,12 +3,24 @@
 import React, { useMemo, useRef, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Loader2 } from "lucide-react"
+import { Check, Loader2 } from "lucide-react"
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 import AlertBox from "@/components/AlertBox"
 import { useCart } from "../CartContext"
 import { useAppContext } from "../providers/AppContext"
+import type { CartItem, ProductAttribute } from "@/lib/store-types"
+import {
+  getAttributeKey,
+  getAttributeValueKey,
+  getColorFromValue,
+  isColorAttribute,
+  isLightColorHex,
+  isValueSelectedForAttribute,
+  normalizeAttributeValue,
+} from "@/lib/products/attributes"
+import OrderConfirmationCard from "../components/order-confirmation/OrderConfirmationCard"
+import { WhatsAppOrderData } from "@/lib/whatsapp"
 
 interface ErrorAlert {
   id: string
@@ -113,22 +125,46 @@ const FIELD_FOCUS_ORDER: (keyof CheckoutFormData)[] = [
   "country",
 ]
 
+const PAYMENT_METHOD = "Cash on Delivery"
+
 export default function CartPage() {
-  const { cart, totalPrice, updateQuantity, removeFromCart, clearCart } = useCart()
+  const { cart, totalPrice, updateQuantity, removeFromCart, updateItemAttribute, clearCart } = useCart()
   const { t, language } = useAppContext()
   const cartLabels = t("cart")
 
   const [formData, setFormData] = useState<CheckoutFormData>(initialFormData)
   const [fieldErrors, setFieldErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [successMessage, setSuccessMessage] = useState("")
   const [errorMessages, setErrorMessages] = useState<ErrorAlert[]>([])
+
+  // Snapshot autonome de la dernière commande créée avec succès. Tant que
+  // ceci est non-null, on affiche l'écran de confirmation à la place du
+  // panier/formulaire. La commande reste PENDING côté backend quoi qu'il
+  // arrive sur cet écran.
+  const [orderConfirmation, setOrderConfirmation] = useState<WhatsAppOrderData | null>(null)
 
   // Refs used to auto-focus the first invalid field on submit
   const fieldRefs = useRef<Partial<Record<keyof CheckoutFormData, HTMLInputElement | HTMLTextAreaElement | null>>>({})
 
-  const getProductName = (item: any) => {
+  const getProductName = (item: CartItem) => {
     return language === "ar" ? item.nameAr : item.nameFr
+  }
+
+  // Toujours des tableaux, même pour un vieil item de localStorage qui n'a
+  // pas ces champs (fix de "Cannot read properties of undefined").
+  const getSelectedAttributes = (item: CartItem): CartItem["selectedAttributes"] => item.selectedAttributes ?? []
+  const getProductAttributes = (item: CartItem): ProductAttribute[] => item.attributes ?? []
+
+  const attributeLabel = (attribute: ProductAttribute) =>
+    language === "ar" ? attribute.nameAr || attribute.name : attribute.name
+
+  // Libellé bilingue statique — utilisé seulement en repli, quand le produit
+  // n'a plus (ou pas encore) ses attributs modifiables mais que la ligne
+  // panier a conservé une sélection figée.
+  const getSelectedAttributeLabel = (attribute: CartItem["selectedAttributes"][number]) => {
+    const name = language === "ar" ? attribute.attributeNameAr || attribute.attributeName : attribute.attributeName
+    const value = language === "ar" ? attribute.selectedValueAr || attribute.selectedValue : attribute.selectedValue
+    return `${name} : ${value}`
   }
 
   const updateField = (field: keyof CheckoutFormData) =>
@@ -167,7 +203,6 @@ export default function CartPage() {
 
   const handleOrder = async () => {
     setErrorMessages([])
-    setSuccessMessage("")
 
     if (cart.length === 0) {
       setErrorMessages([{
@@ -192,6 +227,34 @@ export default function CartPage() {
       return
     }
 
+    // Ne jamais envoyer categoryId/category/selectedSize/selectedColor/... :
+    // uniquement productId, quantity, selectedAttributes.
+    const orderItems = cart.map((item) => ({
+      productId: item.id,
+      quantity: item.quantity,
+      selectedAttributes: getSelectedAttributes(item).map((attribute) => ({
+        attributeName: attribute.attributeName,
+        attributeNameAr: attribute.attributeNameAr ?? null,
+        selectedValue: attribute.selectedValue,
+        selectedValueAr: attribute.selectedValueAr ?? null,
+      })),
+    }))
+
+    // Snapshot du panier AVANT de le vider — c'est la seule source des noms
+    // produit / prix / attributs pour le message WhatsApp, le backend ne les
+    // renvoie pas dans la réponse de POST /orders.
+    const cartSnapshotForWhatsApp = cart.map((item) => ({
+      productName: getProductName(item) || "",
+      price: item.price,
+      quantity: item.quantity,
+      selectedAttributes: getSelectedAttributes(item),
+    }))
+
+    console.log("========== CREATE ORDER ==========")
+    console.log("Cart:", cart)
+    console.log("Order items:", orderItems)
+    console.log("=================================")
+
     try {
       setIsSubmitting(true)
 
@@ -215,14 +278,8 @@ export default function CartPage() {
             postalCode: formData.postalCode.trim(),
             country: formData.country.trim(),
           },
-          paymentMethod: "Cash on Delivery",
-          items: cart.map((item: any) => ({
-            productId: item.id,
-            quantity: item.quantity,
-            // NOTE: adapt `item.size` to whatever field name your
-            // CartContext actually uses for the selected size.
-            selectedSize: item.size ?? null,
-          })),
+          paymentMethod: PAYMENT_METHOD,
+          items: orderItems,
         }),
       })
 
@@ -234,15 +291,38 @@ export default function CartPage() {
         return
       }
 
-      // Success!
-      setSuccessMessage(data.message || "Commande créée avec succès ! 🎉 Nous vous contacterons bientôt.")
+      // Succès : on construit le snapshot autonome pour l'écran de
+      // confirmation + le message WhatsApp, en préférant les montants
+      // renvoyés par le backend (source de vérité) avec repli sur le total
+      // calculé côté client si jamais un champ manquait dans la réponse.
+      setOrderConfirmation({
+        orderNumber: data.orderNumber,
+        paymentMethod: PAYMENT_METHOD,
+        items: cartSnapshotForWhatsApp,
+        customer: {
+          firstName: formData.firstName.trim(),
+          lastName: formData.lastName.trim(),
+          phone: formData.phone.trim(),
+          email: formData.email.trim(),
+        },
+        shippingAddress: {
+          address: formData.address.trim(),
+          city: formData.city.trim(),
+          state: formData.state.trim(),
+          postalCode: formData.postalCode.trim(),
+          country: formData.country.trim(),
+        },
+        subtotal: data.subtotal ?? totalPrice,
+        shipping: data.shipping ?? 0,
+        tax: data.tax ?? 0,
+        total: data.total ?? totalPrice,
+      })
 
-      // Clear form and cart ONLY on success
+      // Vide le panier et le formulaire uniquement APRÈS avoir capturé le
+      // snapshot ci-dessus.
       clearCart()
       setFormData(initialFormData)
       setFieldErrors({})
-
-      setTimeout(() => setSuccessMessage(""), 5000)
     } catch (error) {
       console.error("Order error:", error)
       setErrorMessages([{
@@ -299,6 +379,112 @@ export default function CartPage() {
     )
   }
 
+  // Bloc "attributs" d'une ligne panier : interactif si le produit expose
+  // encore ses attributs, sinon repli en lecture seule sur la sélection
+  // déjà enregistrée (jamais de crash dans les deux cas).
+  const renderItemAttributes = (item: CartItem) => {
+    const productAttributes = getProductAttributes(item)
+    const selectedAttributes = getSelectedAttributes(item)
+
+    if (productAttributes.length === 0) {
+      if (selectedAttributes.length === 0) return null
+
+      return (
+        <ul dir={language === "ar" ? "rtl" : "ltr"} className="space-y-0.5 text-sm text-white/60">
+          {selectedAttributes.map((attribute, index) => (
+            <li key={`${item.variantKey}-${attribute.attributeName}-${index}`}>
+              {getSelectedAttributeLabel(attribute)}
+            </li>
+          ))}
+        </ul>
+      )
+    }
+
+    return (
+      <div dir={language === "ar" ? "rtl" : "ltr"} className="space-y-3">
+        {productAttributes.map((attribute) => {
+          const attrKey = getAttributeKey(attribute)
+          const label = attributeLabel(attribute)
+          const isColor = isColorAttribute(attribute)
+
+          return (
+            <div key={`${item.variantKey}-${attrKey}`} className="space-y-1.5">
+              <p className="text-[11px] font-medium uppercase tracking-wide text-white/45">{label}</p>
+              <div className="flex flex-wrap items-center gap-2">
+                {(attribute.values ?? []).map((rawValue) => {
+                  const value = normalizeAttributeValue(rawValue)
+                  const valueKey = getAttributeValueKey(value)
+                  const valueLabel = language === "ar" ? value.valueAr || value.value : value.value
+                  const selected = isValueSelectedForAttribute(selectedAttributes, attribute, value)
+
+                  if (isColor) {
+                    const hex = getColorFromValue(value.value)
+                    const light = isLightColorHex(hex)
+
+                    return (
+                      <button
+                        key={valueKey}
+                        type="button"
+                        onClick={() => updateItemAttribute(item.variantKey, attrKey, valueKey)}
+                        aria-pressed={selected}
+                        aria-label={`${label} ${valueLabel}`}
+                        title={valueLabel}
+                        className={`relative h-7 w-7 shrink-0 rounded-full transition-all ${
+                          light ? "border border-white/40" : "border border-white/10"
+                        } ${selected ? "ring-2 ring-[#C9A84C] ring-offset-2 ring-offset-[#0f0f0f]" : ""}`}
+                        style={{ backgroundColor: hex }}
+                      >
+                        {selected && (
+                          <Check
+                            size={12}
+                            className="absolute inset-0 m-auto"
+                            color={light ? "#111111" : "#FFFFFF"}
+                          />
+                        )}
+                      </button>
+                    )
+                  }
+
+                  return (
+                    <button
+                      key={valueKey}
+                      type="button"
+                      onClick={() => updateItemAttribute(item.variantKey, attrKey, valueKey)}
+                      aria-pressed={selected}
+                      aria-label={`${label} ${valueLabel}`}
+                      className={`rounded-lg border px-2.5 py-1 text-xs font-medium transition-all ${
+                        selected
+                          ? "border-[#C9A84C] bg-[#C9A84C]/15 text-[#E8C97E]"
+                          : "border-white/15 text-white/70 hover:border-[#C9A84C]/50 hover:text-[#E8C97E]"
+                      }`}
+                    >
+                      {valueLabel}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
+
+  // ---------------------------------------------------------------------
+  // Écran de confirmation post-commande (remplace panier + formulaire).
+  // ---------------------------------------------------------------------
+  if (orderConfirmation) {
+    return (
+      <main className="min-h-screen bg-black pt-28">
+        <Navbar />
+        <section className="px-6 py-12 md:px-12">
+          <OrderConfirmationCard order={orderConfirmation} language={language} />
+        </section>
+        <Footer />
+      </main>
+    )
+  }
+
   return (
     <main className="min-h-screen bg-black pt-28">
       <Navbar />
@@ -315,8 +501,8 @@ export default function CartPage() {
             <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
               <div className="space-y-4">
                 {cart.map((item) => (
-                  <div key={item.id} className="flex flex-col gap-4 rounded-[24px] border border-white/10 bg-white/5 p-4 sm:flex-row sm:items-center">
-                    <div className="relative h-28 w-full overflow-hidden rounded-2xl sm:w-28">
+                  <div key={item.variantKey} className="flex flex-col gap-4 rounded-[24px] border border-white/10 bg-white/5 p-4 sm:flex-row sm:items-start">
+                    <div className="relative h-28 w-full shrink-0 overflow-hidden rounded-2xl sm:w-28">
                       <Image
                         src={item.image || "/placeholder.svg"}
                         alt={getProductName(item) || "Article du panier"}
@@ -325,32 +511,44 @@ export default function CartPage() {
                         className="object-cover"
                       />
                     </div>
-                    <div className="flex-1 space-y-2">
-                      <h2 className="text-2xl font-cormorant text-white">{getProductName(item)}</h2>
-                      <p className="text-lg font-semibold text-[#e8c97e]">{item.price} MAD</p>
+
+                    <div className="flex-1 space-y-3">
+                      <div>
+                        <h2 className="text-2xl font-cormorant text-white">{getProductName(item)}</h2>
+                        <p className="text-lg font-semibold text-[#e8c97e]">{item.price} MAD</p>
+                      </div>
+
+                      {renderItemAttributes(item)}
+
+                      <div className="flex flex-wrap items-center gap-4 pt-1">
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => updateQuantity(item.variantKey, item.quantity - 1)}
+                            disabled={item.quantity <= 1}
+                            className="rounded-full border border-white/10 px-3 py-1 text-white disabled:opacity-50"
+                          >
+                            −
+                          </button>
+                          <span className="min-w-8 text-center text-white">{item.quantity}</span>
+                          <button
+                            type="button"
+                            onClick={() => updateQuantity(item.variantKey, item.quantity + 1)}
+                            className="rounded-full border border-white/10 px-3 py-1 text-white hover:bg-white/10"
+                          >
+                            +
+                          </button>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => removeFromCart(item.variantKey)}
+                          className="text-sm text-red-400 hover:text-red-300"
+                        >
+                          {cartLabels.remove}
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        disabled={item.quantity <= 1}
-                        className="rounded-full border border-white/10 px-3 py-1 text-white disabled:opacity-50"
-                      >
-                        −
-                      </button>
-                      <span className="min-w-8 text-center text-white">{item.quantity}</span>
-                      <button
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        className="rounded-full border border-white/10 px-3 py-1 text-white hover:bg-white/10"
-                      >
-                        +
-                      </button>
-                    </div>
-                    <button
-                      onClick={() => removeFromCart(item.id)}
-                      className="text-sm text-red-400 hover:text-red-300"
-                    >
-                      {cartLabels.remove}
-                    </button>
                   </div>
                 ))}
               </div>
@@ -373,18 +571,6 @@ export default function CartPage() {
                         onClose={() => setErrorMessages((msgs) => msgs.filter((m) => m.id !== error.id))}
                       />
                     ))}
-                  </div>
-                )}
-
-                {/* Success Message */}
-                {successMessage && (
-                  <div className="mb-4">
-                    <AlertBox
-                      type="success"
-                      message={successMessage}
-                      autoClose={5000}
-                      onClose={() => setSuccessMessage("")}
-                    />
                   </div>
                 )}
 

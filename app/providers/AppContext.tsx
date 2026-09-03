@@ -17,6 +17,11 @@ interface AppContextType {
   refreshProducts: (availableOnly?: boolean) => Promise<void>
   refreshCategories: () => Promise<void>
   refreshOrders: () => Promise<void>
+
+   createCategory: (
+    nameFr: string,
+    nameAr: string
+  ) => Promise<Category>
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -48,6 +53,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setProducts(productsPayload)
   }, [])
 
+
+  
+
   const refreshCategories = useCallback(async () => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/categories`, { cache: "no-store", credentials: "include" })
@@ -57,6 +65,54 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
     setCategories(await response.json())
   }, [])
+
+
+
+  const createCategory = useCallback(
+  async (nameFr: string, nameAr: string): Promise<Category> => {
+    const token = localStorage.getItem("adminToken")
+
+    if (!token) {
+      throw new Error("Session expirée. Veuillez vous reconnecter.")
+    }
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/categories`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          nameFr: nameFr.trim(),
+          nameAr: nameAr.trim(),
+        }),
+      }
+    )
+
+    const data = await response.json().catch(() => ({}))
+
+    if (!response.ok) {
+      throw new Error(
+        data.message ||
+        data.error ||
+        data.details?.[0] ||
+        "Erreur lors de la création de la catégorie"
+      )
+    }
+
+    const newCategory = data as Category
+
+    // Synchronisation immédiate du store global
+    await refreshCategories()
+
+    return newCategory
+  },
+  [refreshCategories]
+)
+
 
   const refreshOrders = useCallback(async () => {
     const response = await fetch(
@@ -118,8 +174,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       refreshProducts,
       refreshCategories,
       refreshOrders,
+      createCategory,
     }
-  }, [categories, language, orders, products, refreshCategories, refreshOrders, refreshProducts, setLanguage])
+  }, [categories, language, orders, products, refreshCategories, refreshOrders, refreshProducts, setLanguage, createCategory])
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
 }

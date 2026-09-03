@@ -23,6 +23,7 @@ interface CategorySelectProps {
   selectedCategoryId: string
   onSelectCategory: (categoryId: string) => void
   onCategoryDeleted?: () => void
+  onCategoryCreated?: () => void
   language: "fr" | "ar"
   isLoading?: boolean
 }
@@ -68,7 +69,12 @@ export function CategorySelect({
   // actuellement sélectionnée dès l'ouverture du menu.
   const listRef = useRef<HTMLDivElement>(null)
 
-  const { t } = useAppContext()
+
+  const {
+    t,
+    createCategory,
+    refreshCategories,
+  } = useAppContext()
   const admin = t("admin")
   const adminErrors = admin.errors
   const selectedCategory = useMemo(
@@ -102,7 +108,10 @@ export function CategorySelect({
   }
 
   const handleCreateCategory = async () => {
-    if (!newCategoryFr.trim() || !newCategoryAr.trim()) {
+    const nameFr = newCategoryFr.trim()
+    const nameAr = newCategoryAr.trim()
+
+    if (!nameFr || !nameAr) {
       setError(admin.bothLanguagesRequired)
       return
     }
@@ -111,24 +120,85 @@ export function CategorySelect({
     setIsCreating(true)
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/categories`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nameFr: newCategoryFr, nameAr: newCategoryAr }),
-      })
+      // ==========================================
+      // JWT ADMIN
+      // ==========================================
+      const token = localStorage.getItem("adminToken")
 
-      if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || "Erreur lors de la création")
+      if (!token) {
+        throw new Error("Session expirée. Veuillez vous reconnecter.")
       }
 
-      const newCategory = await response.json()
-      onSelectCategory(newCategory.id)
+      console.log("========== CREATE CATEGORY ==========")
+      console.log("nameFr:", nameFr)
+      console.log("nameAr:", nameAr)
+      console.log("token:", token ? "PRESENT" : "MISSING")
+
+      // ==========================================
+      // CREATE CATEGORY
+      // ==========================================
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/categories`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            nameFr,
+            nameAr,
+          }),
+        }
+      )
+
+      const data = await response.json().catch(() => ({}))
+
+      console.log("CATEGORY RESPONSE:", response.status, data)
+
+      if (!response.ok) {
+        throw new Error(
+          data.message ||
+          data.error ||
+          data.details?.[0] ||
+          "Erreur lors de la création de la catégorie"
+        )
+      }
+
+      const createdCategory = data
+
+      console.log("CATEGORY CREATED:", createdCategory)
+
+      // ==========================================
+      // IMPORTANT :
+      // sélectionner immédiatement la catégorie
+      // ==========================================
+      onSelectCategory(createdCategory.id)
+
+      // ==========================================
+      // Nettoyer le formulaire de catégorie
+      // ==========================================
       setNewCategoryFr("")
       setNewCategoryAr("")
       setShowNewCategory(false)
+
+      // ==========================================
+      // IMPORTANT :
+      // synchroniser la liste des catégories
+      // ==========================================
+      if (onCategoryDeleted) {
+        onCategoryDeleted()
+      }
+
     } catch (err) {
-      setError(err instanceof Error ? err.message : admin.categoryCreateError)
+      console.error("CATEGORY CREATION ERROR:", err)
+
+      setError(
+        err instanceof Error
+          ? err.message
+          : admin.categoryCreateError
+      )
     } finally {
       setIsCreating(false)
     }
@@ -167,7 +237,24 @@ export function CategorySelect({
 
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL
-      const response = await fetch(`${API_URL}/categories/${categoryId}`, { method: "DELETE" })
+      const token = localStorage.getItem("adminToken")
+
+      if (!token) {
+        throw new Error(
+          "Session expirée. Veuillez vous reconnecter."
+        )
+      }
+
+      const response = await fetch(
+        `${API_URL}/admin/categories/${categoryId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}))
@@ -308,11 +395,10 @@ export function CategorySelect({
             type="button"
             onClick={() => setIsOpen(!isOpen)}
             disabled={isLoading}
-            className={`w-full rounded-2xl border bg-black/30 px-4 py-3 flex items-center justify-between text-left text-white disabled:opacity-50 transition-colors ${
-              selectedCategory
-                ? "border-[#c9a84c]/40 hover:border-[#c9a84c]/60"
-                : "border-white/10 hover:border-white/20"
-            }`}
+            className={`w-full rounded-2xl border bg-black/30 px-4 py-3 flex items-center justify-between text-left text-white disabled:opacity-50 transition-colors ${selectedCategory
+              ? "border-[#c9a84c]/40 hover:border-[#c9a84c]/60"
+              : "border-white/10 hover:border-white/20"
+              }`}
           >
             <span className={selectedCategory ? "text-[#f3d57f]" : "text-white/50"}>
               {selectedCategory ? getCategoryLabel(selectedCategory) : admin.selectCategory}
@@ -331,9 +417,8 @@ export function CategorySelect({
                     <div key={category.id} className="relative">
                       <div
                         data-selected={isSelected ? "true" : undefined}
-                        className={`w-full px-4 py-3 text-left flex items-center justify-between gap-2 transition-colors ${
-                          isSelected ? "bg-[#c9a84c]/20 text-[#c9a84c]" : "text-white hover:bg-white/10"
-                        }`}
+                        className={`w-full px-4 py-3 text-left flex items-center justify-between gap-2 transition-colors ${isSelected ? "bg-[#c9a84c]/20 text-[#c9a84c]" : "text-white hover:bg-white/10"
+                          }`}
                       >
                         <button
                           type="button"
@@ -442,11 +527,10 @@ export function CategorySelect({
         >
           <AlertDialogHeader>
             <div
-              className={`mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-full border ${
-                canDeleteTarget
-                  ? "border-rose-500/25 bg-rose-500/10 shadow-[0_0_30px_-8px_rgba(244,63,94,0.5)]"
-                  : "border-amber-500/25 bg-amber-500/10 shadow-[0_0_30px_-8px_rgba(245,158,11,0.4)]"
-              }`}
+              className={`mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-full border ${canDeleteTarget
+                ? "border-rose-500/25 bg-rose-500/10 shadow-[0_0_30px_-8px_rgba(244,63,94,0.5)]"
+                : "border-amber-500/25 bg-amber-500/10 shadow-[0_0_30px_-8px_rgba(245,158,11,0.4)]"
+                }`}
             >
               <AlertTriangle
                 className={`h-7 w-7 ${canDeleteTarget ? "text-rose-400" : "text-amber-400"}`}
