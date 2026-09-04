@@ -17,12 +17,13 @@ app:
   jwt:
     secret: ${JWT_SECRET:khalid-bijoux-secret-key-change-in-production-2024-very-secure-key-2026}
     expiration-ms: ${JWT_EXPIRATION_MS:28800000}
+
   admin:
-    email: ${ADMIN_EMAIL:admin@khalidbijoux.com}
-    bootstrap:
-      enabled: ${ADMIN_BOOTSTRAP_ENABLED:true}
-      email: ${ADMIN_BOOTSTRAP_EMAIL:admin@khalid-bijoux.com}
-      password: ${ADMIN_BOOTSTRAP_PASSWORD:admin123}
+      email: ${ADMIN_EMAIL:admin@khalid-bijoux.com}
+      bootstrap:
+        enabled: ${ADMIN_BOOTSTRAP_ENABLED:true}
+        email: ${ADMIN_BOOTSTRAP_EMAIL:admin@khalid-bijoux.com}
+        password: ${ADMIN_BOOTSTRAP_PASSWORD:admin123}
   upload:
     directory: ${UPLOAD_DIRECTORY:uploads/products}
   auth:

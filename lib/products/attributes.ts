@@ -236,21 +236,47 @@ export function isColorAttribute(attribute: ProductAttribute): boolean {
 const KNOWN_COLOR_HEX: Record<string, string> = {
   or: "#D4AF37",
   gold: "#D4AF37",
+  "or jaune": "#D4AF37",
+
   argent: "#C0C0C0",
   silver: "#C0C0C0",
-  "rose gold": "#B76E79",
+
+  "or blanc": "#F5F5F0",
+  "white gold": "#F5F5F0",
+
   "or rose": "#B76E79",
-  rose: "#B76E79",
+  "rose gold": "#B76E79",
+
   noir: "#111111",
   black: "#111111",
+
   blanc: "#FFFFFF",
   white: "#FFFFFF",
+
+  champagne: "#E8D3A5",
+  bronze: "#CD7F32",
+  cuivre: "#B87333",
+  copper: "#B87333",
+
   rouge: "#C0392B",
   red: "#C0392B",
+
   bleu: "#3498DB",
   blue: "#3498DB",
+
   vert: "#2E8B57",
   green: "#2E8B57",
+
+  violet: "#8E44AD",
+  purple: "#8E44AD",
+
+  rose: "#E8A0A8",
+  pink: "#E8A0A8",
+
+  jaune: "#F1C40F",
+  yellow: "#F1C40F",
+
+  orange: "#E67E22",
 }
 
 const FALLBACK_COLOR_HEX = "#8A8A8A"
@@ -266,6 +292,10 @@ export function getColorFromValue(value: string, colorHex?: string): string {
   const normalized = value.trim().toLowerCase()
   return KNOWN_COLOR_HEX[normalized] ?? FALLBACK_COLOR_HEX
 }
+
+
+
+
 
 /** Utilisé pour choisir une bordure/coche visibles sur les couleurs claires (ex: blanc). */
 export function isLightColorHex(hex: string): boolean {
