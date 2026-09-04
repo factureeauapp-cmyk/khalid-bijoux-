@@ -1,5 +1,17 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+
+# Maven
+**/target/
+target/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+
+
 # dependencies
 /node_modules
 /.pnp
@@ -81,3 +93,7 @@ application-prod.properties
 # OS
 .DS_Store
 Thumbs.db
+
+# Maven build files
+**/target/
+target/
