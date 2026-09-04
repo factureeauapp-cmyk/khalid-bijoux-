@@ -2,6 +2,11 @@ server:
   port: ${PORT:8080}
   address: 0.0.0.0
 
+brevo:
+  api-key: ${BREVO_API_KEY}
+  from-email: ${MAIL_FROM_EMAIL}
+  from-name: ${MAIL_FROM_NAME:Khalid Bijoux}
+
 app:
   cors:
     allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:3000}
@@ -11,6 +16,7 @@ app:
     free-shipping-threshold: ${ORDER_FREE_SHIPPING_THRESHOLD:0}
     tax-rate: ${ORDER_TAX_RATE:0}
 
+
   base-url: ${BASE_URL:http://localhost:8080}
 
   jwt:
@@ -18,32 +24,21 @@ app:
     expiration-ms: ${JWT_EXPIRATION_MS:28800000}
 
   admin:
-    email: ${ADMIN_EMAIL:admin@khalid-bijoux.com}
-    bootstrap:
-      enabled: ${ADMIN_BOOTSTRAP_ENABLED:true}
-      email: ${ADMIN_BOOTSTRAP_EMAIL:admin@khalid-bijoux.com}
-      password: ${ADMIN_BOOTSTRAP_PASSWORD:admin123}
-
+      email: ${ADMIN_EMAIL:admin@khalid-bijoux.com}
+      bootstrap:
+        enabled: ${ADMIN_BOOTSTRAP_ENABLED:true}
+        email: ${ADMIN_BOOTSTRAP_EMAIL:admin@khalid-bijoux.com}
+        password: ${ADMIN_BOOTSTRAP_PASSWORD:admin123}
   upload:
     directory: ${UPLOAD_DIRECTORY:uploads/products}
-
   auth:
     cookie-secure: ${AUTH_COOKIE_SECURE:false}
 
-
 cloudinary:
-  cloud-name: ${CLOUDINARY_CLOUD_NAME:...}
-  api-key: ${CLOUDINARY_API_KEY:...}
-  api-secret: ${CLOUDINARY_API_SECRET:...}
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:s8uc7652}
+  api-key: ${CLOUDINARY_API_KEY:446972716138229}
+  api-secret: ${CLOUDINARY_API_SECRET:apuYg_GC_jH04s9YlSFETEVHlK4}
 
-
-# ==========================================
-# BREVO
-# ==========================================
-brevo:
-  api-key: ${BREVO_API_KEY}
-  from-email: ${MAIL_FROM_EMAIL}
-  from-name: ${MAIL_FROM_NAME:Khalid Bijoux}
 
 
 spring:
@@ -53,7 +48,6 @@ spring:
     password: ${MYSQLPASSWORD:root}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-  # SMTP conservé pour le développement local avec SMTP4Dev
   mail:
     host: ${SMTP_HOST:localhost}
     port: ${SMTP_PORT:25}
@@ -63,9 +57,13 @@ spring:
       mail.smtp.auth: ${SMTP_AUTH:false}
       mail.smtp.starttls.enable: ${SMTP_STARTTLS:false}
 
+
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+
+
+
