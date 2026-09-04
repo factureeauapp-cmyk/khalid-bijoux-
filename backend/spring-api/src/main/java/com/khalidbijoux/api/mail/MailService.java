@@ -1,50 +1,3 @@
-//package com.khalidbijoux.api.mail;
-//
-//import lombok.RequiredArgsConstructor;
-//import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.mail.SimpleMailMessage;
-//import org.springframework.mail.javamail.JavaMailSender;
-//import org.springframework.stereotype.Service;
-//
-//@Service
-//@RequiredArgsConstructor
-//public class MailService {
-//    private final JavaMailSender mailSender;
-//
-//    @Value("${SMTP_USER:}")
-//    private String senderEmail;
-//
-//    public void sendPasswordResetCode(String recipient, String code, int expirationMinutes) {
-//        send(recipient, "Khalid Bijoux — code de changement de mot de passe",
-//                "Votre code de vérification est : " + code + "\n\nIl expire dans " + expirationMinutes + " minutes.\nNe partagez ce code avec personne.");
-//    }
-//
-//    public void sendContactMessage(String adminEmail, String name, String email, String subject, String message) {
-//        SimpleMailMessage mail = message(adminEmail, "[Contact] " + subject,
-//                "Nom : " + name + "\nEmail : " + email + "\nSujet : " + subject + "\n\nMessage :\n" + message);
-//        mail.setReplyTo(email);
-//        mailSender.send(mail);
-//    }
-//
-//    private void send(String recipient, String subject, String body) {
-//        mailSender.send(message(recipient, subject, body));
-//    }
-//
-//    private SimpleMailMessage message(String recipient, String subject, String body) {
-//        SimpleMailMessage mail = new SimpleMailMessage();
-//        mail.setTo(recipient);
-//        mail.setSubject(subject);
-//        mail.setText(body);
-//        if (senderEmail != null && !senderEmail.isBlank()) mail.setFrom(senderEmail);
-//        return mail;
-//    }
-//}
-
-
-
-
-
-
 package com.khalidbijoux.api.mail;
 
 import lombok.RequiredArgsConstructor;
@@ -69,29 +22,21 @@ public class MailService {
     @Value("${brevo.from-name:Khalid Bijoux}")
     private String fromName;
 
+    @Value("${app.admin.email}")
+    private String adminEmail;
+
     private final RestClient restClient = RestClient.builder()
             .baseUrl("https://api.brevo.com")
             .build();
 
-    public void sendPasswordResetCode(
+    /**
+     * Envoi d'un email via l'API Brevo.
+     */
+    private void sendEmail(
             String to,
-            String code,
-            int expirationMinutes
+            String subject,
+            String textContent
     ) {
-        String text = """
-                Bonjour,
-
-                Votre code de vérification Khalid Bijoux est :
-
-                %s
-
-                Ce code expire dans %d minutes.
-
-                Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.
-
-                Khalid Bijoux
-                """.formatted(code, expirationMinutes);
-
         Map<String, Object> body = Map.of(
                 "sender", Map.of(
                         "name", fromName,
@@ -102,8 +47,8 @@ public class MailService {
                                 "email", to
                         )
                 ),
-                "subject", "Code de vérification - Khalid Bijoux",
-                "textContent", text
+                "subject", subject,
+                "textContent", textContent
         );
 
         restClient.post()
@@ -115,4 +60,73 @@ public class MailService {
                 .retrieve()
                 .toBodilessEntity();
     }
+
+    /**
+     * Envoie le code OTP de réinitialisation du mot de passe administrateur.
+     */
+    public void sendPasswordResetCode(
+            String to,
+            String code,
+            int expirationMinutes
+    ) {
+        String text = """
+            Bonjour,
+
+            Votre code de vérification Khalid Bijoux est :
+
+            %s
+
+            Ce code expire dans %d minutes.
+
+            Si vous n'êtes pas à l'origine de cette demande,
+            veuillez ignorer cet email.
+
+            Khalid Bijoux
+            """.formatted(code, expirationMinutes);
+
+        sendEmail(
+                to,
+                "Code de vérification - Khalid Bijoux",
+                text
+        );
+    }
+
+    /**
+     * Envoie un message provenant du formulaire de contact.
+     */
+    public void sendContactMessage(
+            String to,
+            String name,
+            String email,
+            String subject,
+            String message
+    ) {
+        String text = """
+            Nouveau message depuis le formulaire de contact Khalid Bijoux.
+
+            Nom :
+            %s
+
+            Email :
+            %s
+
+            Sujet :
+            %s
+
+            Message :
+            %s
+            """.formatted(
+                name,
+                email,
+                subject,
+                message
+        );
+
+        sendEmail(
+                to,
+                "Nouveau message contact - " + subject,
+                text
+        );
+    }
+    
 }
