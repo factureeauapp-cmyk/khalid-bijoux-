@@ -52,6 +52,11 @@ spring:
       mail.smtp.auth: ${SMTP_AUTH:false}
       mail.smtp.starttls.enable: ${SMTP_STARTTLS:false}
 
+  brevo:
+    api-key: ${BREVO_API_KEY}
+    from-email: ${MAIL_FROM_EMAIL}
+    from-name: ${MAIL_FROM_NAME:Khalid Bijoux}
+
 
   jpa:
     hibernate:
@@ -59,5 +64,6 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+
 
 
