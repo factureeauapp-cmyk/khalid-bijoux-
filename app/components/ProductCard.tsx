@@ -5,10 +5,12 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { ChevronLeft, ChevronRight, ImageOff, Plus } from "lucide-react"
+import { useStore } from "@/hooks/use-store"
 import { useCart } from "../CartContext"
 import { useAppContext } from "../providers/AppContext"
 import { getCategoryById, getCategoryName, getProductDescription, getProductName } from "@/lib/product-utils"
 import type { Product } from "@/lib/store-types"
+import { Heart } from "lucide-react"
 
 // Seuil de glissement (px) à partir duquel un geste tactile est considéré
 // comme un swipe plutôt qu'un simple tap.
@@ -17,6 +19,7 @@ const SWIPE_THRESHOLD = 40
 export default function ProductCard({ product }: { product: Product }) {
   const router = useRouter()
   const { addToCart } = useCart()
+const { toggleWishlist, isInWishlist } = useStore()
   const { t, language, categories } = useAppContext()
   const shop = t("shop")
   const [mounted, setMounted] = useState(false)
@@ -48,6 +51,7 @@ export default function ProductCard({ product }: { product: Product }) {
   const productTag = product?.tag || null
   const productDescription = getProductDescription(product, language)
   const isOutOfStock = (product.quantity ?? 0) <= 0
+  const isFavorite = isInWishlist(product.id) 
 
   const productImages: string[] =
     product.images && product.images.length > 0
@@ -129,6 +133,58 @@ export default function ProductCard({ product }: { product: Product }) {
         onTouchStart={hasMultipleImages ? handleTouchStart : undefined}
         onTouchEnd={hasMultipleImages ? handleTouchEnd : undefined}
       >
+
+
+ {/* Wishlist */}
+<button
+  type="button"
+  onClick={(event) => {
+    event.stopPropagation()
+    toggleWishlist(product)
+  }}
+  aria-label={
+    isFavorite
+      ? language === "ar"
+        ? "إزالة من المفضلة"
+        : "Retirer des favoris"
+      : language === "ar"
+        ? "إضافة إلى المفضلة"
+        : "Ajouter aux favoris"
+  }
+  title={
+    isFavorite
+      ? language === "ar"
+        ? "إزالة من المفضلة"
+        : "Retirer des favoris"
+      : language === "ar"
+        ? "إضافة إلى المفضلة"
+        : "Ajouter aux favoris"
+  }
+  className="
+    absolute right-4 top-4 z-40
+    flex h-10 w-10 items-center justify-center
+    rounded-full
+    border border-white/20
+    bg-black/50
+    text-white
+    backdrop-blur-md
+    transition-all duration-300
+    hover:scale-110
+    hover:border-[#C9A84C]/60
+    hover:bg-black/75
+    active:scale-95
+  "
+>
+  <Heart
+    className={`h-5 w-5 transition-all duration-300 ${
+      isFavorite
+        ? "fill-[#E8C97E] text-[#E8C97E]"
+        : "text-white"
+    }`}
+    strokeWidth={1.8}
+  />
+</button>
+       
         {allImagesFailed ? (
           <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-black/50">
             <ImageOff className="h-6 w-6 text-white/25" strokeWidth={1.5} />

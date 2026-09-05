@@ -153,7 +153,7 @@ export const translations = {
       address: "Beni Mellal, Morocco",
       whatsapp: "WhatsApp",
       openingHours: "Mon - Sat: 09:00 - 19:00",
-      needHelp: "Need help?",
+      needHelp: "Besoin d'aide ?",
       whatsappDescription: "Contactez-nous directement sur WhatsApp pour toute question concernant nos bijoux.",
       contactWhatsApp: "Contactez-nous sur WhatsApp",
       rings: "Rings",

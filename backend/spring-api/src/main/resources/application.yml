@@ -4,7 +4,7 @@ server:
 
 brevo:
   api-key: ${BREVO_API_KEY}
-  from-email: ${MAIL_FROM_EMAIL:admin@khalid-bijoux.com}
+  from-email: ${MAIL_FROM_EMAIL:factureeauapp@gmail.com}
   from-name: ${MAIL_FROM_NAME:Khalid Bijoux}
 
 app:
@@ -49,10 +49,10 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   mail:
-    host: ${SMTP_HOST:localhost}
-    port: ${SMTP_PORT:25}
-    username: ${SMTP_USER:}
-    password: ${SMTP_PASSWORD:}
+    host: ${SMTP_HOST:smtp-relay.brevo.com}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USER:b617d6001@smtp-brevo.com}
+    password: ${SMTP_PASSWORD}
     properties:
       mail.smtp.auth: ${SMTP_AUTH:false}
       mail.smtp.starttls.enable: ${SMTP_STARTTLS:false}
