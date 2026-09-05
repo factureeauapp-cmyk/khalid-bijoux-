@@ -9,6 +9,7 @@ import { useCart } from "../CartContext"
 import { useAppContext } from "../providers/AppContext"
 import LanguageSwitcher from "./LanguageSwitcher"
 import Logo from "./Logo"
+import SocialMediaBar from "./SocialMediaBar"
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -79,11 +80,11 @@ export default function Navbar() {
       <motion.nav
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className={`fixed top-0 z-999 flex h-19.5 w-full items-center px-4 transition-all duration-300 sm:px-6 md:px-10 ${
-          isScrolled ? "border-b border-[#C9A84C]/10 bg-[#0D0D0D]/90 backdrop-blur-md" : "bg-transparent"
-        }`}
+        className={`fixed top-0 z-999 flex h-19.5 w-full items-center px-4 transition-all duration-300 sm:px-6 md:px-10 ${isScrolled ? "border-b border-[#C9A84C]/10 bg-[#0D0D0D]/90 backdrop-blur-md" : "bg-transparent"
+          }`}
       >
-        <div className="mx-auto flex w-full max-w-350 items-center justify-between gap-3">
+        <div className="relative mx-auto flex w-full max-w-350 items-center justify-between gap-3">
+
           <div className="flex min-w-0 items-center gap-3">
             <Logo />
           </div>
@@ -102,45 +103,85 @@ export default function Navbar() {
           </div>
 
           <div className="flex flex-1 items-center justify-end gap-2 sm:gap-3">
-            <div className="hidden md:block">
+
+            {/* ================= DESKTOP ================= */}
+            <div className="hidden items-center gap-3 md:flex">
+
               <LanguageSwitcher />
+
+              <Link
+                href="/cart"
+                className="relative flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-[#121212]/80 text-[#E7E0D3] transition-all duration-300 hover:border-[#C9A84C] hover:text-[#C9A84C]"
+              >
+                <ShoppingBag size={20} strokeWidth={1.5} />
+
+                {isHydrated && totalItems > 0 && (
+                  <span className="absolute -right-1 -top-1 min-w-5 rounded-full bg-[#C9A84C] px-1.5 py-0.5 text-center text-[10px] font-bold text-black">
+                    {totalItems}
+                  </span>
+                )}
+              </Link>
             </div>
 
-            <Link href="/cart" className="relative flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-[#121212]/80 text-[#E7E0D3] transition-all duration-300 hover:border-[#C9A84C] hover:text-[#C9A84C]">
-              <ShoppingBag size={20} strokeWidth={1.5} />
-              {isHydrated && totalItems > 0 && (
-                <span className="absolute -right-1 -top-1 min-w-5 rounded-full bg-[#C9A84C] px-1.5 py-0.5 text-center text-[10px] font-bold text-black">
-                  {totalItems}
-                </span>
-              )}
-            </Link>
 
-            <button
-              ref={buttonRef}
-              type="button"
-              onClick={() => setIsMenuOpen((prev) => !prev)}
-              aria-label={isMenuOpen ? t("closeMenu") : t("openMenu")}
-              aria-expanded={isMenuOpen}
-              aria-controls="mobile-navigation-panel"
-              className="relative flex h-10 w-10 items-center justify-center rounded-full border border-[#C9A84C]/20 bg-[#121212]/80 text-[#E7E0D3] transition-all duration-300 hover:border-[#C9A84C] hover:text-[#C9A84C] lg:hidden"
-            >
-              <motion.div
-                initial={false}
-                animate={{ rotate: isMenuOpen ? 180 : 0, opacity: isMenuOpen ? 0 : 1 }}
-                transition={{ duration: 0.24 }}
-                className="absolute"
+            {/* ================= MOBILE ================= */}
+            <div className="flex items-center gap-2 md:hidden">
+
+              <div className="hidden min-[401px]:block">
+                <SocialMediaBar />
+              </div>
+
+              {/* Panier */}
+              <Link
+                href="/cart"
+                className="relative flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-[#121212]/80 text-[#E7E0D3] transition-all duration-300 hover:border-[#C9A84C] hover:text-[#C9A84C]"
               >
-                <Menu size={20} strokeWidth={1.7} />
-              </motion.div>
-              <motion.div
-                initial={false}
-                animate={{ rotate: isMenuOpen ? 0 : -180, opacity: isMenuOpen ? 1 : 0 }}
-                transition={{ duration: 0.24 }}
-                className="absolute"
+                <ShoppingBag size={20} strokeWidth={1.5} />
+
+                {isHydrated && totalItems > 0 && (
+                  <span className="absolute -right-1 -top-1 min-w-5 rounded-full bg-[#C9A84C] px-1.5 py-0.5 text-center text-[10px] font-bold text-black">
+                    {totalItems}
+                  </span>
+                )}
+              </Link>
+
+              {/* Hamburger */}
+              <button
+                ref={buttonRef}
+                type="button"
+                onClick={() => setIsMenuOpen((prev) => !prev)}
+                aria-label={isMenuOpen ? t("closeMenu") : t("openMenu")}
+                aria-expanded={isMenuOpen}
+                aria-controls="mobile-navigation-panel"
+                className="relative flex h-10 w-10 items-center justify-center rounded-full border border-[#C9A84C]/20 bg-[#121212]/80 text-[#E7E0D3] transition-all duration-300 hover:border-[#C9A84C] hover:text-[#C9A84C]"
               >
-                <X size={20} strokeWidth={1.7} />
-              </motion.div>
-            </button>
+                <motion.div
+                  initial={false}
+                  animate={{
+                    rotate: isMenuOpen ? 180 : 0,
+                    opacity: isMenuOpen ? 0 : 1,
+                  }}
+                  transition={{ duration: 0.24 }}
+                  className="absolute"
+                >
+                  <Menu size={20} strokeWidth={1.7} />
+                </motion.div>
+
+                <motion.div
+                  initial={false}
+                  animate={{
+                    rotate: isMenuOpen ? 0 : -180,
+                    opacity: isMenuOpen ? 1 : 0,
+                  }}
+                  transition={{ duration: 0.24 }}
+                  className="absolute"
+                >
+                  <X size={20} strokeWidth={1.7} />
+                </motion.div>
+              </button>
+
+            </div>
+
           </div>
         </div>
       </motion.nav>
@@ -168,8 +209,8 @@ export default function Navbar() {
             >
               <div className="flex items-center justify-between pb-5">
                 <div className="flex min-w-0 items-center gap-3">
-                {/* <Logo className="gap-3" /> */}
-              </div>
+                  {/* <Logo className="gap-3" /> */}
+                </div>
 
                 <button
                   type="button"
@@ -199,11 +240,10 @@ export default function Navbar() {
                         <Link
                           href={link.href}
                           onClick={() => setIsMenuOpen(false)}
-                          className={`flex items-center justify-between rounded-2xl px-4 py-3.5 text-[17px] tracking-[0.02em] transition-all duration-300 ${
-                            active
+                          className={`flex items-center justify-between rounded-2xl px-4 py-3.5 text-[17px] tracking-[0.02em] transition-all duration-300 ${active
                               ? "bg-[#C9A84C]/15 text-[#E8C97E] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
                               : "text-[#F6EFE4] hover:bg-white/5 hover:text-[#C9A84C]"
-                          }`}
+                            }`}
                         >
                           <span className="font-cormorant text-[1.05rem]">{link.name}</span>
                           <span className={`text-[10px] uppercase tracking-[0.3em] ${active ? "text-[#C9A84C]" : "text-white/40"}`}>

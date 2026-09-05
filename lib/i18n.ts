@@ -147,6 +147,22 @@ export const translations = {
     footer: {
       description: "Maison de bijoux au style moderne, pensée pour une expérience d'achat simple et élégante.",
       rights: "Tous droits réservés.",
+      followUs: "Follow us",
+      navigation: "Navigation",
+      contact: "Contact",
+      address: "Beni Mellal, Morocco",
+      whatsapp: "WhatsApp",
+      openingHours: "Mon - Sat: 09:00 - 19:00",
+      needHelp: "Need help?",
+      whatsappDescription: "Contactez-nous directement sur WhatsApp pour toute question concernant nos bijoux.",
+      contactWhatsApp: "Contactez-nous sur WhatsApp",
+      rings: "Rings",
+      earrings: "Earrings",
+      necklaces: "Necklaces",
+      bracelets: "Bracelets",
+      privacy: "Privacy",
+      terms: "Terms",
+
     },
     loading: "Chargement",
     loadingDescription: "Préparation de la page, merci de patienter un instant.",
@@ -383,7 +399,7 @@ export const translations = {
 
 
 
-  
+
 
       deleteProductTitle: "Supprimer le produit ?",
 
@@ -604,6 +620,24 @@ export const translations = {
     footer: {
       description: "دار مجوهرات بطابع عصري وتجربة شراء بسيطة وأنيقة.",
       rights: "جميع الحقوق محفوظة.",
+      followUs: "تابعونا",
+      navigation: "التنقل",
+      contact: "اتصل بنا",
+      address: "بني ملال، المغرب",
+      whatsapp: "واتساب",
+      openingHours: "الإثنين - السبت: 09:00 - 19:00",
+      needHelp: "هل تحتاج إلى المساعدة؟",
+      whatsappDescription: "تواصلوا معنا مباشرة عبر واتساب لأي استفسار حول مجوهراتنا.",
+      contactWhatsApp: "تواصل معنا عبر واتساب",
+      rings: "الخواتم",
+      earrings: "الأقراط",
+      necklaces: "القلائد",
+      bracelets: "الأساور",
+      privacy: "الخصوصية",
+      terms: "الشروط والأحكام",
+
+
+
     },
     loading: "جاري التحميل",
     loadingDescription: "نجهز الصفحة الآن، نقدر صبركم للحظة.",

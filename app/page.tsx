@@ -20,6 +20,8 @@ export default function HomePage() {
     <main className="min-h-screen overflow-hidden bg-black">
       <Navbar />
 
+     
+        
       <section className="relative flex min-h-screen items-center px-6 pt-24 md:px-12">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(201,168,76,0.2),transparent_45%)]" />
         <div className="absolute right-[-120px] top-24 h-[420px] w-[420px] rounded-full bg-[#c9a84c]/10 blur-[110px]" />

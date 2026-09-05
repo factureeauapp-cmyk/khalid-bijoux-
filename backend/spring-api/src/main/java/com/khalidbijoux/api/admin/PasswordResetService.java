@@ -2,7 +2,6 @@ package com.khalidbijoux.api.admin;
 
 import com.khalidbijoux.api.mail.MailService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,7 +12,6 @@ import java.time.OffsetDateTime;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class PasswordResetService {
 
     private static final int OTP_TTL_MINUTES = 5;
@@ -36,30 +34,19 @@ public class PasswordResetService {
     @Transactional
     public void requestReset() {
 
-        log.info("==============================================");
-        log.info("PASSWORD RESET - REQUEST");
-        log.info("Configured administrator email: [{}]", adminEmail);
-        log.info("==============================================");
-
         OffsetDateTime now = OffsetDateTime.now();
 
-        // Vérifier que l'administrateur existe AVANT de créer l'OTP
-        boolean adminExists = adminRepository.findByEmail(adminEmail).isPresent();
-
-        log.info(
-                "Administrator lookup for email [{}] -> exists: {}",
-                adminEmail,
-                adminExists
-        );
+        // Vérifier que l'administrateur existe
+        boolean adminExists =
+                adminRepository.findByEmail(adminEmail).isPresent();
 
         if (!adminExists) {
-            log.error(
-                    "CONFIGURATION ERROR: No administrator found for configured email [{}]",
-                    adminEmail
-            );
-
+            /*
+             * Ne jamais exposer l'email configuré,
+             * l'ID ou les détails de la base de données.
+             */
             throw new IllegalArgumentException(
-                    "Configured administrator was not found"
+                    "Une erreur est survenue."
             );
         }
 
@@ -69,20 +56,9 @@ public class PasswordResetService {
                         adminEmail
                 );
 
-        log.info(
-                "Active OTP records found for [{}]: {}",
-                adminEmail,
-                existingOtps.size()
+        existingOtps.forEach(otp ->
+                otp.setInvalidatedAt(now)
         );
-
-        existingOtps.forEach(otp -> {
-            otp.setInvalidatedAt(now);
-
-            log.debug(
-                    "Previous OTP invalidated. OTP ID: {}",
-                    otp.getId()
-            );
-        });
 
         // Génération OTP
         String code = String.format(
@@ -100,26 +76,13 @@ public class PasswordResetService {
                         .attempts(0)
                         .build();
 
-        PasswordResetOtp savedOtp =
-                otpRepository.save(passwordResetOtp);
+        otpRepository.save(passwordResetOtp);
 
-        log.info(
-                "New password reset OTP created. OTP ID: {}, email: [{}], expiresAt: {}",
-                savedOtp.getId(),
-                adminEmail,
-                savedOtp.getExpiresAt()
-        );
-
-        // Ne jamais logger le code OTP
+        // Ne JAMAIS logger le code OTP
         mailService.sendPasswordResetCode(
                 adminEmail,
                 code,
                 OTP_TTL_MINUTES
-        );
-
-        log.info(
-                "Password reset email sent successfully to [{}]",
-                adminEmail
         );
     }
 
@@ -130,29 +93,15 @@ public class PasswordResetService {
     @Transactional
     public void verify(VerifyOtpRequest request) {
 
-        log.info("==============================================");
-        log.info("PASSWORD RESET - VERIFY OTP");
-        log.info("Configured administrator email: [{}]", adminEmail);
-        log.info("==============================================");
-
         PasswordResetOtp otp = activeOtp();
 
-        log.info(
-                "Active OTP found. ID: {}, email: [{}], attempts: {}, verifiedAt: {}, expiresAt: {}",
-                otp.getId(),
-                otp.getEmail(),
-                otp.getAttempts(),
-                otp.getVerifiedAt(),
-                otp.getExpiresAt()
+        validateCode(
+                otp,
+                request.otp()
         );
 
-        validateCode(otp, request.otp());
-
-        otp.setVerifiedAt(OffsetDateTime.now());
-
-        log.info(
-                "OTP verified successfully. OTP ID: {}",
-                otp.getId()
+        otp.setVerifiedAt(
+                OffsetDateTime.now()
         );
     }
 
@@ -163,52 +112,22 @@ public class PasswordResetService {
     @Transactional
     public void changePassword(ChangePasswordRequest request) {
 
-        log.info("==============================================");
-        log.info("PASSWORD RESET - CHANGE PASSWORD");
-        log.info("Configured administrator email: [{}]", adminEmail);
-        log.info("==============================================");
-
         // Vérification confirmation
         if (!request.newPassword().equals(request.confirmPassword())) {
-
-            log.warn(
-                    "Password confirmation does not match for administrator [{}]",
-                    adminEmail
-            );
-
             throw new IllegalArgumentException(
-                    "Password confirmation does not match"
+                    "Les mots de passe ne correspondent pas."
             );
         }
-
-        log.info("Password confirmation: OK");
 
         // Récupération OTP
         PasswordResetOtp otp = activeOtp();
 
-        log.info(
-                "OTP loaded for password change. ID: {}, email: [{}], verifiedAt: {}, attempts: {}, expiresAt: {}",
-                otp.getId(),
-                otp.getEmail(),
-                otp.getVerifiedAt(),
-                otp.getAttempts(),
-                otp.getExpiresAt()
-        );
-
-        // Vérifier que OTP a déjà été vérifié
+        // Vérifier que l'OTP a été vérifié
         if (otp.getVerifiedAt() == null) {
-
-            log.warn(
-                    "Password change rejected: OTP has not been verified. OTP ID: {}",
-                    otp.getId()
-            );
-
             throw new IllegalArgumentException(
-                    "OTP must be verified before changing the password"
+                    "La vérification est requise."
             );
         }
-
-        log.info("OTP verification state: VALID");
 
         // Vérifier à nouveau le code
         validateCode(
@@ -216,66 +135,19 @@ public class PasswordResetService {
                 request.otp()
         );
 
-        log.info("OTP code validation: OK");
-
-        // ========================================================
-        // RECHERCHE ADMIN
-        // ========================================================
-
-        log.info(
-                "Searching administrator in database with email: [{}]",
-                adminEmail
-        );
-
+        // Recherche administrateur
         var adminOptional =
                 adminRepository.findByEmail(adminEmail);
 
-        log.info(
-                "Administrator lookup result for [{}]: {}",
-                adminEmail,
-                adminOptional.isPresent()
-        );
-
         if (adminOptional.isEmpty()) {
-
-            log.error(
-                    "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-            );
-
-            log.error(
-                    "CONFIGURED ADMINISTRATOR NOT FOUND"
-            );
-
-            log.error(
-                    "Configured email = [{}]",
-                    adminEmail
-            );
-
-            log.error(
-                    "Check the Admin table and verify that this exact email exists."
-            );
-
-            log.error(
-                    "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-            );
-
             throw new IllegalArgumentException(
-                    "Configured administrator was not found"
+                    "Une erreur est survenue."
             );
         }
 
         Admin admin = adminOptional.get();
 
-        log.info(
-                "Administrator FOUND. Database ID: {}, email: [{}]",
-                admin.getId(),
-                admin.getEmail()
-        );
-
-        // ========================================================
-        // UPDATE PASSWORD
-        // ========================================================
-
+        // Mise à jour du mot de passe
         admin.setPassword(
                 passwordEncoder.encode(
                         request.newPassword()
@@ -287,16 +159,6 @@ public class PasswordResetService {
         );
 
         adminRepository.save(admin);
-
-        log.info(
-                "Administrator password successfully updated. Admin ID: {}",
-                admin.getId()
-        );
-
-        log.info(
-                "Password reset completed successfully for [{}]",
-                adminEmail
-        );
     }
 
     // ============================================================
@@ -305,34 +167,18 @@ public class PasswordResetService {
 
     private PasswordResetOtp activeOtp() {
 
-        log.info(
-                "Searching active OTP for email [{}]",
-                adminEmail
-        );
-
         var otpOptional =
                 otpRepository
                         .findFirstByEmailAndUsedAtIsNullAndInvalidatedAtIsNullOrderByIdDesc(
                                 adminEmail
                         );
 
-        log.info(
-                "Active OTP lookup result: {}",
-                otpOptional.isPresent()
-        );
-
         PasswordResetOtp otp =
-                otpOptional.orElseThrow(() -> {
-
-                    log.warn(
-                            "No active password reset request found for [{}]",
-                            adminEmail
-                    );
-
-                    return new IllegalArgumentException(
-                            "No active password reset request"
-                    );
-                });
+                otpOptional.orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Une demande de réinitialisation est requise."
+                        )
+                );
 
         OffsetDateTime now = OffsetDateTime.now();
 
@@ -342,17 +188,10 @@ public class PasswordResetService {
 
         if (otp.getExpiresAt().isBefore(now)) {
 
-            log.warn(
-                    "OTP expired. OTP ID: {}, expiresAt: {}, currentTime: {}",
-                    otp.getId(),
-                    otp.getExpiresAt(),
-                    now
-            );
-
             otp.setInvalidatedAt(now);
 
             throw new IllegalArgumentException(
-                    "OTP has expired"
+                    "Le code a expiré."
             );
         }
 
@@ -362,25 +201,12 @@ public class PasswordResetService {
 
         if (otp.getAttempts() >= MAX_ATTEMPTS) {
 
-            log.warn(
-                    "OTP maximum attempts reached. OTP ID: {}, attempts: {}",
-                    otp.getId(),
-                    otp.getAttempts()
-            );
-
             otp.setInvalidatedAt(now);
 
             throw new IllegalArgumentException(
-                    "Too many invalid OTP attempts"
+                    "Trop de tentatives. Veuillez recommencer."
             );
         }
-
-        log.info(
-                "Active OTP is valid. ID: {}, attempts: {}, expiresAt: {}",
-                otp.getId(),
-                otp.getAttempts(),
-                otp.getExpiresAt()
-        );
 
         return otp;
     }
@@ -400,21 +226,10 @@ public class PasswordResetService {
                         otp.getOtpHash()
                 );
 
-        log.info(
-                "OTP hash validation result: {}",
-                matches
-        );
-
         if (!matches) {
 
             otp.setAttempts(
                     otp.getAttempts() + 1
-            );
-
-            log.warn(
-                    "Invalid OTP. OTP ID: {}, attempts: {}",
-                    otp.getId(),
-                    otp.getAttempts()
             );
 
             if (otp.getAttempts() >= MAX_ATTEMPTS) {
@@ -422,15 +237,10 @@ public class PasswordResetService {
                 otp.setInvalidatedAt(
                         OffsetDateTime.now()
                 );
-
-                log.warn(
-                        "OTP invalidated because maximum attempts was reached. OTP ID: {}",
-                        otp.getId()
-                );
             }
 
             throw new IllegalArgumentException(
-                    "Invalid OTP"
+                    "Code de vérification invalide."
             );
         }
     }

@@ -4,7 +4,7 @@ server:
 
 brevo:
   api-key: ${BREVO_API_KEY}
-  from-email: ${MAIL_FROM_EMAIL}
+  from-email: ${MAIL_FROM_EMAIL:admin@khalid-bijoux.com}
   from-name: ${MAIL_FROM_NAME:Khalid Bijoux}
 
 app:
